@@ -1,0 +1,2 @@
+// Planogram Agent
+module.exports = {};

@@ -1,0 +1,2 @@
+// Inventory Agent
+module.exports = {};

@@ -1,0 +1,2 @@
+// OpenAI Config
+module.exports = {};

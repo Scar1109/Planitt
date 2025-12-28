@@ -1,0 +1,327 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-dark: #f8fafc;
+  --bg-card: rgba(255, 255, 255, 0.7);
+  --bg-card-hover: rgba(255, 255, 255, 0.9);
+  --primary: #4f46e5;
+  --primary-glow: rgba(79, 70, 229, 0.3);
+  --accent: #6366f1;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border: rgba(0, 0, 0, 0.1);
+
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 4rem;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.6;
+
+  /* Key change: allow scroll on short screens */
+  min-height: 100dvh;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Utilities */
+.text-gradient {
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.primary-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+}
+
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Layout Containers */
+.coming-soon-container {
+  position: relative;
+  min-height: 100dvh;
+  width: 100%;
+
+  display: grid;
+  place-items: center;
+
+  /* Scroll only if needed */
+  overflow: hidden;
+  padding: clamp(16px, 2.5vh, 28px);
+}
+
+.bg-image {
+  position: absolute;
+  inset: 0;
+  background-image: url('/background_light.png');
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(248, 250, 252, 0.8), transparent);
+  opacity: 0.9;
+  z-index: 0;
+}
+
+.main-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 900px;
+  padding: 2vh 20px;
+  /* Dynamic vertical padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* Ensure content fits or shrinks */
+  height: 100vh;
+  justify-content: space-evenly;
+  /* Distribute space evenly */
+}
+
+/* Components */
+.badge {
+  padding: 4px 16px;
+  border-radius: 9999px;
+  border-color: rgba(79, 70, 229, 0.2);
+  /* Margin removed, handled by parent flex */
+}
+
+.badge-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.hero-logo {
+  max-width: 350px;
+  /* Maintained large size */
+  height: auto;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  display: none;
+  /* Hidden in favor of logo */
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  font-weight: 400;
+
+  /* Helps “one-page on 1080p” by keeping lines readable and not too tall */
+  line-height: 1.45;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+
+  /* Enforce Horizontal Layout */
+  .countdown-flex {
+    gap: 0.5rem;
+  }
+
+  .countdown-item {
+    padding: 0.5rem 0.25rem;
+    min-width: auto;
+  }
+
+  .countdown-value {
+    font-size: 1.25rem;
+  }
+
+  .countdown-label {
+    font-size: 0.6rem;
+    letter-spacing: 0;
+  }
+
+  .hero-logo {
+    max-width: 200px;
+    /* Safe size for mobile */
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    padding: 0 1rem;
+    /* Margin handled by flex space-evenly */
+  }
+
+  .footer {
+    font-size: 0.75rem;
+  }
+}
+
+/* Countdown */
+.countdown-container {
+  width: 100%;
+  max-width: 600px;
+}
+
+.countdown-flex {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.countdown-item {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+  flex: 1;
+}
+
+.countdown-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+  line-height: 1;
+}
+
+.countdown-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Form */
+.signup-form {
+  width: 100%;
+  max-width: 500px;
+  /* Increased slightly for single line */
+  /* .signup-form is already row by default now */
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.input-field {
+  flex: 1;
+  /* Take remaining space */
+  width: auto;
+  /* Reset width */
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  outline: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+}
+
+.footer {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Tablet and up: input + button in one row */
+@media (min-width: 768px) {
+  .signup-form {
+    grid-template-columns: 1fr auto;
+    align-items: stretch;
+  }
+
+  .btn-primary {
+    padding: 12px 28px;
+  }
+}
+
+/* Small phones: tighter countdown and subtitle */
+@media (max-width: 420px) {
+  .countdown-flex {
+    gap: 8px;
+  }
+
+  .countdown-item {
+    padding: 10px 8px;
+  }
+
+  .hero-subtitle {
+    padding: 0 6px;
+  }
+}
+
+/* Short screens: allow scrolling and avoid clipping */
+@media (max-height: 700px) {
+  .coming-soon-container {
+    place-items: start center;
+    overflow: auto;
+  }
+
+  .main-content {
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+}

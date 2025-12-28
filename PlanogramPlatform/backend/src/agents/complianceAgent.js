@@ -1,0 +1,2 @@
+// Compliance Agent
+module.exports = {};

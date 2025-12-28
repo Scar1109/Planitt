@@ -1,0 +1,2 @@
+// POS Service
+module.exports = {};
