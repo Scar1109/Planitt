@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - 'Website/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Website/**'
   workflow_dispatch:
 
 permissions:
