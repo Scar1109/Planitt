@@ -45,6 +45,7 @@ const Sidebar = () => {
             icon: FaCog,
             subItems: settingsSubItems.length > 0 ? settingsSubItems : undefined
         },
+        { name: "Forecasting", href: "/forecasting", icon: TrendingUp },
     ];
 
     const isSubItemActive = (subItems) => {

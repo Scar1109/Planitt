@@ -1,2 +1,2 @@
 // Inventory Agent
-module.exports = {};
+export default {};
