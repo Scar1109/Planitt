@@ -1,20 +1,37 @@
-import app from './app.js';
-// Restart trigger
-import mongoose from 'mongoose';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import app from './app.js';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-process.env.JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey123';
-const port = process.env.PORT || 3000;
-const mongoUri = process.env.MONGO_URI || "mongodb+srv://admin_db_user:3pPsCiANzsuiI6B9@cluster0.8ovat0j.mongodb.net/";
+const envPath = path.join(__dirname, '../.env');
 
-console.log('Loading environment variables...');
-console.log('MONGO_URI Length:', mongoUri ? mongoUri.length : 'undefined');
+
+
+dotenv.config({ path: envPath });
+
+const port = process.env.PORT;
+const mongoUri = process.env.MONGO_URI;
+
+
+if (!port) {
+    throw new Error('PORT is missing in .env');
+}
+
+if (!mongoUri) {
+    throw new Error('MONGO_URI is missing in .env');
+}
 
 mongoose.connect(mongoUri)
     .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error:', err));
+    .catch(err => {
+        console.error('MongoDB connection failed:', err);
+        process.exit(1);
+    });
 
 app.listen(port, () => {
     console.log(`Planogram Platform Backend listening on port ${port}`);
