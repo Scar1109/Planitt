@@ -1,0 +1,21 @@
+{
+    "timestamp": "2026-01-02T01:13:36.850148",
+    "metrics": {
+        "MAE": 4.1721608437978785,
+        "RMSE": 7.747182079126111,
+        "MAPE": 3148090337938015.5
+    },
+    "params": {
+        "model": "RandomForestRegressor",
+        "n_estimators": 100,
+        "seed": 42
+    },
+    "features": [
+        "UnitPriceLKR",
+        "Shelf_Level",
+        "Category_Code",
+        "IsWeekend",
+        "IsHoliday"
+    ],
+    "sanity_check_uplift_percent": 87.39906754791467
+}

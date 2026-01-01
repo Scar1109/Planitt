@@ -11,6 +11,7 @@ import Settings from '../components/dashboard/Settings';
 import UserManagement from '../components/dashboard/UserManagement';
 import StoreSettings from '../components/dashboard/StoreSettings';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
+import ComplianceDashboard from './ComplianceDashboard';
 
 const DashboardLayout = ({ children }) => {
     return (
@@ -72,6 +73,7 @@ const Dashboard = () => {
                 <Route path="/planograms/sub3" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 3</h2><p>Content for Sub Item 3</p></div>} />
 
                 <Route path="/analytics" element={<Analytics />} />
+                <Route path="/compliance" element={<ComplianceDashboard />} />
                 <Route path="/store" element={<StoreInfo />} />
 
                 <Route path="/settings" element={<Settings />} />

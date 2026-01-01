@@ -18,9 +18,11 @@ app.use(cookieParser());
 
 import storeRoutes from './routes/storeRoutes.js';
 // ...
+import complianceRoutes from './routes/compliance.routes.js';
 app.use('/api/stores', storeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/compliance', complianceRoutes);
 
 app.get('/health', (req, res) => {
     res.json({ status: "ok", service: "planogram-platform-backend" });

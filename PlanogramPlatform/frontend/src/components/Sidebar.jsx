@@ -38,6 +38,7 @@ const Sidebar = () => {
             ]
         },
         { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
+        { name: 'Compliance Intelligence', path: '/dashboard/compliance', icon: FaRobot },
         { name: 'Store Info', path: '/dashboard/store', icon: FaStore },
         {
             name: 'Settings',
