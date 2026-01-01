@@ -1,0 +1,67 @@
+name: Deploy Website to Hostinger
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Website/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Website/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Website
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Website/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: CI=false npm run build
+
+      - name: Add .htaccess to dist
+        run: |
+          cat > dist/.htaccess <<'EOF'
+          RewriteEngine On
+          RewriteBase /
+          RewriteRule ^index\.html$ - [L]
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteCond %{REQUEST_FILENAME} !-d
+          RewriteRule . /index.html [L]
+          EOF
+
+      - name: List dist for sanity
+        run: |
+          ls -la dist | sed -n '1,200p'
+          echo "-----"
+          head -n 20 dist/.htaccess
+
+      - name: Deploy to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          protocol: ftps
+          local-dir: Website/dist/
+          server-dir: /public_html/
+          log-level: verbose
+          dangerous-clean-slate: true
