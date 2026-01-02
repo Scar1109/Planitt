@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
     Line,
@@ -15,7 +16,7 @@ import {
     ReferenceLine,
     ReferenceArea,
 } from "recharts"
-import { TrendingUp, Download, Loader2, Eye, EyeOff, Sparkles, CalendarDays } from "lucide-react"
+import { TrendingUp, Download, Loader2, Eye, EyeOff, Sparkles, CalendarDays, Search, ChevronDown, X } from "lucide-react"
 import { api } from "@/api/client"
 
 export function ForecastChart() {
@@ -28,13 +29,37 @@ export function ForecastChart() {
     const [productsLoading, setProductsLoading] = useState(true)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [searchQuery, setSearchQuery] = useState("")
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const dropdownRef = useRef(null)
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
+
+    // Filter products based on search query
+    const filteredProducts = products.filter(p => {
+        const query = searchQuery.toLowerCase()
+        return p.sku.toLowerCase().includes(query) ||
+            (p.name && p.name.toLowerCase().includes(query)) ||
+            (p.category && p.category.toLowerCase().includes(query))
+    })
+
+    const selectedProductData = products.find(p => p.sku === selectedProduct)
 
     // Fetch real products from training data
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 setProductsLoading(true)
-                const response = await api.getProducts(null, null, 50)
+                const response = await api.getProducts(null, null, 2000)
 
                 if (response.success && response.data && response.data.length > 0) {
                     // Map to expected format
@@ -99,32 +124,60 @@ export function ForecastChart() {
                 })
 
                 // Process forecast data and match with holidays
-                // The Python ML service returns: { product_id, store_id, forecasts: [...], model_version, accuracy_metrics }
                 const forecasts = forecastResponse.forecasts || []
+                const history = forecastResponse.history || []
 
-                if (forecasts.length === 0) {
-                    setError("No forecast data returned from ML model")
-                    return
-                }
+                // Use a Map to merge data by date
+                const dataMap = new Map()
 
-                const chartData = forecasts.map((point, index) => {
-                    const forecastDate = new Date(point.date)
-                    const dateKey = point.date // YYYY-MM-DD format
-                    const isHoliday = holidayMap.has(dateKey)
-                    const holidayInfo = holidayMap.get(dateKey)
-
-                    return {
-                        date: forecastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                // 1. Add History
+                history.forEach(point => {
+                    dataMap.set(point.date, {
+                        date: new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
                         fullDate: point.date,
+                        actual: point.actual_sales,
+                        forecast: null,
+                        lower: null,
+                        upper: null
+                    })
+                })
+
+                // 2. Add Forecasts (merge if date exists, else new)
+                forecasts.forEach(point => {
+                    const existing = dataMap.get(point.date) || {
+                        date: new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                        fullDate: point.date,
+                        actual: null
+                    }
+
+                    dataMap.set(point.date, {
+                        ...existing,
                         forecast: Math.round(point.forecast),
                         lower: Math.round(point.lower_bound),
-                        upper: Math.round(point.upper_bound),
-                        actual: null, // Will be populated with real historical data if available
-                        holiday: isHoliday,
-                        holidayName: holidayInfo?.name,
-                        holidayImpact: holidayInfo?.impact,
-                    }
+                        upper: Math.round(point.upper_bound)
+                    })
                 })
+
+                // Convert to array and sort by date
+                const chartData = Array.from(dataMap.values())
+                    .sort((a, b) => new Date(a.fullDate) - new Date(b.fullDate))
+                    .map(d => {
+                        // Add holiday info
+                        const isHoliday = holidayMap.has(d.fullDate)
+                        const holidayInfo = holidayMap.get(d.fullDate)
+
+                        return {
+                            ...d,
+                            holiday: isHoliday,
+                            holidayName: holidayInfo?.name,
+                            holidayImpact: holidayInfo?.impact,
+                        }
+                    })
+
+                if (chartData.length === 0) {
+                    setError("No data available for this product")
+                    return
+                }
 
                 // Find holidays within forecast period
                 const forecastHolidays = chartData
@@ -137,7 +190,7 @@ export function ForecastChart() {
 
                 setForecastData(chartData)
                 setHolidays(forecastHolidays)
-                console.log(`✅ Chart data prepared: ${chartData.length} points`)
+                console.log(`✅ Chart data prepared: ${chartData.length} points (${history.length} actual, ${forecasts.length} forecast)`)
             } catch (err) {
                 console.error("Error fetching forecast:", err)
                 setError(err instanceof Error ? err.message : "Failed to load forecast from ML model")
@@ -199,69 +252,155 @@ export function ForecastChart() {
     }
 
     return (
-        <Card className="overflow-visible">
-            <CardHeader className="pb-4 border-b border-border/50">
+        <Card className="overflow-visible bg-white border-slate-100 shadow-sm rounded-xl">
+            <CardHeader className="pb-4 border-b border-slate-100">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="space-y-1">
                         <CardTitle className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                                <TrendingUp className="h-4 w-4 text-primary" />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
+                                <TrendingUp className="h-4 w-4 text-indigo-600" />
                             </div>
-                            <span>Demand Forecast</span>
-                            {loading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                            <span className="text-slate-800">Demand Forecast</span>
+                            {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-400" />}
                             {!loading && holidays.length > 0 && (
-                                <Badge variant="outline" className="gap-1 ml-2">
+                                <Badge variant="outline" className="gap-1 ml-2 bg-white text-slate-600 border-slate-200">
                                     <CalendarDays className="h-3 w-3" />
                                     {holidays.length} {holidays.length === 1 ? 'Holiday' : 'Holidays'}
                                 </Badge>
                             )}
                         </CardTitle>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-slate-500">
                             ML-powered predictions with holiday adjustments
                         </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                        <Select value={selectedProduct} onValueChange={setSelectedProduct} disabled={productsLoading}>
-                            <SelectTrigger className="w-[200px] h-10 text-sm bg-background/80 backdrop-blur-sm rounded-xl border-input hover:border-primary/30 hover:bg-accent/30 transition-all duration-200 shadow-sm">
-                                <SelectValue placeholder={productsLoading ? "Loading..." : "Select Product"}>
-                                    {selectedProduct && (
-                                        <span className="font-medium truncate">
-                                            {products.find(p => p.sku === selectedProduct)?.name}
-                                        </span>
-                                    )}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent className="bg-popover/95 backdrop-blur-md border-border/50 rounded-xl shadow-lg max-h-[320px] overflow-hidden">
-                                <div className="p-1">
-                                    {products.map((product) => (
-                                        <SelectItem
-                                            key={product.sku}
-                                            value={product.sku}
-                                            className="rounded-lg py-2.5 px-3 cursor-pointer focus:bg-primary/10 focus:text-foreground data-[state=checked]:bg-primary/10"
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
-                                                    {product.name.charAt(0).toUpperCase()}
-                                                </div>
-                                                <div className="flex flex-col gap-0.5">
-                                                    <span className="font-medium text-sm">{product.name}</span>
-                                                    <span className="text-xs text-muted-foreground">
-                                                        {product.category} • <span className="font-mono">{product.sku}</span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </SelectItem>
-                                    ))}
-                                </div>
-                            </SelectContent>
-                        </Select>
+                        {/* Custom Searchable Product Dropdown */}
+                        <div className="relative" ref={dropdownRef}>
+                            <button
+                                type="button"
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                disabled={productsLoading}
+                                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 min-w-[280px] max-w-[320px] h-10 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <span className="truncate text-left flex-1 font-medium text-slate-700">
+                                    {productsLoading ? "Loading products..." : selectedProductData
+                                        ? selectedProductData.name || selectedProductData.sku
+                                        : "Select Product..."}
+                                </span>
+                                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-indigo-600' : ''}`} />
+                            </button>
 
-                        <div className="toggle-group">
+                            {isDropdownOpen && !productsLoading && (
+                                <div className="absolute z-50 mt-2 w-[380px] rounded-xl border border-slate-200 bg-white shadow-xl animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 overflow-hidden">
+                                    {/* Search Input */}
+                                    <div className="p-3 border-b border-slate-100 bg-slate-50">
+                                        <div className="relative">
+                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Input
+                                                type="text"
+                                                placeholder="Search by SKU, name, or category..."
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                className="pl-9 pr-9 h-10 text-sm rounded-lg border-slate-200 bg-white focus:ring-indigo-500 transition-colors"
+                                                autoFocus
+                                            />
+                                            {searchQuery && (
+                                                <button
+                                                    onClick={() => setSearchQuery("")}
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-0.5 rounded-md hover:bg-slate-100"
+                                                >
+                                                    <X className="h-4 w-4" />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Products List */}
+                                    <div className="max-h-[320px] overflow-y-auto p-2">
+                                        {filteredProducts.length > 0 ? (
+                                            <div className="space-y-1">
+                                                {filteredProducts.map((p) => (
+                                                    <button
+                                                        key={p.sku}
+                                                        onClick={() => {
+                                                            setSelectedProduct(p.sku)
+                                                            setIsDropdownOpen(false)
+                                                            setSearchQuery("")
+                                                        }}
+                                                        className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group ${selectedProduct === p.sku
+                                                            ? 'bg-indigo-50 border border-indigo-100'
+                                                            : 'hover:bg-slate-50 border border-transparent'
+                                                            }`}
+                                                    >
+                                                        <div className="flex items-start gap-3">
+                                                            <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${selectedProduct === p.sku
+                                                                ? 'bg-indigo-600 text-white'
+                                                                : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600'
+                                                                } transition-colors`}>
+                                                                {(p.name || p.sku).charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className={`font-medium truncate ${selectedProduct === p.sku ? 'text-indigo-700' : 'text-slate-700'}`}>
+                                                                    {p.name || p.sku}
+                                                                </p>
+                                                                <div className="flex items-center gap-2 mt-0.5">
+                                                                    <span className="text-xs font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                                                                        {p.sku}
+                                                                    </span>
+                                                                    {p.category && (
+                                                                        <span className="text-xs text-slate-400">
+                                                                            {p.category}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            {selectedProduct === p.sku && (
+                                                                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center">
+                                                                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="px-3 py-8 text-center">
+                                                <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-3">
+                                                    <Search className="h-5 w-5 text-slate-400" />
+                                                </div>
+                                                <p className="text-sm text-slate-500">
+                                                    {products.length === 0
+                                                        ? "Loading products..."
+                                                        : `No products found for "${searchQuery}"`}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Footer with count */}
+                                    <div className="border-t border-slate-100 px-4 py-2.5 bg-slate-50 flex items-center justify-between">
+                                        <span className="text-xs text-slate-500">
+                                            {filteredProducts.length} of {products.length.toLocaleString()} products
+                                        </span>
+                                        <Badge variant="outline" className="text-xs bg-white text-slate-600 border-slate-200">
+                                            MongoDB
+                                        </Badge>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex bg-slate-100 p-1 rounded-lg">
                             {timeRanges.map((range) => (
                                 <button
                                     key={range}
                                     onClick={() => setTimeRange(range)}
-                                    className={`toggle-item ${timeRange === range ? "active" : ""}`}
+                                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${timeRange === range
+                                        ? "bg-white text-indigo-600 shadow-sm"
+                                        : "text-slate-500 hover:text-slate-700"
+                                        }`}
                                 >
                                     {range}
                                 </button>
@@ -323,38 +462,37 @@ export function ForecastChart() {
                 )}
                 {!loading && !productsLoading && !error && (
                     <>
-                        <div className="h-[320px]">
+                        <div className="h-[320px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <ComposedChart data={forecastData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="confidenceGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
-                                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.02} />
+                                            <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.1} />
+                                            <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.01} />
                                         </linearGradient>
                                         <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.15} />
-                                            <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0.02} />
+                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0.01} />
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid
                                         strokeDasharray="3 3"
-                                        stroke="hsl(var(--border))"
-                                        strokeOpacity={0.5}
+                                        stroke="#e2e8f0"
                                         vertical={false}
                                     />
                                     <XAxis
                                         dataKey="date"
-                                        tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-                                        axisLine={{ stroke: "hsl(var(--border))" }}
+                                        tick={{ fill: "#64748b", fontSize: 11 }}
+                                        axisLine={{ stroke: "#e2e8f0" }}
                                         tickLine={false}
-                                        dy={8}
+                                        dy={10}
                                     />
                                     <YAxis
-                                        tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                                        tick={{ fill: "#64748b", fontSize: 11 }}
                                         axisLine={false}
                                         tickLine={false}
-                                        dx={-8}
-                                        domain={["dataMin - 200", "dataMax + 200"]}
+                                        dx={-10}
+                                        domain={[0, 'auto']}
                                     />
                                     <Tooltip content={<CustomTooltip />} />
 
@@ -368,26 +506,23 @@ export function ForecastChart() {
                                                 key={`holiday-${index}`}
                                                 x1={point.date}
                                                 x2={nextDate}
-                                                fill="hsl(var(--warning))"
-                                                fillOpacity={0.15}
-                                                stroke="hsl(var(--warning))"
-                                                strokeOpacity={0.3}
+                                                fill="#fbbf24"
+                                                fillOpacity={0.1}
+                                                stroke="none"
                                             />
                                         )
                                     })}
 
                                     {/* Today marker */}
                                     <ReferenceLine
-                                        x={forecastData[6]?.date}
-                                        stroke="hsl(var(--muted-foreground))"
+                                        x={forecastData.find(d => !d.actual && d.forecast)?.date}
+                                        stroke="#94a3b8"
                                         strokeDasharray="4 4"
-                                        strokeOpacity={0.5}
                                         label={{
-                                            value: "Today",
+                                            value: "Forecast Start",
                                             position: "top",
-                                            fill: "hsl(var(--muted-foreground))",
+                                            fill: "#94a3b8",
                                             fontSize: 10,
-                                            fontWeight: 500
                                         }}
                                     />
 
@@ -404,7 +539,7 @@ export function ForecastChart() {
                                                 type="monotone"
                                                 dataKey="lower"
                                                 stroke="transparent"
-                                                fill="hsl(var(--background))"
+                                                fill="#ffffff"
                                                 name="Lower Bound"
                                             />
                                         </>
@@ -413,79 +548,82 @@ export function ForecastChart() {
                                     <Area
                                         type="monotone"
                                         dataKey="actual"
-                                        stroke="hsl(var(--success))"
+                                        stroke="#10b981"
                                         fill="url(#actualGradient)"
                                         strokeWidth={2}
-                                        dot={{ fill: "hsl(var(--success))", strokeWidth: 0, r: 4 }}
-                                        activeDot={{ r: 6, fill: "hsl(var(--success))", stroke: "hsl(var(--background))", strokeWidth: 2 }}
+                                        dot={{ fill: "#10b981", strokeWidth: 0, r: 3 }}
+                                        activeDot={{ r: 5, fill: "#10b981", stroke: "#ffffff", strokeWidth: 2 }}
                                         name="Actual Sales"
                                         connectNulls={false}
                                     />
                                     <Line
                                         type="monotone"
                                         dataKey="forecast"
-                                        stroke="hsl(var(--primary))"
+                                        stroke="#4f46e5"
                                         strokeWidth={2.5}
                                         strokeDasharray="6 4"
                                         dot={(props) => {
                                             const { cx, cy, payload } = props
+                                            if (!cx || !cy) return null;
                                             return (
                                                 <g>
                                                     <circle
                                                         cx={cx}
                                                         cy={cy}
-                                                        r={payload.holiday ? 5 : 3}
-                                                        fill={payload.holiday ? "hsl(var(--warning))" : "hsl(var(--primary))"}
+                                                        r={payload.holiday ? 4 : 2}
+                                                        fill={payload.holiday ? "#fbbf24" : "#4f46e5"}
                                                         strokeWidth={0}
                                                     />
                                                     {payload.holiday && (
                                                         <circle
                                                             cx={cx}
                                                             cy={cy}
-                                                            r={7}
+                                                            r={6}
                                                             fill="none"
-                                                            stroke="hsl(var(--warning))"
+                                                            stroke="#fbbf24"
                                                             strokeWidth={1.5}
-                                                            opacity={0.5}
+                                                            opacity={0.6}
                                                         />
                                                     )}
                                                 </g>
                                             )
                                         }}
-                                        activeDot={{ r: 5, fill: "hsl(var(--primary))", stroke: "hsl(var(--background))", strokeWidth: 2 }}
+                                        activeDot={{ r: 5, fill: "#4f46e5", stroke: "#ffffff", strokeWidth: 2 }}
                                         name="Forecast"
                                     />
                                 </ComposedChart>
                             </ResponsiveContainer>
                         </div>
 
-                        <div className="mt-5 pt-4 border-t border-border/50 flex flex-wrap items-center justify-between gap-4">
-                            <div className="flex flex-wrap items-center gap-5">
+                        <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
+                            <div className="flex flex-wrap items-center gap-6">
                                 <div className="flex items-center gap-2">
-                                    <span className="h-2.5 w-2.5 rounded-full bg-success" />
-                                    <span className="text-xs text-muted-foreground">Actual Sales</span>
+                                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-sm" />
+                                    <span className="text-xs font-medium text-slate-600">Actual Sales</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="h-0.5 w-5 bg-primary rounded" style={{ backgroundImage: "repeating-linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary)) 4px, transparent 4px, transparent 8px)" }} />
-                                    <span className="text-xs text-muted-foreground">Forecast</span>
+                                    <span className="h-0.5 w-6 rounded-full bg-indigo-600/20 forced-colors:bg-transparent">
+                                        <span className="block h-full w-full" style={{ backgroundImage: "repeating-linear-gradient(90deg, #4f46e5, #4f46e5 4px, transparent 4px, transparent 8px)" }}></span>
+                                    </span>
+                                    <span className="text-xs font-medium text-slate-600">Forecast</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="h-2.5 w-2.5 rounded bg-primary/20" />
-                                    <span className="text-xs text-muted-foreground">95% Confidence</span>
+                                    <span className="h-2.5 w-2.5 rounded bg-indigo-100 border border-indigo-200" />
+                                    <span className="text-xs font-medium text-slate-600">95% Confidence</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="relative">
-                                        <span className="h-2.5 w-2.5 rounded-full bg-warning block" />
-                                        <span className="h-3.5 w-3.5 rounded-full border border-warning/50 absolute -inset-0.5" />
+                                    <div className="relative flex items-center justify-center h-3 w-3">
+                                        <span className="h-2 w-2 rounded-full bg-amber-400" />
+                                        <span className="absolute inset-0 rounded-full border border-amber-200 animate-pulse" />
                                     </div>
-                                    <span className="text-xs text-muted-foreground">Holiday</span>
+                                    <span className="text-xs font-medium text-slate-600">Holiday</span>
                                 </div>
                             </div>
                             <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setShowConfidence(!showConfidence)}
-                                className="h-8 text-xs gap-1.5"
+                                className="h-8 text-xs gap-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50"
                             >
                                 {showConfidence ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                                 {showConfidence ? "Hide" : "Show"} Confidence

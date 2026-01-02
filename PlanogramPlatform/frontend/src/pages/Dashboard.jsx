@@ -11,6 +11,7 @@ import Settings from '../components/dashboard/Settings';
 import UserManagement from '../components/dashboard/UserManagement';
 import StoreSettings from '../components/dashboard/StoreSettings';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
+import Forecasting from './Forecasting';
 
 const DashboardLayout = ({ children }) => {
     return (
@@ -78,6 +79,7 @@ const Dashboard = () => {
                 <Route path="/settings/users" element={<UserManagement />} />
                 <Route path="/settings/store" element={<StoreSettings />} />
                 <Route path="/settings/profile" element={<ProfileSettings />} />
+                <Route path="/forecasting" element={<Forecasting />} />
             </Routes>
         </DashboardLayout>
     );

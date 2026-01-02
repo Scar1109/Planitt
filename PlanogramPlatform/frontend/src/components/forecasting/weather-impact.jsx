@@ -137,11 +137,13 @@ export function WeatherImpact() {
     }
 
     return (
-        <Card className="border-border">
-            <CardHeader className="pb-2">
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden">
+            <CardHeader className="pb-3 border-b border-slate-100 bg-white">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-foreground">
-                        <Cloud className="h-5 w-5 text-primary" />
+                    <CardTitle className="flex items-center gap-2.5 text-slate-800">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
+                            <Cloud className="h-4 w-4 text-amber-600" />
+                        </div>
                         Weather Impact
                     </CardTitle>
                     <div className="flex items-center gap-2">
@@ -154,84 +156,87 @@ export function WeatherImpact() {
                         >
                             {source === "openweathermap" || source === "Open-Meteo" ? "Live" : "Mock"}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">{location}</span>
+                        <span className="text-xs text-slate-500">{location}</span>
                         <button
                             onClick={fetchWeather}
-                            className="p-1 hover:bg-muted rounded transition-colors"
+                            className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-slate-600"
                             title="Refresh weather"
                         >
-                            <RefreshCw className={`h-4 w-4 text-muted-foreground ${loading ? 'animate-spin' : ''}`} />
+                            <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
                         </button>
                     </div>
                 </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-4 bg-white">
                 <div className="space-y-3">
                     {weather.map((day) => (
                         <div
                             key={day.date}
                             className={`rounded-lg border p-3 transition-all ${day.impact === "positive"
-                                ? "border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/30 dark:border-emerald-800"
+                                ? "border-emerald-100 bg-emerald-50/30"
                                 : day.impact === "negative"
-                                    ? "border-red-200 bg-red-50/50 dark:bg-red-950/30 dark:border-red-800"
-                                    : "border-border bg-background"
+                                    ? "border-red-100 bg-red-50/30"
+                                    : "border-slate-100 bg-white hover:bg-slate-50/50"
                                 }`}
                         >
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-3">
                                     {getWeatherIcon(day.condition, day.isRainy)}
                                     <div>
-                                        <p className="font-medium text-foreground">{day.day}</p>
-                                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                            <Thermometer className="h-3 w-3" />
-                                            <span className="font-medium">
-                                                {day.temperatureHigh}°/{day.temperatureLow}°C
-                                            </span>
-                                            <Droplets className="h-3 w-3 ml-1 text-blue-500" />
-                                            <span>{day.humidity}%</span>
-                                            {day.precipitationProbability > 0 && (
-                                                <>
-                                                    <CloudRain className="h-3 w-3 ml-1 text-blue-400" />
-                                                    <span>{day.precipitationProbability}%</span>
-                                                </>
-                                            )}
+                                        <p className="font-semibold text-sm text-slate-800">{day.day}</p>
+                                        <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                                            <div className="flex items-center gap-1">
+                                                <Thermometer className="h-3 w-3" />
+                                                <span>{day.temperatureHigh}°/{day.temperatureLow}°</span>
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <Droplets className="h-3 w-3 text-blue-400" />
+                                                <span>{day.humidity}%</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <Badge className={impactColors[day.impact]}>
-                                    {day.impact === "positive" ? "↑ Demand Up" :
-                                        day.impact === "negative" ? "↓ Demand Down" :
-                                            "→ Normal"}
+                                <Badge className={`shadow-none border ${day.impact === "positive"
+                                    ? "bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-200"
+                                    : day.impact === "negative"
+                                        ? "bg-red-100 text-red-700 border-red-200 hover:bg-red-200"
+                                        : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
+                                    }`}>
+                                    {day.impact === "positive" ? "High Demand" :
+                                        day.impact === "negative" ? "Low Demand" :
+                                            "Normal"}
                                 </Badge>
                             </div>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                                {day.affectedCategories.map((cat, idx) => (
-                                    <span
-                                        key={idx}
-                                        className={`text-xs px-2 py-0.5 rounded ${cat.includes("+")
-                                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300"
-                                            : cat.includes("-") || cat.includes("↓")
-                                                ? "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
-                                                : "bg-muted text-muted-foreground"
-                                            }`}
-                                    >
-                                        {cat}
-                                    </span>
-                                ))}
-                            </div>
+
+                            {day.affectedCategories.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 pl-[36px]">
+                                    {day.affectedCategories.map((cat, idx) => (
+                                        <span
+                                            key={idx}
+                                            className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${cat.includes("+")
+                                                ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                                                : cat.includes("-") || cat.includes("↓")
+                                                    ? "bg-red-50 text-red-600 border border-red-100"
+                                                    : "bg-slate-100 text-slate-500 border border-slate-200"
+                                                }`}
+                                        >
+                                            {cat}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
 
                 {/* Weather Legend */}
-                <div className="mt-4 pt-3 border-t border-border">
-                    <p className="text-xs text-muted-foreground text-center">
+                <div className="mt-4 pt-3 border-t border-slate-100">
+                    <p className="text-xs text-slate-400 text-center flex items-center justify-center gap-3">
                         <span className="inline-flex items-center gap-1">
-                            <Sun className="h-3 w-3 text-amber-500" /> Hot ({">"}32°C) = +20% beverages
+                            <Sun className="h-3 w-3 text-amber-500" /> Hot {">"}32°C
                         </span>
-                        <span className="mx-2">•</span>
                         <span className="inline-flex items-center gap-1">
-                            <CloudRain className="h-3 w-3 text-blue-500" /> Rain = -10% foot traffic
+                            <CloudRain className="h-3 w-3 text-blue-500" /> Rain
                         </span>
                     </p>
                 </div>

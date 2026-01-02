@@ -159,18 +159,18 @@ export function AgentInventoryForecast() {
     const BadgeIcon = recommendationBadge?.icon || Bot
 
     return (
-        <Card className="overflow-visible">
-            <CardHeader className="pb-4 border-b border-border/50">
+        <Card className="overflow-visible bg-white border-slate-100 shadow-sm rounded-xl">
+            <CardHeader className="pb-4 border-b border-slate-100">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="space-y-1">
                         <CardTitle className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                                <Bot className="h-4 w-4 text-primary" />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
+                                <Bot className="h-4 w-4 text-indigo-600" />
                             </div>
-                            <span>AI Agent Inventory Forecast</span>
-                            {loading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                            <span className="text-slate-800">AI Agent Inventory Forecast</span>
+                            {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-400" />}
                         </CardTitle>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-slate-500">
                             Autonomous agent-based demand predictions with intelligent recommendations
                         </p>
                     </div>
@@ -180,35 +180,34 @@ export function AgentInventoryForecast() {
                             <button
                                 type="button"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                className="flex items-center justify-between gap-2 rounded-xl border border-input bg-background/80 backdrop-blur-sm px-4 py-2.5 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[280px] max-w-[320px] h-10 hover:bg-accent/30 hover:border-primary/30 transition-all duration-200 shadow-sm"
+                                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 min-w-[280px] max-w-[320px] h-10 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
                             >
-                                <span className="truncate text-left flex-1 font-medium">
+                                <span className="truncate text-left flex-1 font-medium text-slate-700">
                                     {selectedProductData
                                         ? selectedProductData.productName || selectedProductData.sku
                                         : "Select Product..."}
                                 </span>
-                                <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-primary' : ''}`} />
+                                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-indigo-600' : ''}`} />
                             </button>
 
                             {isDropdownOpen && (
-                                <div className="absolute z-50 mt-2 w-[380px] rounded-xl border border-border/50 bg-popover/95 backdrop-blur-md shadow-lg animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 overflow-hidden"
-                                    style={{ boxShadow: 'var(--shadow-lg), 0 0 0 1px hsl(var(--border) / 0.1)' }}>
+                                <div className="absolute z-50 mt-2 w-[380px] rounded-xl border border-slate-200 bg-white shadow-xl animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 overflow-hidden">
                                     {/* Search Input */}
-                                    <div className="p-3 border-b border-border/50 bg-muted/30">
+                                    <div className="p-3 border-b border-slate-100 bg-slate-50">
                                         <div className="relative">
-                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                                             <Input
                                                 type="text"
                                                 placeholder="Search by SKU, name, or category..."
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="pl-9 pr-9 h-10 text-sm rounded-lg border-border/50 bg-background/80 focus:bg-background transition-colors"
+                                                className="pl-9 pr-9 h-10 text-sm rounded-lg border-slate-200 bg-white focus:ring-indigo-500 transition-colors"
                                                 autoFocus
                                             />
                                             {searchQuery && (
                                                 <button
                                                     onClick={() => setSearchQuery("")}
-                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-0.5 rounded-md hover:bg-muted"
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-0.5 rounded-md hover:bg-slate-100"
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </button>
@@ -229,35 +228,35 @@ export function AgentInventoryForecast() {
                                                             setSearchQuery("")
                                                         }}
                                                         className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group ${selectedProduct === p.sku
-                                                            ? 'bg-primary/10 border border-primary/20 shadow-sm'
-                                                            : 'hover:bg-accent/50 border border-transparent'
+                                                            ? 'bg-indigo-50 border border-indigo-100'
+                                                            : 'hover:bg-slate-50 border border-transparent'
                                                             }`}
                                                     >
                                                         <div className="flex items-start gap-3">
                                                             <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${selectedProduct === p.sku
-                                                                ? 'bg-primary text-primary-foreground'
-                                                                : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
+                                                                ? 'bg-indigo-600 text-white'
+                                                                : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600'
                                                                 } transition-colors`}>
                                                                 {(p.productName || p.sku).charAt(0).toUpperCase()}
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <p className={`font-medium truncate ${selectedProduct === p.sku ? 'text-primary' : 'text-foreground'}`}>
+                                                                <p className={`font-medium truncate ${selectedProduct === p.sku ? 'text-indigo-700' : 'text-slate-700'}`}>
                                                                     {p.productName || p.sku}
                                                                 </p>
                                                                 <div className="flex items-center gap-2 mt-0.5">
-                                                                    <span className="text-xs font-mono text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
+                                                                    <span className="text-xs font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
                                                                         {p.sku}
                                                                     </span>
                                                                     {p.category && (
-                                                                        <span className="text-xs text-muted-foreground">
+                                                                        <span className="text-xs text-slate-400">
                                                                             {p.category}
                                                                         </span>
                                                                     )}
                                                                 </div>
                                                             </div>
                                                             {selectedProduct === p.sku && (
-                                                                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                                                                    <svg className="w-3 h-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center">
+                                                                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                                                     </svg>
                                                                 </div>
@@ -268,10 +267,10 @@ export function AgentInventoryForecast() {
                                             </div>
                                         ) : (
                                             <div className="px-3 py-8 text-center">
-                                                <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-3">
-                                                    <Search className="h-5 w-5 text-muted-foreground" />
+                                                <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-3">
+                                                    <Search className="h-5 w-5 text-slate-400" />
                                                 </div>
-                                                <p className="text-sm text-muted-foreground">
+                                                <p className="text-sm text-slate-500">
                                                     {productsList.length === 0
                                                         ? "Loading products..."
                                                         : `No products found for "${searchQuery}"`}
@@ -281,11 +280,11 @@ export function AgentInventoryForecast() {
                                     </div>
 
                                     {/* Footer with count */}
-                                    <div className="border-t border-border/50 px-4 py-2.5 bg-muted/20 flex items-center justify-between">
-                                        <span className="text-xs text-muted-foreground">
+                                    <div className="border-t border-slate-100 px-4 py-2.5 bg-slate-50 flex items-center justify-between">
+                                        <span className="text-xs text-slate-500">
                                             {filteredProducts.length} of {totalProducts.toLocaleString()} products
                                         </span>
-                                        <Badge variant="outline" className="text-xs">
+                                        <Badge variant="outline" className="text-xs bg-white text-slate-600 border-slate-200">
                                             MongoDB
                                         </Badge>
                                     </div>
@@ -294,7 +293,7 @@ export function AgentInventoryForecast() {
                         </div>
 
                         <Select value={horizon.toString()} onValueChange={(v) => setHorizon(parseInt(v))}>
-                            <SelectTrigger className="w-[100px] h-9 text-sm bg-background">
+                            <SelectTrigger className="w-[100px] h-10 text-sm bg-white border-slate-200 text-slate-700">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -311,11 +310,11 @@ export function AgentInventoryForecast() {
                 {error && (
                     <div className="h-[320px] flex items-center justify-center">
                         <div className="text-center space-y-2">
-                            <div className="mx-auto h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
-                                <AlertTriangle className="h-6 w-6 text-destructive" />
+                            <div className="mx-auto h-12 w-12 rounded-full bg-red-50 flex items-center justify-center">
+                                <AlertTriangle className="h-6 w-6 text-red-500" />
                             </div>
-                            <p className="text-destructive font-medium">Error loading forecast</p>
-                            <p className="text-sm text-muted-foreground">{error}</p>
+                            <p className="text-red-500 font-medium">Error loading forecast</p>
+                            <p className="text-sm text-slate-500">{error}</p>
                         </div>
                     </div>
                 )}
@@ -324,10 +323,10 @@ export function AgentInventoryForecast() {
                     <div className="h-[320px] flex items-center justify-center">
                         <div className="flex flex-col items-center gap-3">
                             <div className="relative">
-                                <div className="h-12 w-12 rounded-full border-2 border-primary/20" />
-                                <Loader2 className="h-12 w-12 absolute inset-0 animate-spin text-primary" />
+                                <div className="h-12 w-12 rounded-full border-2 border-indigo-100" />
+                                <Loader2 className="h-12 w-12 absolute inset-0 animate-spin text-indigo-600" />
                             </div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-slate-500">
                                 Agent processing forecast...
                             </p>
                         </div>
@@ -338,12 +337,12 @@ export function AgentInventoryForecast() {
                     <>
                         {/* Agent Response Summary */}
                         {forecastData.success && (
-                            <div className="mb-6 p-4 rounded-lg bg-muted/50 border border-border/50">
+                            <div className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-100">
                                 <div className="flex items-start gap-3">
-                                    <Sparkles className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                                    <Sparkles className="h-5 w-5 text-indigo-600 mt-0.5 flex-shrink-0" />
                                     <div className="flex-1 space-y-3">
                                         <div className="flex items-center justify-between gap-4">
-                                            <h3 className="font-semibold text-sm">Agent Analysis</h3>
+                                            <h3 className="font-semibold text-sm text-slate-800">Agent Analysis</h3>
                                             {recommendationBadge && (
                                                 <Badge className={recommendationBadge.className}>
                                                     <BadgeIcon className="h-3 w-3 mr-1" />
@@ -351,34 +350,28 @@ export function AgentInventoryForecast() {
                                                 </Badge>
                                             )}
                                         </div>
-                                        <p className="text-sm text-muted-foreground leading-relaxed">
+                                        <p className="text-sm text-slate-600 leading-relaxed">
                                             {forecastData.message}
                                         </p>
 
                                         {/* Metadata */}
-                                        <div className="flex flex-wrap gap-4 pt-2 border-t border-border/50">
+                                        <div className="flex flex-wrap gap-4 pt-2 border-t border-slate-200/50">
                                             <div className="text-xs">
-                                                <span className="text-muted-foreground">Confidence:</span>{" "}
-                                                <span className="font-medium text-foreground">
+                                                <span className="text-slate-500">Confidence:</span>{" "}
+                                                <span className="font-medium text-slate-700">
                                                     {(forecastData.data.confidence * 100).toFixed(0)}%
                                                 </span>
                                             </div>
                                             <div className="text-xs">
-                                                <span className="text-muted-foreground">Agent:</span>{" "}
-                                                <span className="font-medium text-foreground">
+                                                <span className="text-slate-500">Agent:</span>{" "}
+                                                <span className="font-medium text-slate-700">
                                                     {forecastData.metadata.agent}
                                                 </span>
                                             </div>
                                             <div className="text-xs">
-                                                <span className="text-muted-foreground">Iterations:</span>{" "}
-                                                <span className="font-medium text-foreground">
+                                                <span className="text-slate-500">Iterations:</span>{" "}
+                                                <span className="font-medium text-slate-700">
                                                     {forecastData.metadata.iterations}
-                                                </span>
-                                            </div>
-                                            <div className="text-xs">
-                                                <span className="text-muted-foreground">Tokens:</span>{" "}
-                                                <span className="font-medium text-foreground">
-                                                    {forecastData.metadata.tokensUsed}
                                                 </span>
                                             </div>
                                         </div>
@@ -394,36 +387,37 @@ export function AgentInventoryForecast() {
                                     <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                                         <defs>
                                             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
-                                                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                                                <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.8} />
+                                                <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.3} />
                                             </linearGradient>
                                         </defs>
                                         <CartesianGrid
                                             strokeDasharray="3 3"
-                                            stroke="hsl(var(--border))"
-                                            strokeOpacity={0.5}
+                                            stroke="#e2e8f0"
+                                            strokeOpacity={0.8}
                                             vertical={false}
                                         />
                                         <XAxis
                                             dataKey="day"
-                                            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-                                            axisLine={{ stroke: "hsl(var(--border))" }}
+                                            tick={{ fill: "#64748b", fontSize: 11 }}
+                                            axisLine={{ stroke: "#e2e8f0" }}
                                             tickLine={false}
                                             dy={8}
                                         />
                                         <YAxis
-                                            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                                            tick={{ fill: "#64748b", fontSize: 11 }}
                                             axisLine={false}
                                             tickLine={false}
                                             dx={-8}
                                         />
                                         <Tooltip
                                             contentStyle={{
-                                                backgroundColor: "hsl(var(--popover))",
-                                                border: "1px solid hsl(var(--border))",
+                                                backgroundColor: "#ffffff",
+                                                border: "1px solid #e2e8f0",
                                                 borderRadius: "8px",
+                                                boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                                             }}
-                                            labelStyle={{ color: "hsl(var(--foreground))" }}
+                                            labelStyle={{ color: "#1e293b" }}
                                         />
                                         <Bar
                                             dataKey="units"
@@ -434,9 +428,9 @@ export function AgentInventoryForecast() {
                                         <Line
                                             type="monotone"
                                             dataKey="units"
-                                            stroke="hsl(var(--primary))"
+                                            stroke="#4f46e5"
                                             strokeWidth={2}
-                                            dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                                            dot={{ fill: "#4f46e5", r: 4 }}
                                             activeDot={{ r: 6 }}
                                         />
                                     </ComposedChart>
@@ -446,10 +440,10 @@ export function AgentInventoryForecast() {
 
                         {/* Additional Data */}
                         {forecastData.data?.quantity !== null && (
-                            <div className="mt-4 pt-4 border-t border-border/50">
+                            <div className="mt-4 pt-4 border-t border-slate-100">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-sm text-muted-foreground">Recommended Quantity:</span>
-                                    <span className="font-semibold text-lg text-foreground">
+                                    <span className="text-sm text-slate-500">Recommended Quantity:</span>
+                                    <span className="font-semibold text-lg text-indigo-600">
                                         {forecastData.data.quantity} units
                                     </span>
                                 </div>

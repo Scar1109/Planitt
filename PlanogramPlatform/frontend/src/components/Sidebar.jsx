@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FaHome, FaBox, FaChartLine, FaCog, FaStore, FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { TbTrendingUp } from 'react-icons/tb';
 import classNames from 'classnames';
 
 const Sidebar = () => {
@@ -45,7 +46,7 @@ const Sidebar = () => {
             icon: FaCog,
             subItems: settingsSubItems.length > 0 ? settingsSubItems : undefined
         },
-        { name: "Forecasting", href: "/forecasting", icon: TrendingUp },
+        { name: "Forecasting", path: "/dashboard/forecasting", icon: TbTrendingUp },
     ];
 
     const isSubItemActive = (subItems) => {

@@ -104,51 +104,36 @@ export function ForecastAccuracyCard() {
     }
 
     return (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-children">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {metrics.map((metric) => (
-                <Card
+                <div
                     key={metric.label}
-                    className="group relative overflow-hidden hover:border-primary/20 transition-all duration-300"
+                    className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:border-indigo-100 transition-colors duration-200"
                 >
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <CardContent className="p-5 relative">
-                        <div className="flex items-start gap-4">
-                            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${metric.bgColor} transition-transform duration-300 group-hover:scale-110`}>
-                                <metric.icon className={`h-5 w-5 ${metric.color}`} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide truncate">
-                                    {metric.label}
-                                </p>
-                                <p className="text-2xl font-bold font-display text-foreground mt-1 tracking-tight">
-                                    {metric.value}
-                                </p>
-                                <div className="flex items-center gap-1.5 mt-1.5">
-                                    {metric.trend === "up" && (
-                                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-success/15">
-                                            <svg className="h-2.5 w-2.5 text-success" viewBox="0 0 12 12" fill="none">
-                                                <path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </span>
-                                    )}
-                                    {metric.trend === "down" && (
-                                        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-destructive/15">
-                                            <svg className="h-2.5 w-2.5 text-destructive" viewBox="0 0 12 12" fill="none">
-                                                <path d="M6 3V9M6 9L3 6M6 9L9 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </span>
-                                    )}
-                                    <span className={`text-xs font-medium ${metric.trend === "up" ? "text-success" :
-                                        metric.trend === "down" ? "text-destructive" :
-                                            "text-muted-foreground"
-                                        }`}>
-                                        {metric.change}
-                                    </span>
-                                </div>
-                            </div>
+                    <div className="flex justify-between items-start mb-4">
+                        <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${metric.bgColor.replace('bg-', 'bg-').replace('/10', '/10')}`}>
+                            <metric.icon className={`h-5 w-5 ${metric.color}`} />
                         </div>
-                    </CardContent>
-                </Card>
+                        {metric.trend !== "neutral" && (
+                            <span className={`flex items-center text-xs font-medium px-2 py-1 rounded-full ${metric.trend === "up" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+                                }`}>
+                                {metric.trend === "up" ? "+" : ""}{metric.change}
+                            </span>
+                        )}
+                        {metric.trend === "neutral" && (
+                            <span className="flex items-center text-xs font-medium px-2 py-1 rounded-full bg-slate-50 text-slate-600">
+                                {metric.change}
+                            </span>
+                        )}
+                    </div>
+
+                    <h3 className="text-sm font-medium text-slate-500 mb-1">
+                        {metric.label}
+                    </h3>
+                    <p className="text-2xl font-bold text-slate-800">
+                        {metric.value}
+                    </p>
+                </div>
             ))}
         </div>
     )

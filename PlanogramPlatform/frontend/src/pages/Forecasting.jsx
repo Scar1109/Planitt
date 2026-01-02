@@ -10,18 +10,21 @@ import { AgentInventoryForecast } from "@/components/forecasting/agent-inventory
 export default function Forecasting() {
     return (
         <div className="space-y-6">
+            {/* Page Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Demand Forecasting</h1>
-                    <p className="text-muted-foreground">ML-powered predictions with weather and event integration</p>
+                    <h1 className="text-2xl font-bold text-slate-800">Demand Forecasting</h1>
+                    <p className="text-slate-500 mt-1">ML-powered predictions with weather and event integration</p>
                 </div>
             </div>
 
+            {/* Forecast Accuracy Metrics */}
             <ForecastAccuracyCard />
 
             {/* AI Agent-Based Inventory Forecast */}
             <AgentInventoryForecast />
 
+            {/* Main Content Grid */}
             <div className="grid gap-6 lg:grid-cols-3">
                 <div className="lg:col-span-2 space-y-6">
                     <ForecastChart />
@@ -34,6 +37,7 @@ export default function Forecasting() {
                 </div>
             </div>
 
+            {/* Product Forecasts Table */}
             <ProductForecasts />
         </div>
     )

@@ -17,8 +17,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 import storeRoutes from './routes/storeRoutes.js';
+import productRoutes from './routes/product.routes.js';
 // ...
 app.use('/api/stores', storeRoutes);
+app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
