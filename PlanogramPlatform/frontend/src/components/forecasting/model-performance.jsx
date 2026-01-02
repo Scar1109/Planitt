@@ -19,7 +19,7 @@ export function ModelPerformance() {
 
                 // Fetch both health and metrics
                 const [healthResponse, metricsResponse] = await Promise.all([
-                    api.health(),
+                    api.healthCheck(),
                     api.getMetrics(),
                 ])
 
@@ -111,10 +111,12 @@ export function ModelPerformance() {
     }
 
     return (
-        <Card className="border-border">
-            <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Brain className="h-5 w-5 text-primary" />
+        <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden">
+            <CardHeader className="pb-3 border-b border-slate-100 bg-white">
+                <CardTitle className="flex items-center gap-2.5 text-slate-800">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
+                        <Brain className="h-4 w-4 text-indigo-600" />
+                    </div>
                     ML Model Status
                 </CardTitle>
             </CardHeader>

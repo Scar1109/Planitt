@@ -18,9 +18,15 @@ app.use(cookieParser());
 
 import storeRoutes from './routes/storeRoutes.js';
 import productRoutes from './routes/product.routes.js';
-// ...
+import weatherRoutes from './routes/weather.routes.js';
+import eventsRoutes from './routes/events.routes.js';
+import externalFactorsRoutes from './routes/externalFactors.routes.js';
+
 app.use('/api/stores', storeRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/weather', weatherRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/external-factors', externalFactorsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 

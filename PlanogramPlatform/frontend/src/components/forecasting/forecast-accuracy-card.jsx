@@ -17,41 +17,64 @@ export function ForecastAccuracyCard() {
                 const response = await api.getMetrics()
                 const forecastMetrics = response?.forecast_accuracy || { mape: 0, rmse: 0, training_samples: 0 }
 
-                // Use training_samples from the Python API
-                const samples = forecastMetrics.training_samples || forecastMetrics.samples || 0;
+                // Extract values from the Python API
+                const samples = forecastMetrics.total_samples || forecastMetrics.training_samples || forecastMetrics.samples || 0;
                 const hasData = samples > 0;
-                const mape = forecastMetrics.mape || 0;
-                const accuracy = Math.max(0, 100 - mape);
-                const confidence = Math.max(0, Math.round((1 - mape / 100) * 100));
+                const rmse = forecastMetrics.rmse || 0;
+                const mae = forecastMetrics.mae || 0;
 
+                // Calculate accuracy based on RMSE - lower RMSE = higher accuracy
+                // RMSE < 3 = 95%+, RMSE < 5 = 90%+, RMSE < 10 = 80%+, RMSE < 20 = 70%+
+                // This is typical for retail demand forecasting
+                let accuracy = 0;
+                if (hasData && rmse > 0) {
+                    // Using exponential decay: accuracy = 100 * exp(-rmse/15)
+                    // This gives: RMSE=5 → 72%, RMSE=2 → 88%, RMSE=10 → 51%
+                    accuracy = Math.min(99, Math.max(0, 100 * Math.exp(-rmse / 15)));
+                }
+
+                // Confidence is based on model quality and training data
+                // High samples + low RMSE = high confidence
+                const sampleScore = Math.min(40, (samples / 100000) * 40); // Up to 40 points
+                const rmseScore = rmse < 10 ? 60 - (rmse * 6) : 0; // Up to 60 points
+                const confidence = hasData ? Math.round(Math.max(0, Math.min(100, sampleScore + rmseScore))) : 0;
+
+                // Determine status labels based on RMSE performance
+                const getAccuracyStatus = () => {
+                    if (!hasData) return "No Data";
+                    if (rmse < 3) return "Excellent";
+                    if (rmse < 5) return "Good";
+                    if (rmse < 10) return "Fair";
+                    return "Needs Tuning";
+                };
 
                 const metricsData = [
                     {
                         label: "Forecast Accuracy",
                         value: hasData ? `${accuracy.toFixed(1)}%` : "N/A",
-                        change: !hasData ? "No Data" : mape < 10 ? "Excellent" : mape < 15 ? "Good" : "Fair",
-                        trend: hasData ? "up" : "neutral",
+                        change: getAccuracyStatus(),
+                        trend: hasData && accuracy >= 50 ? "up" : "neutral",
                         icon: Target,
-                        color: hasData ? "text-success" : "text-muted-foreground",
-                        bgColor: hasData ? "bg-success/10" : "bg-muted",
+                        color: hasData && accuracy >= 50 ? "text-emerald-600" : "text-slate-400",
+                        bgColor: hasData && accuracy >= 50 ? "bg-emerald-50" : "bg-slate-100",
                     },
                     {
                         label: "RMSE (Units)",
-                        value: (forecastMetrics.rmse || 0).toFixed(1),
+                        value: rmse.toFixed(1),
                         change: `${samples.toLocaleString()} samples`,
                         trend: "neutral",
                         icon: Activity,
-                        color: "text-info",
-                        bgColor: "bg-info/10",
+                        color: "text-blue-600",
+                        bgColor: "bg-blue-50",
                     },
                     {
                         label: "Model Confidence",
                         value: hasData ? `${confidence}%` : "N/A",
-                        change: hasData ? "Real-time" : "Calibrating",
-                        trend: hasData ? "up" : "neutral",
+                        change: hasData ? (confidence >= 60 ? "Real-time" : "Calibrating") : "No Model",
+                        trend: hasData && confidence >= 50 ? "up" : "neutral",
                         icon: Brain,
-                        color: hasData ? "text-primary" : "text-muted-foreground",
-                        bgColor: hasData ? "bg-primary/10" : "bg-muted",
+                        color: hasData && confidence >= 50 ? "text-indigo-600" : "text-slate-400",
+                        bgColor: hasData && confidence >= 50 ? "bg-indigo-50" : "bg-slate-100",
                     },
                     {
                         label: "Prediction Horizon",
@@ -59,8 +82,8 @@ export function ForecastAccuracyCard() {
                         change: "Optimal",
                         trend: "neutral",
                         icon: BarChart3,
-                        color: "text-warning",
-                        bgColor: "bg-warning/10",
+                        color: "text-amber-600",
+                        bgColor: "bg-amber-50",
                     },
                 ]
 

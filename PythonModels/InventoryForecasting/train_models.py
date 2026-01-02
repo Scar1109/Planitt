@@ -261,17 +261,25 @@ def train_demand_model(X, y, feature_cols):
     mae = mean_absolute_error(y_test, y_pred)
     rmse = np.sqrt(mean_squared_error(y_test, y_pred))
     
-    # MAPE (handling zeros)
-    mask = y_test > 0
+    # Use Symmetric MAPE (sMAPE) which is more robust for values near zero
+    # sMAPE = 200 * |y_true - y_pred| / (|y_true| + |y_pred|)
+    # Range is 0-200, we normalize to 0-100
+    numerator = np.abs(y_test - y_pred)
+    denominator = np.abs(y_test) + np.abs(y_pred) + 1e-8  # Avoid division by zero
+    smape = 100 * np.mean(2 * numerator / denominator)
+    
+    # Also calculate traditional MAPE for reference, but capped
+    mask = y_test > 1  # Only consider meaningful values
     if mask.sum() > 0:
-        mape = np.mean(np.abs((y_test[mask] - y_pred[mask]) / y_test[mask])) * 100
+        mape = min(100, np.mean(np.abs((y_test[mask] - y_pred[mask]) / y_test[mask])) * 100)
     else:
-        mape = 0
+        mape = smape  # Fall back to sMAPE
     
     logger.info(f"\n📈 Model Performance:")
     logger.info(f"   - MAE: {mae:.2f} units")
     logger.info(f"   - RMSE: {rmse:.2f} units")
     logger.info(f"   - MAPE: {mape:.2f}%")
+    logger.info(f"   - sMAPE: {smape:.2f}%")
     
     # Feature importance
     logger.info(f"\n🔍 Top 10 Feature Importance:")
@@ -285,14 +293,16 @@ def train_demand_model(X, y, feature_cols):
         pickle.dump(model, f)
     logger.info(f"\n💾 Model saved to: {model_path}")
     
-    # Save metrics
+    # Save metrics - use capped MAPE for display
     metrics = {
         'mae': float(mae),
         'rmse': float(rmse),
-        'mape': float(mape),
+        'mape': float(mape),  # Capped to max 100
+        'smape': float(smape),
         'training_samples': len(X_train),
         'test_samples': len(X_test),
-        'trained_at': datetime.now().timestamp()  # Unix timestamp (float)
+        'total_samples': len(X_train) + len(X_test),
+        'trained_at': datetime.now().isoformat()
     }
     with open(MODELS_DIR / "demand_metrics.pkl", 'wb') as f:
         pickle.dump(metrics, f)

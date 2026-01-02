@@ -13,10 +13,20 @@ export function WeatherImpact() {
     const fetchWeather = async () => {
         setLoading(true)
         try {
+            console.log("🌤️ Fetching weather data...")
             const data = await api.getWeather("Colombo", 5)
+            console.log("🌤️ Weather API response:", data)
+
+            if (!data || !data.forecast || data.forecast.length === 0) {
+                console.warn("⚠️ No forecast data received from API")
+                setWeather([])
+                setSource("mock")
+                setLocation("Colombo")
+                return
+            }
 
             // Transform and calculate demand impact
-            const transformedWeather = data.forecast?.map((day, index) => {
+            const transformedWeather = data.forecast.map((day, index) => {
                 const date = new Date(day.date)
                 const dayName = index === 0 ? "Today" :
                     index === 1 ? "Tomorrow" :
@@ -77,13 +87,17 @@ export function WeatherImpact() {
                     isRainy,
                     isHotDay: isHot,
                 }
-            }) || []
+            })
 
+            console.log("🌤️ Transformed weather data:", transformedWeather.length, "days")
             setWeather(transformedWeather)
             setSource(data.source || "unknown")
             setLocation(data.location || "Colombo")
         } catch (error) {
-            console.error("Failed to fetch weather:", error)
+            console.error("❌ Failed to fetch weather:", error)
+            setWeather([])
+            setSource("error")
+            setLocation("Colombo")
         } finally {
             setLoading(false)
         }
@@ -149,12 +163,12 @@ export function WeatherImpact() {
                     <div className="flex items-center gap-2">
                         <Badge
                             variant="outline"
-                            className={`text-xs ${source === "openweathermap" || source === "Open-Meteo"
+                            className={`text-xs ${source?.toLowerCase().includes("meteo") || source?.toLowerCase().includes("weather")
                                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                 : "bg-amber-50 text-amber-700 border-amber-200"
                                 }`}
                         >
-                            {source === "openweathermap" || source === "Open-Meteo" ? "Live" : "Mock"}
+                            {source?.toLowerCase().includes("meteo") || source?.toLowerCase().includes("weather") ? "Live" : "Mock"}
                         </Badge>
                         <span className="text-xs text-slate-500">{location}</span>
                         <button
@@ -168,6 +182,19 @@ export function WeatherImpact() {
                 </div>
             </CardHeader>
             <CardContent className="pt-4 bg-white">
+                {weather.length === 0 && !loading && (
+                    <div className="flex flex-col items-center justify-center py-8 text-center">
+                        <Cloud className="h-12 w-12 text-slate-200 mb-3" />
+                        <p className="text-slate-500 font-medium">Unable to load weather data</p>
+                        <p className="text-sm text-slate-400 mt-1">Click refresh to try again</p>
+                        <button
+                            onClick={fetchWeather}
+                            className="mt-3 px-4 py-2 bg-indigo-50 text-indigo-600 text-sm font-medium rounded-lg hover:bg-indigo-100 transition-colors"
+                        >
+                            Retry
+                        </button>
+                    </div>
+                )}
                 <div className="space-y-3">
                     {weather.map((day) => (
                         <div

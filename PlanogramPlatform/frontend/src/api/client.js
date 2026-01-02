@@ -71,6 +71,45 @@ export const api = {
         return response.data;
     },
 
+    // Get weather data from backend (which calls OpenWeatherMap or Open-Meteo)
+    async getWeather(city = 'Colombo', days = 5) {
+        try {
+            const params = new URLSearchParams();
+            params.append('city', city);
+            params.append('country_code', 'LK');
+
+            console.log('📡 API Client: Calling /weather endpoint...');
+            const response = await nodeClient.get(`/weather?${params.toString()}`);
+            console.log('📡 API Client: Weather response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error('📡 API Client: Weather fetch failed:', error.message);
+            throw error;
+        }
+    },
+
+    // Get events/holidays from backend (Sri Lankan holidays, Poya days, etc.)
+    async getEvents(city = 'Colombo', countryCode = 'LK', days = 30) {
+        const params = new URLSearchParams();
+        params.append('city', city);
+        params.append('country_code', countryCode);
+        params.append('days', days.toString());
+
+        const response = await nodeClient.get(`/events?${params.toString()}`);
+        return response.data;
+    },
+
+    // Get comprehensive external factors analysis (past impact + future predictions)
+    async getExternalFactorsAnalysis(days = 30) {
+        try {
+            const response = await nodeClient.get(`/external-factors?days=${days}`);
+            return response.data;
+        } catch (error) {
+            console.error('External factors analysis error:', error);
+            throw error;
+        }
+    },
+
     // Get agent-style inventory forecast (uses ML forecast + wraps in agent format)
     async getAgentInventoryForecast(productId, storeId = 'STORE-001', horizonDays = 7) {
         try {
@@ -140,38 +179,6 @@ export const api = {
             };
         }
     },
-
-    // ============================================
-    // Weather & Events (Mock for now)
-    // ============================================
-
-    // Get weather data
-    async getWeather(city = 'Colombo') {
-        // TODO: Integrate with real weather API
-        return {
-            current: {
-                temp: 28,
-                humidity: 75,
-                condition: 'Partly Cloudy',
-                rainfall: 0,
-            },
-            forecast: [],
-        };
-    },
-
-    // Get upcoming events/holidays
-    async getEvents(city = 'Colombo', country = 'LK') {
-        // TODO: Integrate with events API
-        return {
-            events: [
-                { date: '2026-01-14', name: 'Poya Day', expected_impact: 'medium', days_until: 13 },
-            ],
-        };
-    },
-
-    // ============================================
-    // Node.js Backend Endpoints (port 3000)
-    // ============================================
 
     // Auth endpoints are handled by AuthContext using services/api.js
 };

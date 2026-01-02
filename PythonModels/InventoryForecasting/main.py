@@ -1,4 +1,4 @@
-"""
+﻿"""
 Inventory Forecasting ML Service
 =================================
 FastAPI application serving trained SmartReplan+ models.
