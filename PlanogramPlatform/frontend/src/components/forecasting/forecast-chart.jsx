@@ -66,7 +66,8 @@ export function ForecastChart() {
                     const mappedProducts = response.data.map(p => ({
                         sku: p.sku,
                         name: p.productName || p.sku,
-                        category: p.category || 'Unknown'
+                        category: p.category || 'Unknown',
+                        unitSize: p.unitSize || null
                     }))
                     setProducts(mappedProducts)
                     setSelectedProduct(mappedProducts[0].sku)
@@ -284,7 +285,7 @@ export function ForecastChart() {
                             >
                                 <span className="truncate text-left flex-1 font-medium text-slate-700">
                                     {productsLoading ? "Loading products..." : selectedProductData
-                                        ? selectedProductData.name || selectedProductData.sku
+                                        ? `${selectedProductData.name || selectedProductData.sku}${selectedProductData.unitSize ? ` (${selectedProductData.unitSize})` : ''}`
                                         : "Select Product..."}
                                 </span>
                                 <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-indigo-600' : ''}`} />
@@ -350,6 +351,11 @@ export function ForecastChart() {
                                                                     {p.category && (
                                                                         <span className="text-xs text-slate-400">
                                                                             {p.category}
+                                                                        </span>
+                                                                    )}
+                                                                    {p.unitSize && (
+                                                                        <span className="text-xs text-slate-500 font-medium bg-blue-50 px-1.5 py-0.5 rounded">
+                                                                            {p.unitSize}
                                                                         </span>
                                                                     )}
                                                                 </div>

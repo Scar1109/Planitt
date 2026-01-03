@@ -29,6 +29,7 @@ export const getProducts = async (req, res) => {
             productName: p.productName || p.name || p.sku,
             category: p.category || 'Unknown',
             brand: p.brand || '',
+            unitSize: p.unitSize || '',
             shelfLifeDays: p.shelfLifeDays || p.typicalShelfLifeDays || 7,
         }));
 

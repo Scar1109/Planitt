@@ -6,6 +6,7 @@ import { ProductForecasts } from "@/components/forecasting/product-forecasts"
 import { ModelPerformance } from "@/components/forecasting/model-performance"
 import { ExternalFactors } from "@/components/forecasting/external-factors"
 import { AgentInventoryForecast } from "@/components/forecasting/agent-inventory-forecast"
+import { LowStockAlerts } from "@/components/forecasting/low-stock-alerts"
 
 export default function Forecasting() {
     return (
@@ -21,8 +22,15 @@ export default function Forecasting() {
             {/* Forecast Accuracy Metrics */}
             <ForecastAccuracyCard />
 
-            {/* AI Agent-Based Inventory Forecast */}
-            <AgentInventoryForecast />
+            {/* AI Agent-Based Inventory Forecast + Low Stock Alerts Side by Side */}
+            <div className="grid gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-2">
+                    <AgentInventoryForecast />
+                </div>
+                <div>
+                    <LowStockAlerts />
+                </div>
+            </div>
 
             {/* Main Content Grid */}
             <div className="grid gap-6 lg:grid-cols-3">

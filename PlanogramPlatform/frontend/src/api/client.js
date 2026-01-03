@@ -91,6 +91,17 @@ export const api = {
         return response.data;
     },
 
+    // Get low stock alerts from real inventory data
+    async getLowStockAlerts(limit = 10) {
+        try {
+            const response = await nodeClient.get(`/inventory/low-stock-alerts?limit=${limit}`);
+            return response.data;
+        } catch (error) {
+            console.error('Low stock alerts error:', error);
+            throw error;
+        }
+    },
+
     // Health check
     async healthCheck() {
         const response = await mlClient.get('/health');
@@ -149,46 +160,132 @@ export const api = {
 
             const forecasts = forecastResponse.data.forecasts || [];
             const metrics = forecastResponse.data.accuracy_metrics || {};
+            const history = forecastResponse.data.history || [];
 
-            // Calculate total predicted demand
+            // Get product info for human-readable name
+            let productName = productId;
+            try {
+                const productsResponse = await nodeClient.get(`/products?limit=1000`);
+                const product = productsResponse.data?.data?.find(p => p.sku === productId);
+                if (product) {
+                    productName = product.productName || product.name || productId;
+                }
+            } catch (e) {
+                // Use SKU as fallback
+            }
+
+            // Calculate insights
             const totalDemand = forecasts.reduce((sum, f) => sum + f.forecast, 0);
             const avgDailyDemand = totalDemand / (forecasts.length || 1);
+            const roundedTotal = Math.round(totalDemand);
+            const roundedAvg = Math.round(avgDailyDemand);
 
-            // Generate recommendation based on forecast
+            // Find peak demand day
+            let peakDay = null;
+            let peakDemand = 0;
+            forecasts.forEach(f => {
+                if (f.forecast > peakDemand) {
+                    peakDemand = f.forecast;
+                    peakDay = f.date;
+                }
+            });
+
+            // Format peak day for display
+            const peakDayFormatted = peakDay ? new Date(peakDay).toLocaleDateString('en-US', {
+                weekday: 'long', month: 'short', day: 'numeric'
+            }) : 'Unknown';
+
+            // Get historical average for comparison
+            const historyTotal = history.reduce((sum, h) => sum + (h.actual_sales || 0), 0);
+            const historyAvg = history.length > 0 ? historyTotal / history.length : avgDailyDemand;
+            const demandTrend = ((avgDailyDemand - historyAvg) / historyAvg * 100).toFixed(0);
+            const trendDirection = demandTrend >= 0 ? 'increase' : 'decrease';
+            const trendText = Math.abs(demandTrend) > 5
+                ? `${Math.abs(demandTrend)}% ${trendDirection} compared to recent sales`
+                : 'stable compared to recent sales';
+
+            // Generate human-readable recommendation
             let recommendation = 'sufficient';
-            let recommendationText = '';
+            let urgency = 'low';
+            let actionTitle = '';
+            let actionDetails = '';
+            let orderSuggestion = '';
+
+            // Determine next business day for ordering
+            const today = new Date();
+            const orderByDate = new Date(today);
+            orderByDate.setDate(orderByDate.getDate() + Math.max(1, Math.floor(horizonDays / 3)));
+            const orderByDay = orderByDate.toLocaleDateString('en-US', { weekday: 'long' });
 
             if (avgDailyDemand > 100) {
                 recommendation = 'restock';
-                recommendationText = 'High demand expected. Consider increasing stock levels.';
+                urgency = 'high';
+                actionTitle = '🚨 Urgent: High Demand Expected';
+                actionDetails = `You'll need approximately ${roundedTotal} units over the next ${horizonDays} days. Peak demand is expected on ${peakDayFormatted} with ${Math.round(peakDemand)} units.`;
+                orderSuggestion = `Place your order by ${orderByDay} to ensure stock arrives before the rush.`;
             } else if (avgDailyDemand > 50) {
                 recommendation = 'monitor';
-                recommendationText = 'Moderate demand expected. Monitor inventory levels.';
+                urgency = 'medium';
+                actionTitle = '⚡ Attention: Moderate Demand';
+                actionDetails = `Expected demand is ${roundedTotal} units over ${horizonDays} days, averaging ${roundedAvg} units daily. This is ${trendText}.`;
+                orderSuggestion = `Consider ordering before ${orderByDay} if current stock is below ${roundedTotal} units.`;
+            } else if (avgDailyDemand > 20) {
+                recommendation = 'sufficient';
+                urgency = 'low';
+                actionTitle = '✅ Stock Looks Good';
+                actionDetails = `Normal demand expected: ${roundedTotal} units over ${horizonDays} days (${roundedAvg} units/day). This is ${trendText}.`;
+                orderSuggestion = `Reorder when stock falls below ${roundedAvg * 3} units to maintain 3-day buffer.`;
             } else {
                 recommendation = 'sufficient';
-                recommendationText = 'Stock levels appear sufficient for forecasted demand.';
+                urgency = 'low';
+                actionTitle = '✅ Low Demand Period';
+                actionDetails = `Light demand expected: only ${roundedTotal} units needed over ${horizonDays} days. Avoid overstocking to reduce waste risk.`;
+                orderSuggestion = `No immediate reorder needed. Check again in ${Math.min(horizonDays, 5)} days.`;
             }
 
-            // Format day-by-day forecast for message
-            const dayForecasts = forecasts.map((f, i) =>
-                `- Day ${i + 1}: ${Math.round(f.forecast)} units`
-            ).join('\n');
+            // Build day-by-day summary (human readable with weekday names)
+            const dayByDaySummary = forecasts.slice(0, 5).map(f => {
+                const date = new Date(f.date);
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const units = Math.round(f.forecast);
+                const label = units > avgDailyDemand * 1.2 ? '📈' : units < avgDailyDemand * 0.8 ? '📉' : '';
+                return `${dayName} (${dateStr}): ${units} units ${label}`;
+            }).join(' → ');
 
-            // Build agent-style response
+            // Build agent-style response with human-readable message
+            const message = `**${actionTitle}**
+
+📦 **${productName}** - ${horizonDays}-Day Forecast
+
+${actionDetails}
+
+📊 **Daily Breakdown**: ${dayByDaySummary}
+
+💡 **Recommendation**: ${orderSuggestion}`;
+
             return {
                 success: true,
-                message: `Based on ML analysis for product ${productId}, here is the ${horizonDays}-day demand forecast:\n\n${dayForecasts}\n\n${recommendationText}`,
+                message: message,
                 data: {
                     recommendation: recommendation,
-                    quantity: Math.round(totalDemand),
-                    confidence: metrics.r2 || 0.85,
+                    quantity: roundedTotal,
+                    confidence: metrics.mape ? Math.max(0.5, 1 - metrics.mape / 100) : 0.85,
                     forecasts: forecasts,
+                    insights: {
+                        avgDaily: roundedAvg,
+                        peakDay: peakDayFormatted,
+                        peakDemand: Math.round(peakDemand),
+                        trendPercent: parseFloat(demandTrend),
+                        urgency: urgency,
+                    }
                 },
                 metadata: {
-                    agent: 'InventoryForecastAgent',
+                    agent: 'SmartReplan+ AI',
                     iterations: 1,
-                    tokensUsed: 0, // ML model, not LLM
+                    tokensUsed: 0,
                     productId: productId,
+                    productName: productName,
                     horizonDays: horizonDays,
                 },
             };
@@ -196,10 +293,10 @@ export const api = {
             console.error('Agent forecast error:', error);
             return {
                 success: false,
-                message: error.response?.data?.detail || error.message || 'Failed to generate forecast',
+                message: `❌ Could not generate forecast for this product. ${error.response?.data?.detail || error.message || 'Please try again.'}\n\n💡 **Tip**: Make sure the product exists in our ML training data.`,
                 data: null,
                 metadata: {
-                    agent: 'InventoryForecastAgent',
+                    agent: 'SmartReplan+ AI',
                     error: true,
                 },
             };

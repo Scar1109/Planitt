@@ -1,18 +1,12 @@
-import express from 'express';
-import InventorySnapshot from '../models/InventorySnapshot.js';
-import Product from '../models/Product.js';
-import Sale from '../models/Sale.js';
-import { validate, schemas } from '../middleware/validation.js';
-import logger from '../config/logger.js';
-
-const router = express.Router();
+import InventorySnapshot from "../models/InventorySnapshot.js";
+import Sale from "../models/Sale.js";
+import Product from "../models/Product.js";
 
 /**
- * @route   GET /api/inventory/low-stock-alerts
- * @desc    Get low stock alerts based on real inventory vs demand data
- * @access  Public
+ * Get Low Stock Alerts - Real data from database
+ * Analyzes inventory levels against average daily sales to determine stock health
  */
-router.get('/low-stock-alerts', async (req, res, next) => {
+export const getLowStockAlerts = async (req, res) => {
     try {
         const { limit = 10 } = req.query;
 
@@ -89,7 +83,7 @@ router.get('/low-stock-alerts', async (req, res, next) => {
             const salesData = salesMap[snapshot.sku] || { avgDailySales: 0, totalSold: 0 };
             const productInfo = productMap[snapshot.sku] || {};
 
-            // Skip products with no sales history
+            // Skip products with no sales history (they might be new or discontinued)
             if (salesData.avgDailySales === 0) continue;
 
             const avgDailyDemand = salesData.avgDailySales;
@@ -129,6 +123,7 @@ router.get('/low-stock-alerts', async (req, res, next) => {
                     alertLevel,
                     alertMessage,
                     urgency,
+                    // Additional real data
                     soldQtyToday: snapshot.soldQty || 0,
                     discardedQty: snapshot.discardedQty || 0,
                     lastOrderQty: snapshot.orderPlacedQty || 0,
@@ -138,15 +133,14 @@ router.get('/low-stock-alerts', async (req, res, next) => {
             }
         }
 
-        // Sort by urgency (critical first)
+        // Sort by urgency (critical first, then by stock level)
         lowStockAlerts.sort((a, b) => {
             if (b.urgency !== a.urgency) return b.urgency - a.urgency;
             return a.daysOfStock - b.daysOfStock;
         });
 
+        // Return top N alerts
         const topAlerts = lowStockAlerts.slice(0, parseInt(limit));
-
-        logger.info(`Found ${lowStockAlerts.length} low stock alerts, returning top ${topAlerts.length}`);
 
         res.json({
             success: true,
@@ -162,115 +156,66 @@ router.get('/low-stock-alerts', async (req, res, next) => {
         });
 
     } catch (error) {
-        logger.error('Error fetching low stock alerts:', error);
-        next(error);
-    }
-});
-
-
-/**
- * @route   GET /api/inventory/:storeId
- * @desc    Get all inventory for a store
- * @access  Public
- */
-router.get('/:storeId', validate(schemas.storeIdParam), async (req, res, next) => {
-    try {
-        const { storeId } = req.params;
-
-        logger.info(`Getting inventory for store ${storeId}`);
-
-        const inventory = await InventorySnapshot.find({ storeId })
-            .sort({ snapshotDate: -1 });
-
-        // Group by product and get latest snapshot for each
-        const latestInventory = {};
-        for (const item of inventory) {
-            if (!latestInventory[item.productId]) {
-                latestInventory[item.productId] = item;
-            }
-        }
-
-        // Enrich with product details
-        const enrichedInventory = await Promise.all(
-            Object.values(latestInventory).map(async (inv) => {
-                const product = await Product.findOne({ productId: inv.productId });
-                return {
-                    ...inv.toObject(),
-                    productName: product?.name,
-                    category: product?.category,
-                };
-            })
-        );
-
-        res.json({
-            success: true,
-            count: enrichedInventory.length,
-            data: enrichedInventory,
+        console.error("Error fetching low stock alerts:", error);
+        res.status(500).json({
+            success: false,
+            error: error.message
         });
-    } catch (error) {
-        next(error);
     }
-});
+};
 
 /**
- * @route   GET /api/inventory/:storeId/:productId
- * @desc    Get inventory for a specific product at a store
- * @access  Public
+ * Get Inventory Summary Statistics
  */
-router.get('/:storeId/:productId', validate(schemas.productIdParam), async (req, res, next) => {
+export const getInventorySummary = async (req, res) => {
     try {
-        const { storeId, productId } = req.params;
+        // Get the most recent date with inventory data
+        const latestInventory = await InventorySnapshot.findOne()
+            .sort({ date: -1 })
+            .select('date');
 
-        logger.info(`Getting inventory for product ${productId} at store ${storeId}`);
-
-        const inventory = await InventorySnapshot.findOne({
-            storeId,
-            productId,
-        }).sort({ snapshotDate: -1 });
-
-        if (!inventory) {
-            return res.status(404).json({
-                success: false,
-                error: 'Inventory not found',
+        if (!latestInventory) {
+            return res.json({
+                success: true,
+                summary: null,
+                message: "No inventory data available"
             });
         }
 
-        // Get product details
-        const product = await Product.findOne({ productId });
+        const latestDate = latestInventory.date;
+
+        // Aggregate inventory stats
+        const stats = await InventorySnapshot.aggregate([
+            { $match: { date: latestDate } },
+            {
+                $group: {
+                    _id: null,
+                    totalProducts: { $sum: 1 },
+                    totalStock: { $sum: "$closingStock" },
+                    totalSold: { $sum: "$soldQty" },
+                    totalDiscarded: { $sum: "$discardedQty" },
+                    avgClosingStock: { $avg: "$closingStock" },
+                    lowStockCount: {
+                        $sum: { $cond: [{ $lt: ["$closingStock", 20] }, 1, 0] }
+                    },
+                    outOfStock: {
+                        $sum: { $cond: [{ $eq: ["$closingStock", 0] }, 1, 0] }
+                    }
+                }
+            }
+        ]);
 
         res.json({
             success: true,
-            data: {
-                ...inventory.toObject(),
-                productName: product?.name,
-                category: product?.category,
-                unitPrice: product?.unitPrice,
-            },
+            summary: stats[0] || null,
+            dataDate: latestDate
         });
+
     } catch (error) {
-        next(error);
-    }
-});
-
-/**
- * @route   POST /api/inventory/snapshot
- * @desc    Create a new inventory snapshot
- * @access  Public
- */
-router.post('/snapshot', async (req, res, next) => {
-    try {
-        const snapshot = new InventorySnapshot(req.body);
-        await snapshot.save();
-
-        logger.info(`Created inventory snapshot for ${snapshot.productId} at ${snapshot.storeId}`);
-
-        res.status(201).json({
-            success: true,
-            data: snapshot,
+        console.error("Error fetching inventory summary:", error);
+        res.status(500).json({
+            success: false,
+            error: error.message
         });
-    } catch (error) {
-        next(error);
     }
-});
-
-export default router;
+};

@@ -121,32 +121,36 @@ export function AgentInventoryForecast() {
         }))
     }
 
-    // Get recommendation badge styling
+    // Get recommendation badge styling with user-friendly colors and labels
     const getRecommendationBadge = (recommendation) => {
         switch (recommendation?.toLowerCase()) {
             case 'monitor':
                 return {
                     variant: "outline",
-                    className: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-300",
-                    icon: AlertTriangle
+                    className: "bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 border-amber-200 shadow-sm",
+                    icon: AlertTriangle,
+                    label: "⚡ WATCH"
                 }
             case 'restock':
                 return {
                     variant: "outline",
-                    className: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-300",
-                    icon: TrendingUp
+                    className: "bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border-red-200 shadow-sm",
+                    icon: TrendingUp,
+                    label: "🚨 ORDER NOW"
                 }
             case 'sufficient':
                 return {
                     variant: "outline",
-                    className: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border-green-300",
-                    icon: CheckCircle
+                    className: "bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 border-emerald-200 shadow-sm",
+                    icon: CheckCircle,
+                    label: "✓ STOCK OK"
                 }
             default:
                 return {
                     variant: "outline",
-                    className: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-300",
-                    icon: Bot
+                    className: "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-200 shadow-sm",
+                    icon: Bot,
+                    label: "ℹ️ INFO"
                 }
         }
     }
@@ -184,7 +188,7 @@ export function AgentInventoryForecast() {
                             >
                                 <span className="truncate text-left flex-1 font-medium text-slate-700">
                                     {selectedProductData
-                                        ? selectedProductData.productName || selectedProductData.sku
+                                        ? `${selectedProductData.productName || selectedProductData.sku}${selectedProductData.unitSize ? ` (${selectedProductData.unitSize})` : ''}`
                                         : "Select Product..."}
                                 </span>
                                 <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-indigo-600' : ''}`} />
@@ -250,6 +254,11 @@ export function AgentInventoryForecast() {
                                                                     {p.category && (
                                                                         <span className="text-xs text-slate-400">
                                                                             {p.category}
+                                                                        </span>
+                                                                    )}
+                                                                    {p.unitSize && (
+                                                                        <span className="text-xs text-slate-500 font-medium bg-blue-50 px-1.5 py-0.5 rounded">
+                                                                            {p.unitSize}
                                                                         </span>
                                                                     )}
                                                                 </div>
@@ -337,43 +346,85 @@ export function AgentInventoryForecast() {
                     <>
                         {/* Agent Response Summary */}
                         {forecastData.success && (
-                            <div className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                            <div className={`mb-6 p-4 rounded-xl border ${forecastData.data?.insights?.urgency === 'high'
+                                ? 'bg-red-50 border-red-200'
+                                : forecastData.data?.insights?.urgency === 'medium'
+                                    ? 'bg-amber-50 border-amber-200'
+                                    : 'bg-emerald-50 border-emerald-200'
+                                }`}>
                                 <div className="flex items-start gap-3">
-                                    <Sparkles className="h-5 w-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                                    <Sparkles className={`h-5 w-5 mt-0.5 flex-shrink-0 ${forecastData.data?.insights?.urgency === 'high'
+                                        ? 'text-red-600'
+                                        : forecastData.data?.insights?.urgency === 'medium'
+                                            ? 'text-amber-600'
+                                            : 'text-emerald-600'
+                                        }`} />
                                     <div className="flex-1 space-y-3">
                                         <div className="flex items-center justify-between gap-4">
-                                            <h3 className="font-semibold text-sm text-slate-800">Agent Analysis</h3>
+                                            <h3 className="font-semibold text-sm text-slate-800">AI Forecast Analysis</h3>
                                             {recommendationBadge && (
-                                                <Badge className={recommendationBadge.className}>
-                                                    <BadgeIcon className="h-3 w-3 mr-1" />
-                                                    {forecastData.data.recommendation.toUpperCase()}
+                                                <Badge className={`${recommendationBadge.className} px-3 py-1 text-xs font-semibold`}>
+                                                    {recommendationBadge.label || forecastData.data.recommendation.toUpperCase()}
                                                 </Badge>
                                             )}
                                         </div>
-                                        <p className="text-sm text-slate-600 leading-relaxed">
-                                            {forecastData.message}
-                                        </p>
 
-                                        {/* Metadata */}
-                                        <div className="flex flex-wrap gap-4 pt-2 border-t border-slate-200/50">
-                                            <div className="text-xs">
-                                                <span className="text-slate-500">Confidence:</span>{" "}
-                                                <span className="font-medium text-slate-700">
-                                                    {(forecastData.data.confidence * 100).toFixed(0)}%
-                                                </span>
+                                        {/* Formatted Message with Better Rendering */}
+                                        <div className="text-sm text-slate-700 leading-relaxed space-y-2">
+                                            {forecastData.message.split('\n').map((line, idx) => {
+                                                // Parse markdown-style formatting
+                                                if (line.startsWith('**') && line.endsWith('**')) {
+                                                    return <p key={idx} className="font-semibold text-slate-900 text-base">{line.replace(/\*\*/g, '')}</p>;
+                                                }
+                                                if (line.includes('**')) {
+                                                    const parts = line.split(/\*\*([^*]+)\*\*/g);
+                                                    return (
+                                                        <p key={idx}>
+                                                            {parts.map((part, i) =>
+                                                                i % 2 === 1
+                                                                    ? <strong key={i} className="font-semibold text-slate-800">{part}</strong>
+                                                                    : part
+                                                            )}
+                                                        </p>
+                                                    );
+                                                }
+                                                if (line.trim() === '') return null;
+                                                return <p key={idx}>{line}</p>;
+                                            })}
+                                        </div>
+
+                                        {/* Quick Stats Row */}
+                                        {forecastData.data?.insights && (
+                                            <div className="flex flex-wrap gap-3 pt-3 border-t border-slate-200/50">
+                                                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/60 text-xs">
+                                                    <span className="text-slate-500">Avg Daily:</span>
+                                                    <span className="font-semibold text-slate-700">{forecastData.data.insights.avgDaily} units</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/60 text-xs">
+                                                    <span className="text-slate-500">Peak:</span>
+                                                    <span className="font-semibold text-slate-700">{forecastData.data.insights.peakDay}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/60 text-xs">
+                                                    <span className="text-slate-500">Confidence:</span>
+                                                    <span className="font-semibold text-slate-700">{(forecastData.data.confidence * 100).toFixed(0)}%</span>
+                                                </div>
+                                                {forecastData.data.insights.trendPercent !== 0 && (
+                                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs ${forecastData.data.insights.trendPercent > 0
+                                                        ? 'bg-emerald-100 text-emerald-700'
+                                                        : 'bg-red-100 text-red-700'
+                                                        }`}>
+                                                        <span>{forecastData.data.insights.trendPercent > 0 ? '↑' : '↓'}</span>
+                                                        <span className="font-semibold">{Math.abs(forecastData.data.insights.trendPercent)}% vs avg</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <div className="text-xs">
-                                                <span className="text-slate-500">Agent:</span>{" "}
-                                                <span className="font-medium text-slate-700">
-                                                    {forecastData.metadata.agent}
-                                                </span>
-                                            </div>
-                                            <div className="text-xs">
-                                                <span className="text-slate-500">Iterations:</span>{" "}
-                                                <span className="font-medium text-slate-700">
-                                                    {forecastData.metadata.iterations}
-                                                </span>
-                                            </div>
+                                        )}
+
+                                        {/* Metadata Footer */}
+                                        <div className="flex items-center gap-2 pt-2 text-[10px] text-slate-400">
+                                            <span>Powered by {forecastData.metadata?.agent || 'AI'}</span>
+                                            <span>•</span>
+                                            <span>{forecastData.metadata?.productName || forecastData.metadata?.productId}</span>
                                         </div>
                                     </div>
                                 </div>

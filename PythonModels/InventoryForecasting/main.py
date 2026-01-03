@@ -143,8 +143,8 @@ def load_models():
         # Load Product Master
         if (MODELS_DIR / "product_master.csv").exists():
             models['product_master'] = pd.read_csv(MODELS_DIR / "product_master.csv")
-            # Create lookup dict for faster access
-            models['product_lookup'] = models['product_master'].set_index('SKU').to_dict('index')
+            # Create lookup dict for faster access (column names are lowercase)
+            models['product_lookup'] = models['product_master'].set_index('sku').to_dict('index')
         else:
             models['product_master'] = pd.DataFrame()
             models['product_lookup'] = {}
@@ -288,7 +288,7 @@ def prepare_forecast_input(product_id: str, date: datetime) -> pd.DataFrame:
         'IsPoyaDay': 1 if 14 <= date.day <= 16 else 0,
         # Default values for missing data
         'PromotionFlag': 0,
-        'UnitPriceLKR': info.get('BaseUnitPriceLKR', 0),
+        'UnitPriceLKR': info.get('baseunitpricelkr', 0),
         'AvgTemperatureC': 28.0,
         'RainfallMM': 0.0,
         'HumidityPercent': 75.0,
@@ -311,8 +311,8 @@ def prepare_forecast_input(product_id: str, date: datetime) -> pd.DataFrame:
 def get_product_category(product_id: str) -> str:
     """Extract category from product ID or lookup."""
     info = get_product_info(product_id)
-    if info.get('Category'):
-        return info['Category'].lower()
+    if info.get('category'):
+        return info['category'].lower()
     
     # Infer from product ID patterns
     pid_upper = product_id.upper()
@@ -602,7 +602,7 @@ async def predict_waste_risk(request: WasteRiskRequest):
                 'OpeningStock': item.current_stock,
                 'ClosingStock': item.current_stock, # Proxy
                 'OldStockShare': item.old_stock_share,
-                'ShelfLifeDays': info.get('TypicalShelfLifeDays', 7)
+                'ShelfLifeDays': info.get('typicalshelflifedays', 7)
             }
             
             # Add encodings
@@ -682,21 +682,21 @@ async def get_products(limit: int = 3000, category: str = None):
         total_products = len(df)  # Total count before any filtering
         
         # Filter by category if provided
-        if category and 'Category' in df.columns:
-            df = df[df['Category'] == category]
+        if category and 'category' in df.columns:
+            df = df[df['category'] == category]
         
         # Limit results
         df = df.head(limit)
         
-        # Format for frontend
+               # Format for frontend
         products = []
         for _, row in df.iterrows():
             products.append({
-                "sku": row.get('SKU', ''),
-                "productName": row.get('ProductName', ''),
-                "category": row.get('Category', 'Unknown'),
-                "brand": row.get('Brand', ''),
-                "shelfLifeDays": row.get('TypicalShelfLifeDays', 7),
+                "sku": row.get('sku', ''),
+                "productName": row.get('productname', ''),
+                "category": row.get('category', 'Unknown'),
+                "brand": row.get('brand', ''),
+                "shelfLifeDays": row.get('typicalshelflifedays', 7),
             })
         
         return {
