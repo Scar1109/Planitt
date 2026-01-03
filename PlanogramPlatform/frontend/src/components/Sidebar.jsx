@@ -35,6 +35,7 @@ const Sidebar = () => {
                 { name: 'Sub Item 1', path: '/dashboard/planograms/sub1' },
                 { name: 'Sub Item 2', path: '/dashboard/planograms/sub2' },
                 { name: 'Sub Item 3', path: '/dashboard/planograms/sub3' },
+                { name: 'AI Promotion', path: '/dashboard/planograms/ai-promotion' },
             ]
         },
         { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },

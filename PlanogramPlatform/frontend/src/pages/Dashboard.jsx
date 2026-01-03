@@ -11,6 +11,7 @@ import Settings from '../components/dashboard/Settings';
 import UserManagement from '../components/dashboard/UserManagement';
 import StoreSettings from '../components/dashboard/StoreSettings';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
+import AiPromotion from '../components/dashboard/AiPromotion';
 
 const DashboardLayout = ({ children }) => {
     return (
@@ -69,7 +70,9 @@ const Dashboard = () => {
                 <Route path="/planograms/*" element={<Planograms />} /> {/* Catch sub-routes if mostly same component or specific sub-routes defined above if distinct */}
                 <Route path="/planograms/sub1" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 1</h2><p>Content for Sub Item 1</p></div>} />
                 <Route path="/planograms/sub2" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 2</h2><p>Content for Sub Item 2</p></div>} />
+
                 <Route path="/planograms/sub3" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 3</h2><p>Content for Sub Item 3</p></div>} />
+                <Route path="/planograms/ai-promotion" element={<AiPromotion />} />
 
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/store" element={<StoreInfo />} />
