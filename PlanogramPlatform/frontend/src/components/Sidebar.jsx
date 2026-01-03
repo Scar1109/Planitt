@@ -28,13 +28,15 @@ const Sidebar = () => {
     const navItems = [
         { name: 'Dashboard', path: '/dashboard', icon: FaHome, end: true },
         {
-            name: 'Planograms',
-            path: '/dashboard/planograms',
+            name: 'Planogram Optimization',
+            path: '/dashboard/optimization',
             icon: FaBox,
             subItems: [
-                { name: 'Sub Item 1', path: '/dashboard/planograms/sub1' },
-                { name: 'Sub Item 2', path: '/dashboard/planograms/sub2' },
-                { name: 'Sub Item 3', path: '/dashboard/planograms/sub3' },
+                { name: 'Optimization', path: '/dashboard/optimization', end: true },
+                { name: 'Shelves', path: '/dashboard/optimization/shelves' },
+                { name: 'Products', path: '/dashboard/optimization/products' },
+                { name: 'Constraints', path: '/dashboard/optimization/constraints' },
+                { name: 'Runs & Evaluation', path: '/dashboard/optimization/runs' },
             ]
         },
         { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
@@ -116,6 +118,7 @@ const Sidebar = () => {
                                         <NavLink
                                             key={sub.name}
                                             to={sub.path}
+                                            end={sub.end}
                                             className={({ isActive }) =>
                                                 classNames(
                                                     'flex items-center pl-14 pr-6 py-2 text-sm font-medium transition-colors duration-200',

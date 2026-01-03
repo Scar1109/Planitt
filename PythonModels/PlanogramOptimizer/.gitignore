@@ -1,0 +1,11 @@
+
+# Valid .gitignore content
+__pycache__/
+*.pyc
+venv/
+.env
+.DS_Store
+
+# Large Data & Models
+data/
+models/*.joblib
