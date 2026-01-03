@@ -38,7 +38,15 @@ const Sidebar = () => {
             ]
         },
         { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
-        { name: 'Compliance Intelligence', path: '/dashboard/compliance', icon: FaRobot },
+        {
+            name: 'Compliance ',
+            path: '/dashboard/compliance',
+            icon: FaRobot,
+            subItems: [
+                { name: 'System Forensics', path: '/dashboard/compliance/analysis' },
+                { name: 'Compliance Intelligence', path: '/dashboard/compliance' }
+            ]
+        },
         { name: 'Store Info', path: '/dashboard/store', icon: FaStore },
         {
             name: 'Settings',

@@ -19,6 +19,15 @@ class ComplianceEngine:
         # Unique identifier for a placement position
         return f"{p.get('sku')}_{p.get('fixtureId')}_{p.get('levelIndex')}"
 
+    def get_metadata(self):
+        """Returns academic metadata about the deterministic engine."""
+        return {
+            "engine_type": "Deterministic/Rule-Based",
+            "active_rules": ["MISSING_ITEM", "EXTRA_ITEM", "MISPLACED_ITEM", "FACING_MISMATCH"],
+            "precision_guarantee": "100%",
+            "logic_version": "v1.0.0"
+        }
+
     def compare_planograms(self, current_data: Dict, optimized_data: Dict) -> List[Dict]:
         """
         Compare current layout vs optimized layout.

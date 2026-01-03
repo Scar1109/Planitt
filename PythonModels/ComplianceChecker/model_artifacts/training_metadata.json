@@ -1,13 +1,15 @@
 {
-    "timestamp": "2026-01-02T01:13:36.850148",
+    "timestamp": "2026-01-04T03:39:41.513883",
     "metrics": {
-        "MAE": 4.1721608437978785,
-        "RMSE": 7.747182079126111,
-        "MAPE": 3148090337938015.5
+        "MAE": 55.379006466966956,
+        "RMSE": 85.97815865574513,
+        "MAPE": 7.580197539317838e+16,
+        "R2_Score": 0.0565237829482349,
+        "Accuracy_Percent": 5.65
     },
     "params": {
         "model": "RandomForestRegressor",
-        "n_estimators": 100,
+        "n_estimators": 200,
         "seed": 42
     },
     "features": [
@@ -15,7 +17,9 @@
         "Shelf_Level",
         "Category_Code",
         "IsWeekend",
-        "IsHoliday"
+        "IsHoliday",
+        "Month",
+        "DayOfWeek"
     ],
-    "sanity_check_uplift_percent": 87.39906754791467
+    "sanity_check_uplift_percent": 410.744682874723
 }

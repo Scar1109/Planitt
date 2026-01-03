@@ -11,20 +11,26 @@ const ComplianceDashboard = () => {
 
     // Real Data State
     const [planograms, setPlanograms] = useState([]);
+    const [metadata, setMetadata] = useState(null);
     const [currentId, setCurrentId] = useState('');
     const [optimizedId, setOptimizedId] = useState('');
 
-    // Fetch Planogram List on Mount
+    // Fetch Planogram List & Metadata on Mount
     React.useEffect(() => {
-        const fetchPlanograms = async () => {
+        const loadInitialData = async () => {
             try {
-                const res = await api.get('/planograms');
-                setPlanograms(res.data.data.planograms);
+                // 1. Fetch Planograms
+                const resPlano = await api.get('/planograms');
+                setPlanograms(resPlano.data.data.planograms);
+
+                // 2. Fetch System Metadata (for Accuracy display)
+                const resMeta = await api.get('/compliance/metadata');
+                setMetadata(resMeta.data);
             } catch (err) {
-                console.error("Failed to load planograms", err);
+                console.error("Failed to load dashboard data", err);
             }
         };
-        fetchPlanograms();
+        loadInitialData();
     }, []);
 
     const runCheck = async () => {
@@ -73,8 +79,23 @@ const ComplianceDashboard = () => {
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             <header className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-800">Compliance Intelligence Layer</h1>
-                <p className="text-gray-500">Academic Validation & Economic Impact Analysis</p>
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800">Compliance Intelligence Layer</h1>
+                        <p className="text-gray-500">Academic Validation & Economic Impact Analysis</p>
+                    </div>
+                    {/* System Status Badge
+                    {metadata && (
+                        <div className="hidden md:flex flex-col items-end">
+                            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
+                                <div className="text-xs text-gray-500 text-right">
+                                    <div className="font-bold text-gray-800">{metadata.ml_model?.params?.model || "Unknown Model"}</div>
+                                    <div>RMSE: <span className="text-emerald-600 font-mono font-bold">{metadata.ml_model?.metrics?.RMSE?.toFixed(4) || "0.00"}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    )} */}
+                </div>
             </header>
 
             {/* Control Panel */}
@@ -169,7 +190,9 @@ const ComplianceDashboard = () => {
                                 <FaRobot size={24} />
                             </div>
                             <div>
-                                <h3 className="font-bold text-indigo-900 mb-2">AI Agent Executive Summary</h3>
+                                <div className="flex items-center space-x-2 mb-2">
+                                    <h3 className="font-bold text-indigo-900">AI Agent Executive Summary</h3>
+                                </div>
                                 <p className="text-indigo-800 leading-relaxed italic">
                                     "{agentInsight}"
                                 </p>

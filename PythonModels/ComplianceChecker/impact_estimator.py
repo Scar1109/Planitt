@@ -56,13 +56,18 @@ class ImpactEstimator:
         all_skus = set(product_meta.keys()) | set(price_map.keys())
         for sku in all_skus:
             meta = product_meta.get(sku, {})
-            price = price_map.get(sku, 0.0)
-            if np.isnan(price): price = 0.0
+            # Priority: 1. Sales Data Price (Realized), 2. Product Master Price (List), 3. Default
+            sales_price = price_map.get(sku, 0.0)
+            master_price = float(meta.get('Price') or meta.get('Price_LKR') or meta.get('UnitPriceLKR') or 0.0)
+            
+            final_price = sales_price if sales_price > 0 else master_price
+            
+            if np.isnan(final_price): final_price = 0.0
             
             self.product_map[sku] = {
                 'Category': meta.get('Category', 'Unknown'),
                 'ProductName': meta.get('ProductName', 'Unknown'),
-                'UnitPriceLKR': price
+                'UnitPriceLKR': final_price
             }
             
         # [HOTFIX] Fallback for LOC-COCO-500ML if CSV missing
@@ -99,11 +104,17 @@ class ImpactEstimator:
                 except (ValueError, Exception):
                     cat_code = 0 
                 
+                # Dynamic Date Features for Inference
+                from datetime import datetime
+                now = datetime.now()
+                
                 base_features = {
                     'UnitPriceLKR': price,
                     'Category_Code': cat_code,
-                    'IsWeekend': 0,
-                    'IsHoliday': 0
+                    'IsWeekend': 1 if now.weekday() in [5, 6] else 0,
+                    'IsHoliday': 0,
+                    'Month': now.month,
+                    'DayOfWeek': now.weekday()
                 }
                 
                 # 1. Estimate Current Sales
@@ -139,6 +150,19 @@ class ImpactEstimator:
                 sales_current = max(0, sales_current)
                 sales_opt = max(0, sales_opt)
                 
+                # [HOTFIX] Fallback for New Products (Cold Start)
+                # If model predicts ~0 (unseen SKU), apply a heuristic uplift rule
+                # Rule: Moving up to Eye Level (Level 4/5) usually gives +15% sales vs Bottom
+                if sales_current < 0.1 and sales_opt < 0.1:
+                    base_volume = 100.0 # Assumed monthly unit sales for a standard item
+                    
+                    # Simple heuristic multiplier based on level
+                    current_mult = 1.0 + (shelf_current * 0.05) # L1=1.05, L4=1.20
+                    opt_mult = 1.0 + (shelf_opt * 0.05)
+                    
+                    sales_current = base_volume * current_mult
+                    sales_opt = base_volume * opt_mult
+
                 unit_diff = sales_opt - sales_current
                 revenue_diff = unit_diff * price
                 

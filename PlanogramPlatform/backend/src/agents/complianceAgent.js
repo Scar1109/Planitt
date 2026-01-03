@@ -30,7 +30,7 @@ const generateSummary = async (data) => {
 
         const completion = await openai.chat.completions.create({
             messages: [{ role: "system", content: "You are a helpful assistant." }, { role: "user", content: prompt }],
-            model: "gpt-3.5-turbo", 
+            model: process.env.OPENAI_MODEL || "gpt-3.5-turbo", 
         });
 
         return completion.choices[0].message.content;

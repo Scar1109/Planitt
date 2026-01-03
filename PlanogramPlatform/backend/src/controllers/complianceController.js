@@ -35,7 +35,8 @@ export const analyzeCompliance = async (req, res) => {
         // 3. Combine and Return
         const finalResponse = {
             ...pythonResponse,
-            agent_summary: agentSummary
+            agent_summary: agentSummary,
+            model_used: process.env.OPENAI_MODEL || "gpt-3.5-turbo"
         };
 
         res.json(finalResponse);
@@ -49,4 +50,18 @@ export const analyzeCompliance = async (req, res) => {
 export const triggerTraining = async (req, res) => {
     // Optional: Trigger training via Python API if implemented, or just return mock msg
     res.json({ message: "Training trigger not yet exposed via API." });
+};
+
+export const getSystemMetadata = async (req, res) => {
+    try {
+        const response = await axios.get(`${PYTHON_SERVICE_URL}/metadata`);
+        res.json(response.data);
+    } catch (error) {
+        console.error("Metadata Fetch Error:", error.message);
+        res.status(503).json({ 
+            message: "Model metadata unavailable", 
+            timestamp: new Date().toISOString(), 
+            metrics: { MAE: 0, RMSE: 0 } 
+        });
+    }
 };

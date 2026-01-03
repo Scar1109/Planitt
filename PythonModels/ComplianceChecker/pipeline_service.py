@@ -40,6 +40,25 @@ def health_check():
     model_status = "loaded" if estimator and estimator.model else "not_loaded"
     return {"status": "ok", "service": "compliance-checker", "model_status": model_status}
 
+@app.get("/metadata")
+def get_model_metadata():
+    """Returns training metrics and architecture details for the frontend."""
+    # 1. Load ML Metadata
+    ml_metadata = {"error": "ML Metadata not found"}
+    metadata_path = os.path.join("model_artifacts", "training_metadata.json")
+    if os.path.exists(metadata_path):
+        import json
+        with open(metadata_path, 'r') as f:
+            ml_metadata = json.load(f)
+            
+    # 2. Load Engine Metadata (Deterministic)
+    engine_metadata = engine.get_metadata()
+    
+    return {
+        "ml_model": ml_metadata,
+        "rules_engine": engine_metadata
+    }
+
 @app.post("/analyze", response_model=ComplianceResponse)
 def analyze_compliance(request: PlanogramRequest):
     """
