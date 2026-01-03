@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { FaCheckCircle, FaExclamationTriangle, FaChartLine, FaRobot } from 'react-icons/fa';
 
 const ComplianceDashboard = () => {
@@ -7,27 +7,57 @@ const ComplianceDashboard = () => {
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [report, setReport] = useState(null);
     const [agentInsight, setAgentInsight] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // Real Data State
+    const [planograms, setPlanograms] = useState([]);
+    const [currentId, setCurrentId] = useState('');
+    const [optimizedId, setOptimizedId] = useState('');
+
+    // Fetch Planogram List on Mount
+    React.useEffect(() => {
+        const fetchPlanograms = async () => {
+            try {
+                const res = await api.get('/planograms');
+                setPlanograms(res.data.data.planograms);
+            } catch (err) {
+                console.error("Failed to load planograms", err);
+            }
+        };
+        fetchPlanograms();
+    }, []);
 
     const runCheck = async () => {
+        if (!currentId || !optimizedId) {
+            setErrorMessage("Please select both a Current and Optimized planogram.");
+            setStatus('error');
+            return;
+        }
+
         setStatus('loading');
+        setErrorMessage('');
         try {
-            // Simulated Payload
+            // 1. Fetch full details for both selected planograms
+            const [currentRes, optimizedRes] = await Promise.all([
+                api.get(`/planograms/${currentId}`),
+                api.get(`/planograms/${optimizedId}`)
+            ]);
+
+            const currentData = currentRes.data.data;
+            const optimizedData = optimizedRes.data.data;
+
+            // 2. Construct Payload
             const payload = {
                 current_planogram: {
-                    placements: [
-                        { sku: "LOC-COCO-500ML", fixtureId: "G1", levelIndex: 1, facings: 1 },
-                        { sku: "LOC-SOAP-BAR", fixtureId: "G1", levelIndex: 1, facings: 2 }
-                    ]
+                    placements: currentData.placements // Already formatted by backend controller
                 },
                 optimized_planogram: {
-                    placements: [
-                        { sku: "LOC-COCO-500ML", fixtureId: "G1", levelIndex: 4, facings: 2 }, // Higher shelf!
-                        { sku: "LOC-SOAP-BAR", fixtureId: "G1", levelIndex: 1, facings: 2 }
-                    ]
+                    placements: optimizedData.placements
                 }
             };
 
-            const response = await axios.post('http://localhost:3000/api/compliance/check', payload, { withCredentials: true });
+            // 3. Send to Compliance Engine
+            const response = await api.post('/compliance/check', payload);
 
             setReport(response.data);
             setAgentInsight(response.data.agent_summary);
@@ -35,6 +65,8 @@ const ComplianceDashboard = () => {
         } catch (error) {
             console.error("Compliance Check Failed:", error);
             setStatus('error');
+            const msg = error.response?.data?.message || error.message || "Unknown error occurred";
+            setErrorMessage(msg);
         }
     };
 
@@ -46,19 +78,61 @@ const ComplianceDashboard = () => {
             </header>
 
             {/* Control Panel */}
-            <div className="bg-white p-6 rounded-lg shadow-sm mb-6 flex items-center justify-between">
-                <div>
-                    <h3 className="font-semibold text-lg">Active Session</h3>
-                    <p className="text-sm text-gray-500">Comparing: <span className="font-mono bg-gray-100 px-2 rounded">Current-Floor-Scan-001</span> vs <span className="font-mono bg-gray-100 px-2 rounded">Opt-Model-v4</span></p>
+            <div className="bg-white p-6 rounded-lg shadow-sm mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Current Implementation (Floor Scan)</label>
+                        <select
+                            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border"
+                            value={currentId}
+                            onChange={(e) => setCurrentId(e.target.value)}
+                        >
+                            <option value="">-- Select Planogram --</option>
+                            {planograms.map(p => (
+                                <option key={p._id} value={p._id}>{p.name} ({p.status})</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Optimized Model (Target)</label>
+                        <select
+                            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border"
+                            value={optimizedId}
+                            onChange={(e) => setOptimizedId(e.target.value)}
+                        >
+                            <option value="">-- Select Planogram --</option>
+                            {planograms.map(p => (
+                                <option key={p._id} value={p._id}>{p.name} ({p.status})</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
                 <button
                     onClick={runCheck}
                     disabled={status === 'loading'}
-                    className={`px-6 py-3 rounded-lg font-bold text-white transition ${status === 'loading' ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+                    className={`px-6 py-2.5 rounded-lg font-bold text-white transition h-fit ${status === 'loading' ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
                 >
                     {status === 'loading' ? 'Analyzing...' : 'Run Compliance Check'}
                 </button>
             </div>
+
+            {/* Error Display */}
+            {status === 'error' && (
+                <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                    <div className="flex">
+                        <div className="flex-shrink-0">
+                            <FaExclamationTriangle className="h-5 w-5 text-red-500" />
+                        </div>
+                        <div className="ml-3">
+                            <h3 className="text-sm font-medium text-red-800">Analysis Failed</h3>
+                            <div className="mt-2 text-sm text-red-700">
+                                <p>{errorMessage}</p>
+                                <p className="mt-1 font-mono text-xs">Backend: http://localhost:3000/api</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {status === 'success' && report && (
                 <div className="space-y-6">
@@ -122,7 +196,7 @@ const ComplianceDashboard = () => {
                                     <tr key={idx} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-bold ${dev.type === 'MISPLACED_ITEM' ? 'bg-orange-100 text-orange-700' :
-                                                    dev.type === 'MISSING_ITEM' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                                                dev.type === 'MISSING_ITEM' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
                                                 }`}>
                                                 {dev.type}
                                             </span>

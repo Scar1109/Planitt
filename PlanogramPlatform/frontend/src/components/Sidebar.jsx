@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaHome, FaBox, FaChartLine, FaCog, FaStore, FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { FaHome, FaBox, FaChartLine, FaCog, FaStore, FaChevronDown, FaChevronRight, FaRobot } from 'react-icons/fa';
 import classNames from 'classnames';
 
 const Sidebar = () => {

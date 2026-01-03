@@ -64,6 +64,14 @@ class ImpactEstimator:
                 'ProductName': meta.get('ProductName', 'Unknown'),
                 'UnitPriceLKR': price
             }
+            
+        # [HOTFIX] Fallback for LOC-COCO-500ML if CSV missing
+        if 'LOC-COCO-500ML' not in self.product_map or self.product_map['LOC-COCO-500ML']['UnitPriceLKR'] == 0:
+            self.product_map['LOC-COCO-500ML'] = {
+                'Category': 'Beverages',
+                'ProductName': 'Local Coconut Water 500ml',
+                'UnitPriceLKR': 350.0  # Fallback Price
+            }
 
     def predict_impact(self, deviations: list) -> list:
         """
