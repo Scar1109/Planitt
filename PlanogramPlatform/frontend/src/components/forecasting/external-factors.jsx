@@ -128,10 +128,10 @@ export function ExternalFactors() {
                                     <div
                                         key={`${event.date}-${event.name}`}
                                         className={`rounded-lg border p-3 transition-colors ${event.urgency === 'high'
-                                                ? 'border-red-200 bg-red-50/30'
-                                                : event.urgency === 'medium'
-                                                    ? 'border-amber-200 bg-amber-50/30'
-                                                    : 'border-slate-100 hover:bg-slate-50/50'
+                                            ? 'border-red-200 bg-red-50/30'
+                                            : event.urgency === 'medium'
+                                                ? 'border-amber-200 bg-amber-50/30'
+                                                : 'border-slate-100 hover:bg-slate-50/50'
                                             }`}
                                     >
                                         <div className="flex items-start justify-between gap-3 mb-2">
@@ -148,10 +148,10 @@ export function ExternalFactors() {
                                                             })}
                                                         </p>
                                                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${event.daysUntil <= 3
-                                                                ? "bg-red-50 text-red-700 border-red-200"
-                                                                : event.daysUntil <= 7
-                                                                    ? "bg-amber-50 text-amber-700 border-amber-200"
-                                                                    : "bg-slate-50 text-slate-500 border-slate-200"
+                                                            ? "bg-red-50 text-red-700 border-red-200"
+                                                            : event.daysUntil <= 7
+                                                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                                                : "bg-slate-50 text-slate-500 border-slate-200"
                                                             }`}>
                                                             {event.daysUntil === 0 ? "Today" : event.daysUntil === 1 ? "Tomorrow" : `${event.daysUntil} days`}
                                                         </span>
@@ -160,10 +160,10 @@ export function ExternalFactors() {
                                             </div>
                                             <Badge
                                                 className={`text-[10px] px-1.5 h-5 shadow-none border ${event.overallImpact > 20
-                                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                                        : event.overallImpact > 0
-                                                            ? "bg-blue-50 text-blue-700 border-blue-200"
-                                                            : "bg-red-50 text-red-700 border-red-200"
+                                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                                    : event.overallImpact > 0
+                                                        ? "bg-blue-50 text-blue-700 border-blue-200"
+                                                        : "bg-red-50 text-red-700 border-red-200"
                                                     }`}
                                             >
                                                 {event.overallImpact > 0 ? '+' : ''}{event.overallImpact}%
@@ -172,17 +172,20 @@ export function ExternalFactors() {
 
                                         {/* Predicted impacts by category */}
                                         <div className="pl-[42px] flex flex-wrap gap-1.5">
-                                            {event.predictedImpacts?.slice(0, 4).map((impact, idx) => (
-                                                <span
-                                                    key={idx}
-                                                    className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${impact.direction === 'increase'
+                                            {event.predictedImpacts?.slice(0, 4).map((impact, idx) => {
+                                                const changeValue = impact.adjustedChange ?? impact.baseChange ?? impact.change ?? 0;
+                                                return (
+                                                    <span
+                                                        key={idx}
+                                                        className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${impact.direction === 'increase'
                                                             ? "bg-emerald-50 text-emerald-600 border-emerald-200"
                                                             : "bg-red-50 text-red-600 border-red-200"
-                                                        }`}
-                                                >
-                                                    {impact.category}: {impact.change > 0 ? '+' : ''}{impact.change}%
-                                                </span>
-                                            ))}
+                                                            }`}
+                                                    >
+                                                        {impact.category}: {changeValue > 0 ? '+' : ''}{changeValue}%
+                                                    </span>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )
@@ -231,8 +234,8 @@ export function ExternalFactors() {
                                             </div>
                                         </div>
                                         <Badge className={`text-xs shadow-none border ${parseFloat(pattern.avgImpact) > 0
-                                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                                : "bg-red-50 text-red-700 border-red-200"
+                                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                            : "bg-red-50 text-red-700 border-red-200"
                                             }`}>
                                             {parseFloat(pattern.avgImpact) > 0 ? '+' : ''}{pattern.avgImpact}%
                                         </Badge>
@@ -283,10 +286,10 @@ export function ExternalFactors() {
                             <div
                                 key={idx}
                                 className={`rounded-lg border p-3 ${rec.priority === 'high'
-                                        ? 'border-red-200 bg-red-50/50'
-                                        : rec.priority === 'medium'
-                                            ? 'border-amber-200 bg-amber-50/50'
-                                            : 'border-slate-100 bg-slate-50/30'
+                                    ? 'border-red-200 bg-red-50/50'
+                                    : rec.priority === 'medium'
+                                        ? 'border-amber-200 bg-amber-50/50'
+                                        : 'border-slate-100 bg-slate-50/30'
                                     }`}
                             >
                                 <div className="flex items-start gap-2 mb-2">

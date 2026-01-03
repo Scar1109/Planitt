@@ -17,7 +17,22 @@ export function SeasonalTrends() {
                 setLoading(true)
                 setError(null)
 
-                const productIds = ["DAI-001", "BEV-034", "BAK-008", "PRD-045"]
+                // First, fetch real products from the database
+                let productIds = []
+                try {
+                    const productsResponse = await api.getProducts(null, null, 10)
+                    if (productsResponse?.products?.length > 0) {
+                        productIds = productsResponse.products.slice(0, 4).map(p => p.sku || p.id)
+                    }
+                } catch (e) {
+                    console.warn("Could not fetch products, using fallback:", e)
+                }
+
+                // Fallback to default products if none fetched
+                if (productIds.length === 0) {
+                    productIds = ["LK-BEV-001", "LK-DAI-001", "LK-BAK-001", "LK-PRD-001"]
+                }
+
                 const horizon = viewMode === "weekly" ? 30 : 14
                 const response = await api.getBatchForecast("STORE-001", productIds, horizon)
 
@@ -126,16 +141,20 @@ export function SeasonalTrends() {
                         <span>Demand Patterns</span>
                         {loading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                     </CardTitle>
-                    <div className="toggle-group">
+                    <div className="flex bg-slate-100 p-1 rounded-lg gap-1">
                         <button
                             onClick={() => setViewMode("weekly")}
-                            className={`toggle-item ${viewMode === "weekly" ? "active" : ""}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${viewMode === "weekly"
+                                ? "bg-white text-indigo-600 shadow-sm"
+                                : "text-slate-500 hover:text-slate-700"}`}
                         >
                             Weekly
                         </button>
                         <button
                             onClick={() => setViewMode("daily")}
-                            className={`toggle-item ${viewMode === "daily" ? "active" : ""}`}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${viewMode === "daily"
+                                ? "bg-white text-indigo-600 shadow-sm"
+                                : "text-slate-500 hover:text-slate-700"}`}
                         >
                             Daily
                         </button>
@@ -164,9 +183,9 @@ export function SeasonalTrends() {
                         <div className="h-[280px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                                    <CartesianGrid 
-                                        strokeDasharray="3 3" 
-                                        stroke="hsl(var(--border))" 
+                                    <CartesianGrid
+                                        strokeDasharray="3 3"
+                                        stroke="hsl(var(--border))"
                                         strokeOpacity={0.5}
                                         vertical={false}
                                     />
@@ -191,7 +210,7 @@ export function SeasonalTrends() {
                                         }}
                                         formatter={(value) => [`${value} units`, ""]}
                                     />
-                                    <Legend 
+                                    <Legend
                                         wrapperStyle={{ paddingTop: "10px" }}
                                         formatter={(value) => <span className="text-xs text-muted-foreground">{value}</span>}
                                     />

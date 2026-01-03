@@ -40,6 +40,32 @@ export const api = {
         return response.data;
     },
 
+    // Get batch forecast for multiple products (for Demand Patterns component)
+    async getBatchForecast(storeId = 'STORE-001', productIds = [], horizonDays = 14) {
+        try {
+            const response = await mlClient.post('/api/v1/batch-forecast', {
+                store_id: storeId,
+                product_ids: productIds,
+                horizon_days: horizonDays,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Batch forecast error:', error);
+            // Fallback: fetch individual forecasts
+            const results = await Promise.all(
+                productIds.map(async (productId) => {
+                    try {
+                        const forecast = await this.getForecast(productId, storeId, horizonDays);
+                        return { product_id: productId, forecasts: forecast.forecasts || [], error: null };
+                    } catch (e) {
+                        return { product_id: productId, forecasts: [], error: e.message };
+                    }
+                })
+            );
+            return { store_id: storeId, results, model_version: '2.0.0', total_products: productIds.length, successful: results.filter(r => !r.error).length };
+        }
+    },
+
     // Get waste risk predictions
     async getWasteRisk(inventory, includeRecommendations = true) {
         const response = await mlClient.post('/api/v1/waste-risk', {
