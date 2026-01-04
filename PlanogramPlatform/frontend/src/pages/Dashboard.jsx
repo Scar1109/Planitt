@@ -15,6 +15,13 @@ import AiPromotion from '../components/dashboard/AiPromotion';
 import ForecastPage from './promotional-forecasting/ForecastPage';
 import RecommendationsPage from './promotional-forecasting/RecommendationsPage';
 
+// Optimization Components
+import OptimizationHome from '../components/dashboard/Optimization/OptimizationHome';
+import Shelves from '../components/dashboard/Optimization/Shelves';
+import Products from '../components/dashboard/Optimization/Products';
+import Constraints from '../components/dashboard/Optimization/Constraints';
+import RunsAndEvaluation from '../components/dashboard/Optimization/RunsAndEvaluation';
+
 const DashboardLayout = ({ children }) => {
     return (
         <div className="flex h-screen bg-slate-50 overflow-hidden font-sans text-slate-900">
@@ -67,12 +74,13 @@ const Dashboard = () => {
         <DashboardLayout>
             <Routes>
                 <Route path="/" element={<DashboardHome />} />
-                <Route path="/planograms" element={<Planograms />} />
-                <Route path="/planograms/*" element={<Planograms />} /> {/* Catch sub-routes if mostly same component or specific sub-routes defined above if distinct */}
-                <Route path="/planograms/sub1" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 1</h2><p>Content for Sub Item 1</p></div>} />
-                <Route path="/planograms/sub2" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 2</h2><p>Content for Sub Item 2</p></div>} />
+                {/* Planogram Optimization Routes */}
+                <Route path="/optimization" element={<OptimizationHome />} />
+                <Route path="/optimization/shelves" element={<Shelves />} />
+                <Route path="/optimization/products" element={<Products />} />
+                <Route path="/optimization/constraints" element={<Constraints />} />
+                <Route path="/optimization/runs" element={<RunsAndEvaluation />} />
 
-                <Route path="/planograms/sub3" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 3</h2><p>Content for Sub Item 3</p></div>} />
                 <Route path="/planograms/ai-promotion" element={<AiPromotion />} />
 
                 <Route path="/analytics" element={<Analytics />} />
