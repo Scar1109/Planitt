@@ -17,7 +17,7 @@ const Shelves = () => {
     const fetchShelves = async () => {
         try {
             setLoading(true);
-            const res = await api.get('/shelves');
+            const res = await api.get('/planograms/shelves');
             if (Array.isArray(res.data)) {
                 setShelves(res.data);
             } else {
@@ -65,7 +65,7 @@ const Shelves = () => {
         e.stopPropagation();
         if (window.confirm("Are you sure you want to delete this fixture?")) {
             try {
-                await api.delete(`/shelves/${id}`);
+                await api.delete(`/planograms/shelves/${id}`);
                 fetchShelves();
             } catch (error) {
                 console.error("Failed to delete:", error);
@@ -92,11 +92,11 @@ const Shelves = () => {
                 // I'll add PUT logic to backend later if missing.
                 // For this step I'll try to DELETE old then CREATE new if editing.
 
-                await api.delete(`/shelves/${selectedShelf._id}`); // Delete old
-                await api.post('/shelves', shelfData); // Create new matching one
+                await api.delete(`/planograms/shelves/${selectedShelf._id}`); // Delete old
+                await api.post('/planograms/shelves', shelfData); // Create new matching one
 
             } else {
-                await api.post('/shelves', shelfData);
+                await api.post('/planograms/shelves', shelfData);
             }
             setIsModalOpen(false);
             fetchShelves();
