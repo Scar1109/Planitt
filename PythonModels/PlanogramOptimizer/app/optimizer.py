@@ -37,13 +37,22 @@ class SimulatedAnnealingOptimizer:
                 elif h < 100: level_factor = 1.0
                 else: level_factor = 0.8 # Top
             
-            # Capacity (Depth)
+            # Capacity (Depth & Height)
             prod_depth = product.get('depthCm', 1)
             units_deep = math.floor(level_depth / prod_depth)
             if units_deep < 1: units_deep = 1
+
+            # Vertical Stacking (Height)
+            prod_height = product.get('heightCm', 1)
+            level_height = level.get('usableHeightCm', 0)
+            units_high = math.floor(level_height / prod_height)
+            if units_high < 1: units_high = 1
             
-            # Value = Priority * Facings * UnitsDeep * LocationQuality
-            score += (priority * facings * units_deep * level_factor)
+            # Value = Priority * Facings * UnitsDeep * UnitsHigh * LocationQuality
+            # Adding Density Bonus: more units per linear cm
+            density_bonus = (units_deep * units_high) 
+            
+            score += (priority * facings * density_bonus * level_factor)
             
         return score
 
@@ -165,8 +174,16 @@ class SimulatedAnnealingOptimizer:
                     prod_depth = prod.get('depthCm', 1)
                     units_deep = math.floor(level_depth / prod_depth)
                     if units_deep < 1: units_deep = 1
+
+                    # Height Capacity (Stacking)
+                    prod_height = prod.get('heightCm', 1)
+                    level_height = level.get('usableHeightCm', 0)
+                    units_high = math.floor(level_height / prod_height)
+                    if units_high < 1: units_high = 1
                     
-                    score += (prio * item['facings'] * units_deep * level_factor)
+                    density_bonus = (units_deep * units_high)
+
+                    score += (prio * item['facings'] * density_bonus * level_factor)
         return score
 
     def _state_to_placements(self, state, levels_map):

@@ -4,6 +4,11 @@ import os
 import logging
 import joblib
 from datetime import datetime
+try:
+    from app.train_model import DemandModelTrainer
+except ImportError:
+    # If running script directly (not module), try relative import
+    from train_model import DemandModelTrainer
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -25,6 +30,17 @@ class ModelBasedRanker:
             model_path = os.path.join(self.models_dir, "demand_model.joblib")
             encoder_path = os.path.join(self.models_dir, "sku_encoder.joblib")
             
+            # Check if exists, else Train
+            if not os.path.exists(model_path) or not os.path.exists(encoder_path):
+                logger.info("Model not found. Initiating initial training with available data...")
+                try:
+                    trainer = DemandModelTrainer()
+                    trainer.train()
+                    logger.info("Initial training complete.")
+                except Exception as train_err:
+                    logger.error(f"Auto-training failed: {train_err}")
+
+            # Reload
             if os.path.exists(model_path) and os.path.exists(encoder_path):
                 self.model = joblib.load(model_path)
                 self.encoder = joblib.load(encoder_path)
