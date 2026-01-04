@@ -5,7 +5,8 @@ import {
     getOptimizationRuns,
     getShelves,
     createShelf,
-    deleteShelf
+    deleteShelf,
+    deleteOptimizationRun
 } from '../controllers/planogramController.js';
 
 const router = express.Router();
@@ -13,8 +14,10 @@ const router = express.Router();
 router.use(protect);
 
 // Optimization
-router.post('/optimization/run', runOptimization);
+// Optimization
+router.post('/optimize', runOptimization);
 router.get('/optimization/runs', getOptimizationRuns);
+router.delete('/optimization/runs/:id', deleteOptimizationRun);
 
 // Shelves
 router.get('/shelves', getShelves);

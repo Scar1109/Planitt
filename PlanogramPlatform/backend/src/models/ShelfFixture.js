@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const ShelfFixtureSchema = new mongoose.Schema({
     storeId: { type: mongoose.Schema.Types.ObjectId, ref: "Store", required: true, index: true },
     aisleBaySide: { type: String, required: true, index: true },
-    fixtureType: { type: String, enum: ["gondola", "wall", "endcap", "rack", "other"], default: "other" },
+    fixtureType: { type: String, enum: ["Standard", "Cooler", "gondola", "wall", "endcap", "rack", "other"], default: "other" },
     totalWidthCm: { type: Number, required: true },
     totalHeightCm: { type: Number, required: true },
     totalDepthCm: { type: Number, required: true },

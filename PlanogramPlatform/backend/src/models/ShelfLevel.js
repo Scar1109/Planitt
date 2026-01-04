@@ -8,7 +8,9 @@ const ShelfLevelSchema = new mongoose.Schema({
     usableWidthCm: { type: Number, required: true },
     usableHeightCm: { type: Number, required: true },
     usableDepthCm: { type: Number, required: true },
-    weightLimitKg: { type: Number, default: null }
+    usableDepthCm: { type: Number, required: true },
+    weightLimitKg: { type: Number, default: null },
+    tags: { type: [String], default: [] }
 }, { timestamps: true });
 
 ShelfLevelSchema.index({ storeId: 1, fixtureId: 1, levelIndex: 1 }, { unique: true });
