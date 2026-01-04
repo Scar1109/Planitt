@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class DemandModelTrainer:
     def __init__(self):
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
-        self.data_dir = os.path.join(self.base_dir, "..", "data")
+        self.data_dir = os.path.join(self.base_dir, "..", "..", "..", "Dataset")
         self.models_dir = os.path.join(self.base_dir, "..", "models")
         
         os.makedirs(self.models_dir, exist_ok=True)
