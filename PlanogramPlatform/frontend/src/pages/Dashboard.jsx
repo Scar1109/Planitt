@@ -12,6 +12,8 @@ import UserManagement from '../components/dashboard/UserManagement';
 import StoreSettings from '../components/dashboard/StoreSettings';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
 import AiPromotion from '../components/dashboard/AiPromotion';
+import ForecastPage from './promotional-forecasting/ForecastPage';
+import RecommendationsPage from './promotional-forecasting/RecommendationsPage';
 
 const DashboardLayout = ({ children }) => {
     return (
@@ -48,7 +50,6 @@ const UnassignedView = () => (
 const Dashboard = () => {
     const { user } = useAuth();
 
-    // Check if user is unassigned (and not admin)
     const isUnassigned = user && user.role !== 'admin' && !user.store;
 
     if (isUnassigned) {
@@ -81,6 +82,8 @@ const Dashboard = () => {
                 <Route path="/settings/users" element={<UserManagement />} />
                 <Route path="/settings/store" element={<StoreSettings />} />
                 <Route path="/settings/profile" element={<ProfileSettings />} />
+                <Route path="/promotional-forecasting/forecast" element={<ForecastPage />} />
+                <Route path="/promotional-forecasting/suggested" element={<RecommendationsPage />} />
             </Routes>
         </DashboardLayout>
     );

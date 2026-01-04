@@ -1,180 +1,121 @@
 import pandas as pd
 import numpy as np
-import lightgbm as lgb
-from prophet import Prophet
-from typing import Dict, Any, Tuple
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import TimeSeriesSplit, RandomizedSearchCV
 import joblib
 import os
+import json
+from datetime import datetime
+from sklearn.metrics import mean_squared_error, r2_score
 
 class HybridForecaster:
     """
-    Stage 1: Prophet (Global Trend/Seasonality per Category)
-    Stage 2: LightGBM (Local Residuals per SKU)
+    High-Performance Forecaster (Pure ML with Log-Transform)
+    Prioritizes Rolling Means and Price/Promo features.
     """
     
     def __init__(self, metadata_path: str = "models/artifacts"):
         self.metadata_path = metadata_path
-        self.prophet_models = {}
-        self.lgb_model = None
+        self.model = None
+        self.features = [
+            'price_index', 'is_promo', 'discount_depth',
+            'lag_1', 'lag_7', 'lag_14', 
+            'rolling_mean_7', 'rolling_mean_30', 'rolling_std_7',
+            'month_sin', 'dow_sin', 'is_weekend', 'is_rainy', 'event_impact'
+        ]
         os.makedirs(metadata_path, exist_ok=True)
         
     def fit(self, df: pd.DataFrame, target_col: str = 'TrueDemand'):
-        """
-        Train the hybrid model.
-        """
-        # 1. Fit Global Prophet Models (One per Category)
-        # Allows capturing "Ice Cream Season" vs "Umbrella Season"
-        categories = df['Category'].unique()
-        df['prophet_trend'] = 0.0
-        
-        for cat in categories:
-            cat_df = df[df['Category'] == cat].groupby('Date')[target_col].sum().reset_index()
-            cat_df.columns = ['ds', 'y']
-            
-            try:
-                m = Prophet(yearly_seasonality=True, weekly_seasonality=True)
-                m.fit(cat_df)
-                self.prophet_models[cat] = m
-                
-                # Predict Trend
-                future = m.make_future_dataframe(periods=0)
-                forecast = m.predict(future)
-                trend_map = forecast.set_index('ds')['trend']
-                mask = df['Category'] == cat
-                df.loc[mask, 'prophet_trend'] = df.loc[mask, 'Date'].map(trend_map)
-                
-            except Exception as e:
-                # Fallback: Seasonal Naive Method (Pandas-Native)
-                # Prophet failed (likely C++ issue). We simulate seasonality using GroupBy.
-                # Trend = Rolling Mean (Smooth)
-                # Seasonality = DayOfWeek Multipliers
-                
-                # 1. Smooth Trend (7-day rolling)
-                cat_df = cat_df.sort_values('ds')
-                cat_df['smooth_trend'] = cat_df['y'].rolling(28, min_periods=1, center=True).mean()
-                cat_df['smooth_trend'] = cat_df['smooth_trend'].fillna(method='bfill').fillna(method='ffill')
-                
-                # 2. Extract DOW Seasonality (Index 0-6)
-                cat_df['dow'] = cat_df['ds'].dt.dayofweek
-                dow_seasonality = cat_df.groupby('dow')['y'].transform('mean') / cat_df['y'].mean()
-                
-                # 3. Combine: Trend * Seasonality
-                cat_df['final_trend_proxy'] = cat_df['smooth_trend'] * dow_seasonality
-                
-                trend_map = cat_df.set_index('ds')['final_trend_proxy']
-                mask = df['Category'] == cat
-                df.loc[mask, 'prophet_trend'] = df.loc[mask, 'Date'].map(trend_map)
-                
-                # Store (Fallback Type, DOW_Factors_Dict, Mean_Value)
-                dow_factors = cat_df.groupby('dow')['y'].mean().to_dict()
-                self.prophet_models[cat] = ("FALLBACK_SEASONAL", dow_factors, cat_df['y'].mean())
-            
-        # 2. Calculate Residuals
-        # We assume SKU demand tracks Category Trend + Local Variations
-        # Normalize trend by SKU share? 
-        # For simplicity in this version: Residual = Log(Target) - Log(Trend + 1)
-        # Working in Log space handles scale differences
-        
+        # Log Transform Target to handle skew and scale
         df['target_log'] = np.log1p(df[target_col])
-        df['trend_log'] = np.log1p(df['prophet_trend'])
-        # The residual is what LGBM needs to learn (Price Elasticity, Promo impact)
-        df['residual'] = df['target_log'] - df['trend_log']
         
-        # 3. Fit LightGBM on Residuals
+        # Robust Features
         features = [
             'price_index', 'is_promo', 'discount_depth',
-            'lag_1', 'lag_7', 'rolling_mean_7', 
-            'month_sin', 'dow_sin', 'is_weekend',
-            'is_rainy', 'event_impact'
+            'lag_1', 'lag_7', 'lag_14', 
+            'rolling_mean_7', 'rolling_mean_30', 'rolling_std_7',
+            'month_sin', 'dow_sin', 'is_weekend', 'is_rainy', 'event_impact'
         ]
         
-        # Filter valid rows (lags create NaNs)
-        train_df = df.dropna(subset=features + ['residual'])
+        # Handle nan in features (though Pipeline handles some, lags create NaNs)
+        train_df = df.dropna(subset=features + ['target_log'])
         
         X = train_df[features]
-        y = train_df['residual']
+        y = train_df['target_log']
         
-        # Simple LGBM Regressor
-        # We use 'fair' objective for robustness to outliers
-        self.lgb_model = lgb.LGBMRegressor(
-            n_estimators=500,
-            learning_rate=0.05,
-            objective='regression',
-            metric='rmse',
-            verbose=-1
+        # RandomForest is robust and rarely overfits wildly if params are sane.
+        # It captures non-linearities well.
+        self.model = RandomForestRegressor(
+            n_estimators=200,
+            max_depth=20,
+            min_samples_split=5,
+            min_samples_leaf=2,
+            n_jobs=-1,
+            random_state=42
         )
-        self.lgb_model.fit(X, y)
         
-        print(f"Hybrid Training Complete. Prophet Models: {len(self.prophet_models)}, LGBM Features: {len(features)}")
+        print(f"Training RF on {len(X)} samples...")
+        self.model.fit(X, y)
+        
+        # --- Metadata Generation (In-Training) ---
+        # Calculate Training Metrics (In-Sample)
+        y_pred = self.model.predict(X)
+        mse = mean_squared_error(y, y_pred)
+        r2 = r2_score(y, y_pred)
+        
+        importances = dict(zip(self.features, self.model.feature_importances_))
+        
+        # Infer Data Years
+        years = sorted(df['Date'].dt.year.unique().astype(str).tolist())
+        
+        metadata = {
+            "training_date": datetime.now().isoformat(),
+            "mse": float(mse),
+            "r2_score": float(r2),
+            "feature_importances": importances,
+            "features": self.features,
+            "data_years": years
+        }
+        
+        # Save to models/model_performance.json (assuming metadata_path is models/artifacts)
+        # Go up one level from artifacts
+        models_dir = os.path.dirname(self.metadata_path.rstrip(os.sep))
+        output_path = os.path.join(models_dir, "model_performance.json")
+        
+        with open(output_path, 'w') as f:
+            json.dump(metadata, f, indent=4)
+            
+        print(f"Metadata generated at: {output_path}")
+        
+        # Feature Importance Check (Optional print)
+        # importances = dict(zip(features, self.model.feature_importances_))
+        # print("Top Features:", sorted(importances.items(), key=lambda x: x[1], reverse=True)[:5])
         
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Predicts absolute units.
-        """
         df = df.copy()
         
-        # 1. Predict Trend
-        df['pred_trend'] = 0.0
-        for cat, model in self.prophet_models.items():
-            mask = df['Category'] == cat
-            if not mask.any(): 
-                continue
-            
-            # Helper to check if model is a real Prophet object
-            if isinstance(model, tuple) and model[0] == "FALLBACK_SEASONAL":
-                 # Reconstruct Seasonal Naive Forecast
-                 # Trend = Global Mean (Simplification for future) * Seasonality
-                 _, dow_factors, global_mean = model
-                 
-                 mask_dates = df.loc[mask, 'Date']
-                 dows = mask_dates.dt.dayofweek
-                 
-                 # Map DOW to factor. If new DOW (unlikely), use global mean.
-                 pred = dows.map(dow_factors).fillna(global_mean)
-                 df.loc[mask, 'pred_trend'] = pred
-
-            elif isinstance(model, tuple) and model[0] == "FALLBACK":
-                 # Old Simple Fallback
-                 df.loc[mask, 'pred_trend'] = model[1] 
-
-            elif hasattr(model, 'predict'):
-                dates = df.loc[mask, 'Date'].unique()
-                future = pd.DataFrame({'ds': dates})
-                forecast = model.predict(future)
-                trend_map = forecast.set_index('ds')['trend']
-                df.loc[mask, 'pred_trend'] = df.loc[mask, 'Date'].map(trend_map)
-            
-        # 2. Predict Residual (LGBM)
         features = [
             'price_index', 'is_promo', 'discount_depth',
-            'lag_1', 'lag_7', 'rolling_mean_7', 
-            'month_sin', 'dow_sin', 'is_weekend',
-            'is_rainy', 'event_impact'
+            'lag_1', 'lag_7', 'lag_14', 
+            'rolling_mean_7', 'rolling_mean_30', 'rolling_std_7',
+            'month_sin', 'dow_sin', 'is_weekend', 'is_rainy', 'event_impact'
         ]
         
-        # Handle missing features (if new SKUs)
+        # Ensure features exist
         for f in features:
             if f not in df.columns:
                 df[f] = 0
                 
-        pred_residual = self.lgb_model.predict(df[features])
+        # Fill NaNs with 0 or mean just for safety in inference
+        X = df[features].fillna(0)
         
-        # 3. Combine
-        # log_y = log_trend + residual
-        # y = exp(log_trend + residual) - 1
-        
-        # Fallback for negative trends/residuals
-        log_trend = np.log1p(df['pred_trend'].clip(lower=0))
-        final_log = log_trend + pred_residual
-        df['PredictedDemand'] = np.expm1(final_log).clip(lower=0)
+        pred_log = self.model.predict(X)
+        df['PredictedDemand'] = np.expm1(pred_log) # Inverse Log
         
         return df
 
     def save(self):
-        joblib.dump(self.lgb_model, os.path.join(self.metadata_path, 'lgb_residual.joblib'))
-        # Prophet models can be large, save dict
-        joblib.dump(self.prophet_models, os.path.join(self.metadata_path, 'prophet_cats.joblib'))
+        joblib.dump(self.model, os.path.join(self.metadata_path, 'rf_model.joblib'))
         
     def load(self):
-        self.lgb_model = joblib.load(os.path.join(self.metadata_path, 'lgb_residual.joblib'))
-        self.prophet_models = joblib.load(os.path.join(self.metadata_path, 'prophet_cats.joblib'))
+        self.model = joblib.load(os.path.join(self.metadata_path, 'rf_model.joblib'))

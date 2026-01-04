@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import promotionRoutes from './routes/promotionRoutes.js';
 
 const app = express();
 
@@ -21,6 +22,7 @@ import storeRoutes from './routes/storeRoutes.js';
 app.use('/api/stores', storeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/promotions', promotionRoutes);
 
 app.get('/health', (req, res) => {
     res.json({ status: "ok", service: "planogram-platform-backend" });

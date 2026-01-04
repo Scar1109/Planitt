@@ -38,6 +38,15 @@ const Sidebar = () => {
                 { name: 'AI Promotion', path: '/dashboard/planograms/ai-promotion' },
             ]
         },
+        {
+            name: 'Promotional Forecasting',
+            path: '/dashboard/promotional-forecasting',
+            icon: FaChartLine,
+            subItems: [
+                { name: 'Forecast', path: '/dashboard/promotional-forecasting/forecast' },
+                { name: 'Recommendations', path: '/dashboard/promotional-forecasting/suggested' },
+            ]
+        },
         { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
         { name: 'Store Info', path: '/dashboard/store', icon: FaStore },
         {

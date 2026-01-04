@@ -4,7 +4,9 @@ from src.adapters.data_loader import DataLoader
 from src.engine.pipelines import FeaturePipeline
 from src.domain.entities import SKUInfo, PromotionCandidate, PromotionPlan, Constraint, ObjectiveType, PromotionType
 from src.agents.workers.steward import InventorySteward
-from src.agents.workers.strategist import StrategistAgent
+from src.agents.workers.steward import InventorySteward
+# from src.agents.workers.strategist import StrategistAgent
+from src.agents.workers.futurist import FuturistAgent
 from src.agents.workers.futurist import FuturistAgent
 from src.agents.workers.marketer import MarketerAgent
 from src.agents.workers.narrator import NarratorAgent
@@ -17,7 +19,7 @@ class Orchestrator:
     
     def __init__(self):
         self.steward = InventorySteward()
-        self.strategist = StrategistAgent()
+        # self.strategist = StrategistAgent()
         self.marketer = MarketerAgent()
         self.futurist = FuturistAgent()
         self.narrator = NarratorAgent()
@@ -89,7 +91,17 @@ class Orchestrator:
         
         # 2. Optimization (Strategist)
         # Solve the Knapsack Problem
-        selected_candidates = self.strategist.generate_plan(candidates, sku_map, constraints, objective)
+        # 2. Optimization (Strategist)
+        # Solve the Knapsack Problem
+        try:
+            from src.agents.workers.strategist import StrategistAgent
+            strategist = StrategistAgent()
+            selected_candidates = strategist.generate_plan(candidates, sku_map, constraints, objective)
+        except ImportError:
+            print("Strategist/OrTools not available. Returning all valid candidates.")
+            selected_candidates = candidates
+
+        # selected_candidates = self.strategist.generate_plan(candidates, sku_map, constraints, objective)
         
         print(f"Strategist selected {len(selected_candidates)} promotions.")
         

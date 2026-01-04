@@ -17,8 +17,31 @@ class DataLoader:
             return pd.DataFrame(columns=['SKU', 'Category', 'CostPriceLKR', 'ProductName'])
         
         df = pd.read_csv(files[0])
+        
+        col_map = {
+            'sku': 'SKU', 'category': 'Category', 
+            'costPriceLKR': 'CostPriceLKR', 'costpricelkr': 'CostPriceLKR',
+            'productName': 'ProductName', 'productname': 'ProductName'
+        }
+        df = df.rename(columns=col_map)
+        
         # Ensure SKU is string and stripped
-        df['SKU'] = df['SKU'].astype(str).str.strip()
+        if 'SKU' in df.columns:
+            df['SKU'] = df['SKU'].astype(str).str.strip()
+        else:
+            # Fallback if no SKU column (unlikely in master)
+            pass
+            
+        return df
+
+    def _normalize_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        col_map = {
+            'date': 'Date', 'sku': 'SKU', 'unitsSold': 'UnitsSold', 'unitssold': 'UnitsSold',
+            'unitPriceLKR': 'AvgPrice', 'unitpricelkr': 'AvgPrice', 'avgprice': 'AvgPrice',
+            'promotionFlag': 'PromoFlag', 'promotionflag': 'PromoFlag',
+            'promotionType': 'PromoType', 'promotiontype': 'PromoType'
+        }
+        df = df.rename(columns=col_map)
         return df
 
     def load_sales_history(self, years: List[int]) -> pd.DataFrame:
@@ -27,14 +50,19 @@ class DataLoader:
         for year in years:
             files = glob.glob(os.path.join(self.dataset_path, "**", f"Sales_{year}.csv"), recursive=True)
             if files:
-                dfs.append(pd.read_csv(files[0]))
+                df = pd.read_csv(files[0])
+                df = self._normalize_columns(df)
+                dfs.append(df)
         
         if not dfs:
             raise FileNotFoundError("No Sales history found")
             
         df = pd.concat(dfs, ignore_index=True)
+        
         # Ensure SKU is string and stripped
-        df['SKU'] = df['SKU'].astype(str).str.strip()
+        if 'SKU' in df.columns:
+            df['SKU'] = df['SKU'].astype(str).str.strip()
+        
         return df
 
     def load_inventory_snapshot(self, year: int) -> pd.DataFrame:
@@ -44,8 +72,12 @@ class DataLoader:
             raise FileNotFoundError(f"Inventory_Snapshot_{year}.csv not found")
             
         df = pd.read_csv(files[0])
+        col_map = {'sku': 'SKU', 'stockLevel': 'StockLevel', 'stocklevel': 'StockLevel'}
+        df = df.rename(columns=col_map)
+        
         # Ensure SKU is string and stripped
-        df['SKU'] = df['SKU'].astype(str).str.strip()
+        if 'SKU' in df.columns:
+            df['SKU'] = df['SKU'].astype(str).str.strip()
         return df
 
     def load_weather(self, years: List[int]) -> pd.DataFrame:
@@ -60,7 +92,10 @@ class DataLoader:
              # Return empty DF if weather misses, don't crash, handle in Guardian
             return pd.DataFrame()
             
-        return pd.concat(dfs, ignore_index=True)
+        df = pd.concat(dfs, ignore_index=True)
+        col_map = {'date': 'Date', 'isRainy': 'IsRainy', 'eventScore': 'EventScore'}
+        df = df.rename(columns=col_map)
+        return df
 
     def build_golden_table(self, years: List[int] = [2022, 2023, 2024]) -> pd.DataFrame:
         """
