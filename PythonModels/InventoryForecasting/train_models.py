@@ -48,7 +48,8 @@ logger = logging.getLogger(__name__)
 
 # Paths
 BASE_DIR = Path(__file__).parent
-DATA_DIR = BASE_DIR / "data"
+# DATA_DIR = BASE_DIR / "data"  <-- Old path
+DATA_DIR = BASE_DIR.parent.parent / "Dataset" # Point to root Dataset folder
 MODELS_DIR = BASE_DIR / "models"
 
 # Create models directory

@@ -172,7 +172,4 @@ const Sidebar = () => {
     );
 };
 
-// No content provided, this step handles the file check via separate tool if needed,
-// but here I'm using replace_file_content which requires content.
-// Actually, `Sidebar.jsx` might have conflicts down below too?
-// Re-reading file first to be safe.
+export default Sidebar;
