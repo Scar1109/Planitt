@@ -11,6 +11,9 @@ import Settings from '../components/dashboard/Settings';
 import UserManagement from '../components/dashboard/UserManagement';
 import StoreSettings from '../components/dashboard/StoreSettings';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
+import ComplianceDashboard from './ComplianceDashboard';
+import SystemAnalysis from './SystemAnalysis';
+import ComplianceHistory from './ComplianceHistory';
 import AiPromotion from '../components/dashboard/AiPromotion';
 import ForecastPage from './promotional-forecasting/ForecastPage';
 import RecommendationsPage from './promotional-forecasting/RecommendationsPage';
@@ -84,6 +87,9 @@ const Dashboard = () => {
                 <Route path="/planograms/ai-promotion" element={<AiPromotion />} />
 
                 <Route path="/analytics" element={<Analytics />} />
+                <Route path="/compliance" element={<ComplianceDashboard />} />
+                <Route path="/compliance/analysis" element={user && user.role === 'admin' ? <SystemAnalysis /> : <Navigate to="/dashboard/compliance" replace />} />
+                <Route path="/compliance/history" element={user && user.role === 'admin' ? <ComplianceHistory /> : <Navigate to="/dashboard/compliance" replace />} />
                 <Route path="/store" element={<StoreInfo />} />
 
                 <Route path="/settings" element={<Settings />} />

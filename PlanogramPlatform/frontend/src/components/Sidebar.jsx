@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaHome, FaBox, FaChartLine, FaCog, FaStore, FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { FaHome, FaBox, FaChartLine, FaCog, FaStore, FaChevronDown, FaChevronRight, FaRobot } from 'react-icons/fa';
 import classNames from 'classnames';
 
 const Sidebar = () => {
@@ -47,6 +47,16 @@ const Sidebar = () => {
                 { name: 'AI Promotion', path: '/dashboard/planograms/ai-promotion' },
                 { name: 'Forecast', path: '/dashboard/promotional-forecasting/forecast' },
                 { name: 'Recommendations', path: '/dashboard/promotional-forecasting/suggested' },
+            ]
+        },
+        {
+            name: 'Compliance ',
+            path: '/dashboard/compliance',
+            icon: FaRobot,
+            subItems: [
+                { name: 'System Forensics', path: '/dashboard/compliance/analysis' },
+                { name: 'Compliance Intelligence', path: '/dashboard/compliance', end: true },
+                { name: 'Compliance History', path: '/dashboard/compliance/history' }
             ]
         },
         { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
