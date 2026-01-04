@@ -108,15 +108,15 @@ const ComplianceHistory = () => {
                                                 <span className="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">Failed</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-right flex justify-end gap-2">
-                                            <button 
+                                        <td className="px-10 py-4 text-right flex justify-end gap-2">
+                                            {/* <button 
                                                 onClick={() => handleRerun(run._id)} 
                                                 disabled={actionLoading === run._id}
                                                 className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
                                                 title="Rerun Check"
                                             >
                                                 {actionLoading === run._id ? 'Running...' : <FaRedo />}
-                                            </button>
+                                            </button> */}
                                             <button 
                                                 onClick={() => handleDelete(run._id)} 
                                                 disabled={actionLoading === run._id}
