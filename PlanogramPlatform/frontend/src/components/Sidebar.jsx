@@ -49,7 +49,6 @@ const Sidebar = () => {
                 { name: 'Recommendations', path: '/dashboard/promotional-forecasting/suggested' },
             ]
         },
-        { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
         {
             name: 'Compliance ',
             path: '/dashboard/compliance',
@@ -60,6 +59,7 @@ const Sidebar = () => {
                 { name: 'Compliance History', path: '/dashboard/compliance/history' }
             ]
         },
+        { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
         { name: 'Store Info', path: '/dashboard/store', icon: FaStore },
         {
             name: 'Settings',

@@ -10,7 +10,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, mean_absolu
 from datetime import datetime
 
 # --- CONFIGURATION ---
-DATA_DIR = os.path.join("models", "Data", "2024")
+DATA_DIR = os.path.join("..", "..", "Dataset", "2024")
 ARTIFACTS_DIR = "model_artifacts"
 MODEL_FILE = os.path.join(ARTIFACTS_DIR, "sales_model.pkl")
 METADATA_FILE = os.path.join(ARTIFACTS_DIR, "training_metadata.json")
@@ -38,7 +38,7 @@ def normalize_cols(df):
 def load_data():
     """Loads Sales and Product data from 2022-2024 and combines them."""
     years = ['2022', '2023', '2024']
-    base_data_dir = os.path.join("models", "Data")
+    base_data_dir = os.path.join("..", "..", "Dataset")
     
     all_data = []
     

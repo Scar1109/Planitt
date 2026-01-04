@@ -3,7 +3,7 @@ import complianceAgent from '../agents/complianceAgent.js';
 import ComplianceRun from '../models/ComplianceRun.js';
 import Planogram from '../models/Planogram.js';
 
-const PYTHON_SERVICE_URL = 'http://localhost:8000';
+const PYTHON_SERVICE_URL = 'http://localhost:8002';
 
 export const analyzeCompliance = async (req, res) => {
     try {
@@ -46,14 +46,14 @@ export const analyzeCompliance = async (req, res) => {
 
         try {
             // Assuming current_planogram has an _id or we use a provided ID
-            const planogramId = current_planogram._id || current_planogram.id; 
-            
+            const planogramId = current_planogram._id || current_planogram.id;
+
             // Calculate an aggregate score if not provided directly
             const score = pythonResponse.score || pythonResponse.compliance_score || 0;
 
             const newRun = new ComplianceRun({
                 name: generatedName,
-                planogram_id: planogramId, 
+                planogram_id: planogramId,
                 compliance_score: score,
                 details: { ...finalResponse, inputs: { current_planogram, optimized_planogram } }, // Store inputs for rerun
                 status: 'success'
@@ -63,7 +63,7 @@ export const analyzeCompliance = async (req, res) => {
             finalResponse.run_name = generatedName;
         } catch (saveError) {
             console.error("Error saving compliance run:", saveError);
-             // We don't fail the request if save fails, but we might want to notify
+            // We don't fail the request if save fails, but we might want to notify
             finalResponse.save_error = saveError.message;
         }
 
@@ -105,13 +105,13 @@ export const rerunCompliance = async (req, res) => {
         // Check if we stored input data in details
         if (run.details && run.details.inputs) {
             const { current_planogram, optimized_planogram } = run.details.inputs;
-            
+
             // Reuse analyze logic
             // We can call the analyze function internally or just duplicate the logic
             // Calling via axios locally or just refactoring analyzeCompliance to be callable?
             // For simplicity, I'll essentially replicate the analyzeCompliance core steps here
-            
-             // 1. Call Python Compliance Service
+
+            // 1. Call Python Compliance Service
             const pyRes = await axios.post(`${PYTHON_SERVICE_URL}/analyze`, {
                 current_planogram,
                 optimized_planogram
@@ -121,26 +121,26 @@ export const rerunCompliance = async (req, res) => {
             // 2. Call OpenAI Agent
             const agentSummary = await complianceAgent.generateSummary(pythonResponse);
 
-             // 3. Combine
+            // 3. Combine
             const finalResponse = {
                 ...pythonResponse,
                 agent_summary: agentSummary,
                 model_used: process.env.OPENAI_MODEL || "gpt-3.5-turbo"
             };
-            
+
             // Update the existing run with new results? Or create new?
             // "rerun" usually implies updating the status or creating a new entry.
             // I'll update the existing run with new details.
-            
+
             run.compliance_score = pythonResponse.compliance_score || 0;
             run.details = { ...finalResponse, inputs: run.details.inputs };
             run.run_date = new Date(); // Update timestamp
             await run.save();
 
             res.json({ message: "Run updated", result: finalResponse });
-            
+
         } else {
-             res.status(400).json({ message: "Historical data missing inputs, cannot rerun." });
+            res.status(400).json({ message: "Historical data missing inputs, cannot rerun." });
         }
 
     } catch (error) {
@@ -160,10 +160,10 @@ export const getSystemMetadata = async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error("Metadata Fetch Error:", error.message);
-        res.status(503).json({ 
-            message: "Model metadata unavailable", 
-            timestamp: new Date().toISOString(), 
-            metrics: { MAE: 0, RMSE: 0 } 
+        res.status(503).json({
+            message: "Model metadata unavailable",
+            timestamp: new Date().toISOString(),
+            metrics: { MAE: 0, RMSE: 0 }
         });
     }
 };

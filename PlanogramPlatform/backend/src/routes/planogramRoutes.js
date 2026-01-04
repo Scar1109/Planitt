@@ -6,22 +6,27 @@ import {
     getShelves,
     createShelf,
     deleteShelf,
-    deleteOptimizationRun
+    deleteOptimizationRun,
+    getAllPlanograms,
+    getPlanogramById
 } from '../controllers/planogramController.js';
 
 const router = express.Router();
 
-router.use(protect);
+// Specific Routes FIRST
+// Shelves
+router.use(protect); // Protect specific routes if needed, or move protection logic per route
+router.get('/shelves', getShelves);
+router.post('/shelves', createShelf);
+router.delete('/shelves/:id', deleteShelf);
 
-// Optimization
 // Optimization
 router.post('/optimize', runOptimization);
 router.get('/optimization/runs', getOptimizationRuns);
 router.delete('/optimization/runs/:id', deleteOptimizationRun);
 
-// Shelves
-router.get('/shelves', getShelves);
-router.post('/shelves', createShelf);
-router.delete('/shelves/:id', deleteShelf);
+// Planogram CRUD (Generic routes LAST)
+router.get('/', getAllPlanograms);
+router.get('/:id', getPlanogramById); // This catches everything else
 
 export default router;

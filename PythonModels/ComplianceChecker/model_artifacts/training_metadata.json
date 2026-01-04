@@ -1,11 +1,11 @@
 {
-    "timestamp": "2026-01-04T21:56:17.063470",
+    "timestamp": "2026-01-05T01:45:34.843505",
     "metrics": {
-        "MAE": 1.405713438987732,
-        "RMSE": 2.0447079201363243,
-        "MAPE": 0.2285989373922348,
-        "R2_Score": 0.9074990749359131,
-        "Accuracy_Percent": 90.75
+        "MAE": 1.4054921865463257,
+        "RMSE": 2.046580169643395,
+        "MAPE": 0.2285243719816208,
+        "R2_Score": 0.9073295593261719,
+        "Accuracy_Percent": 90.73
     },
     "params": {
         "subsample": 0.9,
@@ -27,7 +27,7 @@
         "PromotionFlag",
         "PromotionType_Code"
     ],
-    "sanity_check_uplift_percent": 54.82466125488281,
+    "sanity_check_uplift_percent": 54.28278350830078,
     "model_type": "XGBRegressor",
     "baseline_inference": {
         "avg_customer_count": 3.675241225298108
