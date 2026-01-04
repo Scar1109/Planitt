@@ -17,7 +17,9 @@ const ProductSchema = new mongoose.Schema({
     depthCm: { type: Number, required: true },
     unitCostLKR: { type: Number, required: true },
     minFacings: { type: Number, default: 1 },
-    maxFacings: { type: Number, default: 10 }
+    maxFacings: { type: Number, default: 10 },
+    allowedTags: [{ type: String }],
+    isActive: { type: Boolean, default: true }
 });
 
 export default mongoose.model("Product", ProductSchema);

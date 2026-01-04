@@ -14,6 +14,16 @@ import ProfileSettings from '../components/dashboard/ProfileSettings';
 import ComplianceDashboard from './ComplianceDashboard';
 import SystemAnalysis from './SystemAnalysis';
 import ComplianceHistory from './ComplianceHistory';
+import AiPromotion from '../components/dashboard/AiPromotion';
+import ForecastPage from './promotional-forecasting/ForecastPage';
+import RecommendationsPage from './promotional-forecasting/RecommendationsPage';
+
+// Optimization Components
+import OptimizationHome from '../components/dashboard/Optimization/OptimizationHome';
+import Shelves from '../components/dashboard/Optimization/Shelves';
+import Products from '../components/dashboard/Optimization/Products';
+import Constraints from '../components/dashboard/Optimization/Constraints';
+import RunsAndEvaluation from '../components/dashboard/Optimization/RunsAndEvaluation';
 
 const DashboardLayout = ({ children }) => {
     return (
@@ -50,7 +60,6 @@ const UnassignedView = () => (
 const Dashboard = () => {
     const { user } = useAuth();
 
-    // Check if user is unassigned (and not admin)
     const isUnassigned = user && user.role !== 'admin' && !user.store;
 
     if (isUnassigned) {
@@ -68,11 +77,14 @@ const Dashboard = () => {
         <DashboardLayout>
             <Routes>
                 <Route path="/" element={<DashboardHome />} />
-                <Route path="/planograms" element={<Planograms />} />
-                <Route path="/planograms/*" element={<Planograms />} /> {/* Catch sub-routes if mostly same component or specific sub-routes defined above if distinct */}
-                <Route path="/planograms/sub1" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 1</h2><p>Content for Sub Item 1</p></div>} />
-                <Route path="/planograms/sub2" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 2</h2><p>Content for Sub Item 2</p></div>} />
-                <Route path="/planograms/sub3" element={<div className="p-8"><h2 className="text-2xl font-bold mb-4">Planogram Sub Item 3</h2><p>Content for Sub Item 3</p></div>} />
+                {/* Planogram Optimization Routes */}
+                <Route path="/optimization" element={<OptimizationHome />} />
+                <Route path="/optimization/shelves" element={<Shelves />} />
+                <Route path="/optimization/products" element={<Products />} />
+                <Route path="/optimization/constraints" element={<Constraints />} />
+                <Route path="/optimization/runs" element={<RunsAndEvaluation />} />
+
+                <Route path="/planograms/ai-promotion" element={<AiPromotion />} />
 
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/compliance" element={<ComplianceDashboard />} />
@@ -84,6 +96,8 @@ const Dashboard = () => {
                 <Route path="/settings/users" element={<UserManagement />} />
                 <Route path="/settings/store" element={<StoreSettings />} />
                 <Route path="/settings/profile" element={<ProfileSettings />} />
+                <Route path="/promotional-forecasting/forecast" element={<ForecastPage />} />
+                <Route path="/promotional-forecasting/suggested" element={<RecommendationsPage />} />
             </Routes>
         </DashboardLayout>
     );

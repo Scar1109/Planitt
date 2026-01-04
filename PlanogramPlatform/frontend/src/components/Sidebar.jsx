@@ -28,13 +28,25 @@ const Sidebar = () => {
     const navItems = [
         { name: 'Dashboard', path: '/dashboard', icon: FaHome, end: true },
         {
-            name: 'Planograms',
-            path: '/dashboard/planograms',
+            name: 'Planogram Optimization',
+            path: '/dashboard/optimization',
             icon: FaBox,
             subItems: [
-                { name: 'Sub Item 1', path: '/dashboard/planograms/sub1' },
-                { name: 'Sub Item 2', path: '/dashboard/planograms/sub2' },
-                { name: 'Sub Item 3', path: '/dashboard/planograms/sub3' },
+                { name: 'Optimization', path: '/dashboard/optimization', end: true },
+                { name: 'Shelves', path: '/dashboard/optimization/shelves' },
+                { name: 'Products', path: '/dashboard/optimization/products' },
+                { name: 'Constraints', path: '/dashboard/optimization/constraints' },
+                { name: 'Runs & Evaluation', path: '/dashboard/optimization/runs' },
+            ]
+        },
+        {
+            name: 'Promotional Forecasting',
+            path: '/dashboard/promotional-forecasting',
+            icon: FaChartLine,
+            subItems: [
+                { name: 'AI Promotion', path: '/dashboard/planograms/ai-promotion' },
+                { name: 'Forecast', path: '/dashboard/promotional-forecasting/forecast' },
+                { name: 'Recommendations', path: '/dashboard/promotional-forecasting/suggested' },
             ]
         },
         { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
