@@ -1,0 +1,238 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+import { FaChartLine, FaSpinner, FaExclamationTriangle, FaCheckCircle, FaRobot, FaMagic } from 'react-icons/fa';
+
+const ForecastPage = () => {
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState(null);
+    const [error, setError] = useState(null);
+    const [formData, setFormData] = useState({
+        sku_id: 'EH-EGB-400',
+        category: 'Beverages',
+        brand: 'Elephant House',
+        base_price: 150.00,
+        cost_price: 95.00,
+        lead_time_days: 3,
+        stock_level: 1000,
+        test_discount: 0.10
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: name === 'sku_id' || name === 'category' || name === 'brand' ? value : parseFloat(value)
+        }));
+    };
+
+    const handleForecast = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        setResult(null);
+
+        const payload = {
+            sku: {
+                sku_id: formData.sku_id,
+                category: formData.category,
+                brand: formData.brand,
+                base_price: formData.base_price,
+                cost_price: formData.cost_price,
+                lead_time_days: formData.lead_time_days,
+                stock_level: formData.stock_level
+            },
+            test_discount: formData.test_discount
+        };
+
+        try {
+            // Artificial delay to mimic complex calculation as requested
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            const response = await axios.post('http://localhost:3000/api/promotions/simulate', payload, {
+                withCredentials: true
+            });
+            setResult(response.data);
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.detail || err.message || 'Failed to forecast');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="space-y-6">
+            <header className="mb-8">
+                <h1 className="text-2xl font-bold text-slate-900 flex items-center">
+                    <FaRobot className="mr-3 text-indigo-600" />
+                    Promotional Uplift Forecast
+                </h1>
+                <p className="text-slate-500 mt-2">
+                    Use AI to predict the performance of your next promotion in the Sri Lankan market.
+                </p>
+            </header>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Form Section */}
+                <div className="lg:col-span-1">
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h2 className="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">Simulation Parameters</h2>
+                        <form onSubmit={handleForecast} className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-medium text-slate-500 mb-1">SKU ID</label>
+                                <input type="text" name="sku_id" value={formData.sku_id} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
+                                    <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Brand</label>
+                                    <input type="text" name="brand" value={formData.brand} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Base Price (LKR)</label>
+                                    <input type="number" step="1" name="base_price" value={formData.base_price} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Cost Price (LKR)</label>
+                                    <input type="number" step="1" name="cost_price" value={formData.cost_price} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Stock Level</label>
+                                    <input type="number" name="stock_level" value={formData.stock_level} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Lead Time (Days)</label>
+                                    <input type="number" name="lead_time_days" value={formData.lead_time_days} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                </div>
+                            </div>
+
+                            <div className="pt-2">
+                                <label className="block text-xs font-medium text-slate-700 mb-1">Proposed Discount: {(formData.test_discount * 100).toFixed(0)}%</label>
+                                <input
+                                    type="range"
+                                    name="test_discount"
+                                    min="0.05"
+                                    max="0.90"
+                                    step="0.05"
+                                    value={formData.test_discount}
+                                    onChange={handleChange}
+                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                                />
+                                <div className="flex justify-between text-xs text-slate-400 mt-1">
+                                    <span>5%</span>
+                                    <span>90%</span>
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-all shadow-md shadow-indigo-200 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+                            >
+                                {loading ? (
+                                    <>
+                                        <FaSpinner className="animate-spin mr-2" />
+                                        Running Simulation...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FaMagic className="mr-2" />
+                                        Predict Uplift
+                                    </>
+                                )}
+                            </button>
+                            <p className="text-center text-xs text-slate-400 mt-2">
+                                Forecast Duration: 7 Days
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+                {/* Results Section */}
+                <div className="lg:col-span-2 space-y-6">
+                    {error && (
+                        <div className="bg-red-50 text-red-700 p-4 rounded-xl border border-red-100 flex items-start">
+                            <FaExclamationTriangle className="mt-1 mr-3 flex-shrink-0" />
+                            <div>
+                                <h3 className="font-semibold">Simulation Failed</h3>
+                                <p className="text-sm">{error}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {!result && !loading && !error && (
+                        <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-slate-400 bg-white/50 border-2 border-dashed border-slate-200 rounded-xl">
+                            <FaChartLine className="w-16 h-16 mb-4 text-slate-200" />
+                            <p className="text-lg font-medium">Ready to Simulate</p>
+                            <p className="text-sm">Enter SKU details and discount to see AI predictions.</p>
+                        </div>
+                    )}
+
+                    {result && (
+                        <div className="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden animate-fade-in-up">
+                            <div className="bg-indigo-600 p-6 text-white">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <h2 className="text-2xl font-bold flex items-center">
+                                            <FaCheckCircle className="mr-2 text-green-300" />
+                                            Forecast Ready
+                                        </h2>
+                                        <p className="opacity-90 mt-1">
+                                            Analysis for {result.sku_id} with {(formData.test_discount * 100).toFixed(0)}% Discount
+                                        </p>
+                                    </div>
+                                    <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-center">
+                                        <span className="text-xs uppercase tracking-wider opacity-75 block">Profit Lift</span>
+                                        <span className="text-xl font-bold">
+                                            Rs. {result.profit_lift?.toLocaleString()}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-6">
+                                <div className="grid grid-cols-3 gap-6 mb-8">
+                                    <div className="text-center p-4 bg-slate-50 rounded-lg border border-slate-100">
+                                        <div className="text-sm text-slate-500 mb-1">Baseline Sales</div>
+                                        <div className="text-2xl font-bold text-slate-700">{result.baseline?.toFixed(1)} <span className="text-sm font-normal text-slate-400">units</span></div>
+                                    </div>
+                                    <div className="text-center p-4 bg-green-50 rounded-lg border border-green-100">
+                                        <div className="text-sm text-green-600 mb-1">Predicted Uplift</div>
+                                        <div className="text-2xl font-bold text-green-700">+{result.uplift?.toFixed(1)} <span className="text-sm font-normal text-green-500">units</span></div>
+                                    </div>
+                                    <div className="text-center p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                                        <div className="text-sm text-indigo-600 mb-1">Revenue Lift</div>
+                                        <div className="text-2xl font-bold text-indigo-700">+ Rs. {result.revenue_lift?.toLocaleString()}</div>
+                                    </div>
+                                </div>
+
+                                {result.risks && result.risks.length > 0 && (
+                                    <div className="mt-6">
+                                        <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3 flex items-center">
+                                            <FaExclamationTriangle className="text-amber-500 mr-2" />
+                                            Risk Assessment
+                                        </h3>
+                                        <div className="space-y-2">
+                                            <div className="bg-amber-50 text-amber-800 p-3 rounded-md text-sm border-l-4 border-amber-400">
+                                                {JSON.stringify(result.risks)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div >
+    );
+};
+
+export default ForecastPage;

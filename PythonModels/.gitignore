@@ -3,3 +3,9 @@ __pycache__/
 venv/
 .env
 .pytest_cache/
+<<<<<<< HEAD
+sales_model.pkl
+*.csv
+=======
+*.joblib
+>>>>>>> origin/development
