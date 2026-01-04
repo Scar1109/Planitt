@@ -14,114 +14,49 @@ export function SeasonalTrends() {
     useEffect(() => {
         const fetchSeasonalData = async () => {
             try {
-                setLoading(true)
-                setError(null)
-
-                // First, fetch real products from the database
-                let productIds = []
-                try {
-                    const productsResponse = await api.getProducts(null, null, 10)
-                    if (productsResponse?.products?.length > 0) {
-                        productIds = productsResponse.products.slice(0, 4).map(p => p.sku || p.id)
-                    }
-                } catch (e) {
-                    console.warn("Could not fetch products, using fallback:", e)
-                }
-
-                // Fallback to default products if none fetched
-                if (productIds.length === 0) {
-                    productIds = ["LK-BEV-001", "LK-DAI-001", "LK-BAK-001", "LK-PRD-001"]
-                }
-
-                const horizon = viewMode === "weekly" ? 30 : 14
-                const response = await api.getBatchForecast("STORE-001", productIds, horizon)
+                // Hardcoded realistic data for demo purposes as requested
+                // Simulating API delay
+                await new Promise(resolve => setTimeout(resolve, 800))
 
                 if (viewMode === "weekly") {
-                    const dayOfWeekData = {}
-                    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-
-                    response.results.forEach((result) => {
-                        result.forecasts.forEach((forecast) => {
-                            const date = new Date(forecast.date)
-                            const dayName = daysOfWeek[date.getDay()]
-
-                            if (!dayOfWeekData[dayName]) {
-                                dayOfWeekData[dayName] = { day: dayName, demand: 0, count: 0 }
-                            }
-                            dayOfWeekData[dayName].demand += forecast.forecast
-                            dayOfWeekData[dayName].count++
-                        })
-                    })
-
-                    const weeklyData = daysOfWeek.map((day) => {
-                        const data = dayOfWeekData[day]
-                        const avgDemand = data ? data.demand / data.count : 0
-
-                        return {
-                            day: day.substring(0, 3),
-                            "This Week": Math.round(avgDemand),
-                            "Last Week": Math.round(avgDemand * (0.9 + Math.random() * 0.2)),
-                            "2 Weeks Ago": Math.round(avgDemand * (0.85 + Math.random() * 0.2)),
-                        }
-                    })
-
+                    // Weekly pattern: High weekends, mid-week dip
+                    const weeklyData = [
+                        { day: "Sun", "This Week": 450, "Last Week": 412, "2 Weeks Ago": 395 },
+                        { day: "Mon", "This Week": 320, "Last Week": 298, "2 Weeks Ago": 315 },
+                        { day: "Tue", "This Week": 290, "Last Week": 285, "2 Weeks Ago": 292 },
+                        { day: "Wed", "This Week": 310, "Last Week": 305, "2 Weeks Ago": 302 },
+                        { day: "Thu", "This Week": 340, "Last Week": 332, "2 Weeks Ago": 328 },
+                        { day: "Fri", "This Week": 410, "Last Week": 388, "2 Weeks Ago": 375 },
+                        { day: "Sat", "This Week": 480, "Last Week": 465, "2 Weeks Ago": 445 },
+                    ]
                     setChartData(weeklyData)
-
-                    const weekendAvg = ((weeklyData[0]["This Week"] || 0) + (weeklyData[6]["This Week"] || 0)) / 2
-                    const weekdayAvg = weeklyData.slice(1, 6).reduce((sum, day) => sum + (day["This Week"] || 0), 0) / 5
-                    const growth = ((weekendAvg - weekdayAvg) / weekdayAvg) * 100
-
-                    const peakDayData = weeklyData.reduce((max, day) =>
-                        (day["This Week"] || 0) > (max["This Week"] || 0) ? day : max
-                    )
-
-                    setStats({
-                        growth: growth.toFixed(1),
-                        avgDemand: Math.round(weeklyData.reduce((sum, day) => sum + (day["This Week"] || 0), 0) / 7),
-                        peakDay: daysOfWeek[weeklyData.indexOf(peakDayData)],
-                    })
+                    setStats({ growth: "14.2", avgDemand: 371, peakDay: "Saturday" })
                 } else {
-                    const aggregatedByDate = {}
+                    // Daily pattern: 14 days forecast with rising trend
+                    const today = new Date()
+                    // Base pattern
+                    const baseValues = [42, 38, 35, 39, 45, 58, 65, 41, 36, 34, 38, 48, 62, 68]
 
-                    response.results.forEach((result) => {
-                        result.forecasts.slice(0, 14).forEach((forecast) => {
-                            const dateKey = forecast.date
-                            if (!aggregatedByDate[dateKey]) {
-                                aggregatedByDate[dateKey] = { date: dateKey, total: 0 }
-                            }
-                            aggregatedByDate[dateKey].total += forecast.forecast
-                        })
-                    })
-
-                    const sortedDates = Object.keys(aggregatedByDate).sort()
-                    const dailyData = sortedDates.map((dateKey) => {
-                        const date = new Date(dateKey)
-                        const dayLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                        const demand = Math.round(aggregatedByDate[dateKey].total)
-
+                    const dailyData = baseValues.map((val, i) => {
+                        const date = new Date(today)
+                        date.setDate(today.getDate() + i)
+                        const forecastVal = val * 5 // Scaling for visuals
                         return {
-                            day: dayLabel,
-                            "Forecast": demand,
-                            "Trend": Math.round(demand * (0.95 + Math.random() * 0.1)),
+                            day: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                            "Forecast": forecastVal,
+                            "Trend": Math.round(forecastVal * 0.92)
                         }
                     })
 
-                    setChartData(dailyData.slice(0, 14))
-
-                    const avgDemand = Math.round(dailyData.reduce((sum, day) => sum + (day["Forecast"] || 0), 0) / dailyData.length)
-                    const peakDay = dailyData.reduce((max, day) => (day["Forecast"] || 0) > (max["Forecast"] || 0) ? day : max)
-                    const minDay = dailyData.reduce((min, day) => (day["Forecast"] || 0) < (min["Forecast"] || 0) ? day : min)
-                    const variance = (((peakDay["Forecast"] || 0) - (minDay["Forecast"] || 0)) / avgDemand * 100).toFixed(1)
-
-                    setStats({
-                        growth: variance,
-                        avgDemand: avgDemand,
-                        peakDay: peakDay.day,
-                    })
+                    setChartData(dailyData)
+                    // Peak is the last day in this sequence
+                    setStats({ growth: "8.4", avgDemand: 230, peakDay: dailyData[13].day })
                 }
+
+                setError(null)
             } catch (err) {
-                console.error("Error fetching seasonal data:", err)
-                setError(err instanceof Error ? err.message : "Unknown error")
+                console.error("Error setting mock data:", err)
+                setError("Failed to load data")
             } finally {
                 setLoading(false)
             }
