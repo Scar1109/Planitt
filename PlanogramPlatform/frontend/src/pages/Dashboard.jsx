@@ -11,6 +11,9 @@ import Settings from '../components/dashboard/Settings';
 import UserManagement from '../components/dashboard/UserManagement';
 import StoreSettings from '../components/dashboard/StoreSettings';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
+import AiPromotion from '../components/dashboard/AiPromotion';
+import ForecastPage from './promotional-forecasting/ForecastPage';
+import RecommendationsPage from './promotional-forecasting/RecommendationsPage';
 
 // Optimization Components
 import OptimizationHome from '../components/dashboard/Optimization/OptimizationHome';
@@ -54,7 +57,6 @@ const UnassignedView = () => (
 const Dashboard = () => {
     const { user } = useAuth();
 
-    // Check if user is unassigned (and not admin)
     const isUnassigned = user && user.role !== 'admin' && !user.store;
 
     if (isUnassigned) {
@@ -72,14 +74,14 @@ const Dashboard = () => {
         <DashboardLayout>
             <Routes>
                 <Route path="/" element={<DashboardHome />} />
-                <Route path="/" element={<DashboardHome />} />
-
                 {/* Planogram Optimization Routes */}
                 <Route path="/optimization" element={<OptimizationHome />} />
                 <Route path="/optimization/shelves" element={<Shelves />} />
                 <Route path="/optimization/products" element={<Products />} />
                 <Route path="/optimization/constraints" element={<Constraints />} />
                 <Route path="/optimization/runs" element={<RunsAndEvaluation />} />
+
+                <Route path="/planograms/ai-promotion" element={<AiPromotion />} />
 
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/store" element={<StoreInfo />} />
@@ -88,6 +90,8 @@ const Dashboard = () => {
                 <Route path="/settings/users" element={<UserManagement />} />
                 <Route path="/settings/store" element={<StoreSettings />} />
                 <Route path="/settings/profile" element={<ProfileSettings />} />
+                <Route path="/promotional-forecasting/forecast" element={<ForecastPage />} />
+                <Route path="/promotional-forecasting/suggested" element={<RecommendationsPage />} />
             </Routes>
         </DashboardLayout>
     );
