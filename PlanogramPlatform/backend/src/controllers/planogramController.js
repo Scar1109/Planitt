@@ -5,14 +5,13 @@ import OptimizationRun from '../models/OptimizationRun.js';
 
 export const runOptimization = async (req, res) => {
     try {
-        const { planogramId } = req.body;
+        let { planogramId, config } = req.body;
         const userId = req.user._id;
 
-        if (!planogramId) {
-            return res.status(400).json({ error: "planogramId is required" });
-        }
+        // Temp: If no planogramId, use a dummy one for now or create one
+        if (!planogramId) planogramId = "temp_plano_" + Date.now();
 
-        const result = await planogramAgent.orchestrateOptimization(userId, planogramId);
+        const result = await planogramAgent.orchestrateOptimization(userId, planogramId, config);
         res.json(result);
 
     } catch (error) {
@@ -36,11 +35,15 @@ export const getOptimizationRuns = async (req, res) => {
 
 export const getShelves = async (req, res) => {
     try {
-        if (!req.user.store) {
-            return res.json([]);
+        let storeId = req.user.store;
+
+        // Fallback for prototype/dev if user has no store assigned
+        if (!storeId) {
+            console.log("No store on user, using fallback store.");
+            storeId = "6956357610ec0ab348888893";
         }
 
-        const fixtures = await ShelfFixture.find({ storeId: req.user.store, isActive: true });
+        const fixtures = await ShelfFixture.find({ storeId: storeId, isActive: true });
 
         // For each fixture, get levels
         const fixturesWithLevels = await Promise.all(fixtures.map(async (fixture) => {
@@ -50,6 +53,7 @@ export const getShelves = async (req, res) => {
 
         res.json(fixturesWithLevels);
     } catch (error) {
+        console.error("Get Shelves Error:", error);
         res.status(500).json({ error: "Failed to fetch shelves" });
     }
 };
@@ -58,12 +62,14 @@ export const createShelf = async (req, res) => {
     try {
         const { aisleBaySide, fixtureType, totalWidthCm, totalHeightCm, totalDepthCm, levels, tags } = req.body;
 
-        if (!req.user.store) {
-            return res.status(400).json({ error: "User is not assigned to a store." });
+        let storeId = req.user.store;
+        if (!storeId) {
+            console.log("[createShelf] No store on user, using fallback store.");
+            storeId = "6956357610ec0ab348888893";
         }
 
         const newFixture = new ShelfFixture({
-            storeId: req.user.store,
+            storeId: storeId,
             aisleBaySide,
             fixtureType,
             totalWidthCm,
@@ -75,14 +81,16 @@ export const createShelf = async (req, res) => {
 
         if (levels && Array.isArray(levels)) {
             const levelDocs = levels.map((lvl, index) => ({
-                storeId: req.user.store,
+                storeId: storeId,
                 fixtureId: newFixture._id,
                 levelIndex: index,
                 heightFromFloorCm: lvl.heightFromFloorCm || (index * 40),
                 usableWidthCm: lvl.usableWidthCm || totalWidthCm,
                 usableHeightCm: lvl.usableHeightCm || 40,
-                usableDepthCm: lvl.usableDepthCm || totalDepthCm
+                usableDepthCm: lvl.usableDepthCm || totalDepthCm,
+                tags: lvl.tags || [] // Save level tags
             }));
+
             await ShelfLevel.insertMany(levelDocs);
         }
 
@@ -97,9 +105,26 @@ export const createShelf = async (req, res) => {
 export const deleteShelf = async (req, res) => {
     try {
         const { id } = req.params;
-        await ShelfFixture.findOneAndUpdate({ _id: id, storeId: req.user.store }, { isActive: false });
+        let storeId = req.user.store;
+        if (!storeId) storeId = "6956357610ec0ab348888893";
+
+        await ShelfFixture.findOneAndDelete({ _id: id, storeId: storeId });
         res.json({ message: "Shelf deleted" });
     } catch (error) {
         res.status(500).json({ error: "Failed to delete shelf" });
+    }
+};
+
+export const deleteOptimizationRun = async (req, res) => {
+    try {
+        const { id } = req.params;
+        // Ensure user owns the run
+        const deleted = await OptimizationRun.findOneAndDelete({ _id: id, ownerUserId: req.user._id });
+        if (!deleted) {
+            return res.status(404).json({ error: "Run not found or unauthorized" });
+        }
+        res.json({ message: "Optimization run deleted" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to delete run" });
     }
 };

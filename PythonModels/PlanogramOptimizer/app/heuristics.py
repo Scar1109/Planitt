@@ -60,6 +60,13 @@ class HeuristicOptimizer:
         for p in sorted_products:
             sku = p['sku']
             min_facings = p.get('minFacings', 1)
+            # --- Constraint Checks ---
+            product_tags = p.get('tags', []) # e.g. ["biscuits", "sweet"]
+            product_category = p.get('category', '').lower()
+            
+            min_facings = p.get('minFacings', 1)
+            
+            # Standard Dims
             width = p['widthCm']
             height = p['heightCm']
             depth = p['depthCm']
@@ -72,6 +79,46 @@ class HeuristicOptimizer:
                 lid = lvl['_id']
                 state = shelf_state[lid]
                 
+                # TAG MATCHING LOGIC
+                # Normalize tags to lower case for comparison
+                level_tags = [t.lower() for t in lvl.get('tags', [])]
+                product_tags_lower = [t.lower() for t in product_tags]
+                
+                # If Level has tags, strict enforcement?
+                if level_tags:
+                    # 1. Generic OPEN Shelf Check
+                    # If shelf is explicitly "general" or "misc", allow ANYTHING (skip other checks)
+                    if "general" in level_tags or "misc" in level_tags:
+                        pass # Allow placement
+                        
+                    # 2. Special Rule: Coolers
+                    elif "cooler" in level_tags or "beverages" in level_tags:
+                        # Must be beverage/cooler item
+                        if not ("beverages" in product_tags_lower or "soda" in product_tags_lower or "juice" in product_tags_lower or "cold_drinks" in product_tags_lower):
+                            continue # Skip non-beverages
+                        # No snacks in cooler
+                        if "chips" in product_tags_lower or "nuts" in product_tags_lower:
+                            continue
+                            
+                    # 3. Special Rule: Snacks
+                    elif "snacks" in level_tags:
+                         if not ("snacks" in product_tags_lower or "chips" in product_tags_lower or "nuts" in product_tags_lower or "biscuits" in product_tags_lower):
+                            # Allow biscuits in snack aisle? Maybe strict:
+                            if "biscuits" not in level_tags: 
+                                pass 
+                            
+                    # 4. Generic Match for Critical Categories
+                    else:
+                        critical_tags = {"biscuits", "noodles", "pasta", "spices", "beverages", "snacks"}
+                        shelf_critical = critical_tags.intersection(set(level_tags))
+                        prod_critical = critical_tags.intersection(set(product_tags_lower))
+                        
+                        if shelf_critical:
+                            # If shelf is critical type (e.g. Biscuits), product MUST share at least one
+                            # UNLESS product category matches the critical tag
+                            if not shelf_critical.intersection(set(product_tags_lower)) and product_category not in shelf_critical:
+                                continue
+
                 # Check Dimensions
                 if lvl['usableHeightCm'] < height: continue
                 if lvl['usableDepthCm'] < depth: continue
@@ -87,7 +134,10 @@ class HeuristicOptimizer:
                         'width_one': width,
                         'total_width': needed_width,
                         'priority': p.get('priority_score', 0),
-                        'max_facings': p.get('maxFacings', 10)
+                        'priority': p.get('priority_score', 0),
+                        'max_facings': p.get('maxFacings', 10),
+                        'height': height,
+                        'depth': depth
                     }
                     state['remaining_width'] -= needed_width
                     placed = True

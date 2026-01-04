@@ -63,7 +63,7 @@ class PlanogramAgent {
 
             const completion = await this.openai.chat.completions.create({
                 messages: [{ role: "system", content: "You represent a sophisticated backend agent." }, { role: "user", content: prompt }],
-                model: "gpt-3.5-turbo",
+                model: process.env.OPENAI_MODEL,
                 response_format: { type: "json_object" }
             });
 
@@ -86,7 +86,7 @@ class PlanogramAgent {
      * orchestrateOptimization
      * Main entry point to run the pipeline.
      */
-    async orchestrateOptimization(userId, planogramId) {
+    async orchestrateOptimization(userId, planogramId, userConfig = null) {
         console.log(`[Agent] Starting optimization for user ${userId}, planogram ${planogramId}`);
 
         // 1. Get User and Store
@@ -106,13 +106,42 @@ class PlanogramAgent {
         if (!store) throw new Error("Store not found for user.");
 
         // 2. Get Agent Decision/Config
-        const config = await this.analyzeDataAndGetConfig(userId);
+        let config;
+        if (userConfig) {
+            console.log("[Agent] Using Manual User Configuration");
+            config = userConfig;
+
+            // Map Frontend RunType to Backend Enum
+            const runTypeMap = {
+                'fast': 'heuristic_only',
+                'balanced': 'hybrid',
+                'deep': 'metaheuristic_only'
+            };
+            if (runTypeMap[config.runType]) {
+                config.runType = runTypeMap[config.runType];
+            }
+
+            // Ensure default structure if missing
+            if (!config.objectiveWeights) config.objectiveWeights = { sales: 0.5, margin: 0.5 };
+            if (!config.hyperparams) config.hyperparams = { iterations: 100 };
+            config.explanation = "Manual User Configuration";
+        } else {
+            console.log("[Agent] Generating Auto-Configuration");
+            config = await this.analyzeDataAndGetConfig(userId);
+        }
+
+        // Ensure planogramId is a valid ObjectId
+        let validPlanogramId = planogramId;
+        if (!mongoose.Types.ObjectId.isValid(planogramId)) {
+            validPlanogramId = new mongoose.Types.ObjectId(); // Generate a valid ID
+            console.log(`[Agent] Generated new ObjectId for run: ${validPlanogramId}`);
+        }
 
         // 3. Create OptimizationRun record
         const runRecord = new OptimizationRun({
             ownerUserId: userId,
-            planogramId: planogramId,
-            runType: config.runType,
+            planogramId: validPlanogramId,
+            runType: config.runType, // Now mapped correctly
             solver: "python_optimizer_v1",
             objectiveWeights: config.objectiveWeights,
             hyperparams: config.hyperparams,
@@ -125,24 +154,56 @@ class PlanogramAgent {
             // 4. Gather Data (Products, Fixtures, Levels)
             const products = await Product.find({}).lean();
 
-            // Filter fixtures by Store ID
-            const fixtures = await ShelfFixture.find({ storeId: store._id, isActive: true }).lean();
-            if (fixtures.length === 0) throw new Error("No active fixtures found for this store.");
+            // Initial Fetch
+            const allFixtures = await ShelfFixture.find({ storeId: store._id, isActive: true }).lean();
+            if (allFixtures.length === 0) throw new Error("No active fixtures found for this store.");
 
-            const fixtureIds = fixtures.map(f => f._id);
-            const levels = await ShelfLevel.find({ fixtureId: { $in: fixtureIds } }).lean();
+            const allFixtureIds = allFixtures.map(f => f._id);
+            const allLevels = await ShelfLevel.find({ fixtureId: { $in: allFixtureIds } }).lean();
+
+            let targetFixtures = allFixtures;
+            let targetLevels = allLevels;
+
+            // Apply Scope Filtering
+            if (config.scope) {
+                console.log(`[Agent] Filtering scope: ${config.scope.type}`);
+
+                if (config.scope.type === 'fixture' && config.scope.fixtureId) {
+                    // Filter for Single Fixture
+                    targetFixtures = allFixtures.filter(f => f._id.toString() === config.scope.fixtureId);
+                    targetLevels = allLevels.filter(l => l.fixtureId.toString() === config.scope.fixtureId);
+
+                } else if (config.scope.type === 'level' && config.scope.levelId) {
+                    // Filter for Single Level
+                    // We need the level object to find its parent fixture ID
+                    const selectedLevel = allLevels.find(l => l._id.toString() === config.scope.levelId);
+                    if (selectedLevel) {
+                        targetLevels = [selectedLevel];
+                        // We must send the parent fixture context
+                        targetFixtures = allFixtures.filter(f => f._id.toString() === selectedLevel.fixtureId.toString());
+                    }
+                }
+            }
 
             // Construct Payload for Python Service
             const payload = {
                 run_id: runRecord._id.toString(),
                 config: config,
                 products: products,
-                fixtures: fixtures,
-                levels: levels
+                fixtures: targetFixtures,
+                levels: targetLevels.map(l => ({
+                    ...l,
+                    tags: l.tags || [] // Ensure tags are sent!
+                }))
             };
 
+            // DEBUG: Log sample level to ensure tags are present
+            if (payload.levels.length > 0) {
+                console.log("[Agent] Sample Level Tags:", JSON.stringify(payload.levels[0].tags));
+            }
+
             // 5. Call Python Service (Sync wait for demonstration)
-            console.log(`[Agent] Sending ${products.length} products and ${levels.length} levels to Python...`);
+            console.log(`[Agent] Sending ${products.length} products and ${targetLevels.length} levels to Python...`);
             const response = await axios.post(`${this.pythonUrl}/optimize`, payload);
 
             if (response.data.status === 'success') {
@@ -161,6 +222,7 @@ class PlanogramAgent {
                     status: "success",
                     score: response.data.score,
                     placementCount: response.data.placements.length,
+                    resultingPlacements: response.data.placements,
                     message: "Optimization completed successfully."
                 };
             } else {
