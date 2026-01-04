@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FaHome, FaBox, FaChartLine, FaCog, FaStore, FaChevronDown, FaChevronRight, FaRobot } from 'react-icons/fa';
+import { TbTrendingUp } from 'react-icons/tb';
 import classNames from 'classnames';
 
 const Sidebar = () => {
@@ -59,8 +60,15 @@ const Sidebar = () => {
                 { name: 'Compliance History', path: '/dashboard/compliance/history' }
             ]
         },
-        { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
-        { name: 'Store Info', path: '/dashboard/store', icon: FaStore },
+        {
+            name: 'Inventory',
+            path: '/dashboard/inventory',
+            icon: TbTrendingUp,
+            subItems: [
+                { name: 'Forecasting', path: '/dashboard/forecasting' },
+                { name: 'Wastage Prevention', path: '/dashboard/inventory/wastage' }
+            ]
+        },
         {
             name: 'Settings',
             path: '/dashboard/settings',
