@@ -82,10 +82,11 @@ export const api = {
     },
 
     // Get products list from MongoDB (Node.js backend)
-    async getProducts(category = null, search = null, limit = 500) {
+    async getProducts(category = null, search = null, limit = 500, sortBy = null) {
         const params = new URLSearchParams();
         if (category) params.append('category', category);
         if (limit) params.append('limit', limit.toString());
+        if (sortBy) params.append('sortBy', sortBy);
 
         const response = await nodeClient.get(`/products?${params.toString()}`);
         return response.data;

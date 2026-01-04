@@ -12,7 +12,10 @@ const config = {
         env: process.env.NODE_ENV || 'development'
     },
     openai: {
-        apiKey: process.env.OPENAI_API_KEY || null
+        apiKey: process.env.OPENAI_API_KEY || null,
+        model: process.env.OPENAI_MODEL,
+        maxTokens: parseInt(process.env.OPENAI_MAX_TOKENS) || 1000,
+        temperature: parseFloat(process.env.OPENAI_TEMPERATURE) || 0.7
     }
 };
 

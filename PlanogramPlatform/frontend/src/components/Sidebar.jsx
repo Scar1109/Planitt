@@ -46,7 +46,15 @@ const Sidebar = () => {
             icon: FaCog,
             subItems: settingsSubItems.length > 0 ? settingsSubItems : undefined
         },
-        { name: "Forecasting", path: "/dashboard/forecasting", icon: TbTrendingUp },
+        {
+            name: 'Inventory',
+            path: '/dashboard/inventory',
+            icon: TbTrendingUp,
+            subItems: [
+                { name: 'Forecasting', path: '/dashboard/forecasting' },
+                { name: 'Wastage Prevention', path: '/dashboard/inventory/wastage' }
+            ]
+        },
     ];
 
     const isSubItemActive = (subItems) => {

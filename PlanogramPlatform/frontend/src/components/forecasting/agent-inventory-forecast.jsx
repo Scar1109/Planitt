@@ -55,8 +55,8 @@ export function AgentInventoryForecast() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                // Fetch all products from MongoDB (POS real-time data)
-                const response = await api.getProducts(null, null, 2000);
+                // Fetch all products from MongoDB (POS real-time data), sorted by high sales impact
+                const response = await api.getProducts(null, null, 2000, 'highSales');
                 if (response.success && response.data) {
                     setProductsList(response.data);
                     setTotalProducts(response.total || response.data.length);

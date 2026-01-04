@@ -29,7 +29,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestClassifier
+from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import (
@@ -282,6 +282,16 @@ def prepare_demand_features(sales_df, weather_df, products_df):
         lambda x: x.rolling(window=30, min_periods=1).mean()
     )
     
+    # NEW: Volatility feature (Standard Deviation)
+    sales_df['sales7daystd'] = sales_df.groupby('sku')['unitssold'].transform(
+        lambda x: x.rolling(window=7, min_periods=1).std()
+    ).fillna(0) # Fill NaN (first few days) with 0
+
+    # NEW: Intermediate lag
+    sales_df['sales14dayavg'] = sales_df.groupby('sku')['unitssold'].transform(
+        lambda x: x.rolling(window=14, min_periods=1).mean()
+    )
+    
     sales_df['dayofweek_avg'] = sales_df.groupby(['sku', 'dayofweek'])['unitssold'].transform('mean')
     
     # ============================================
@@ -335,7 +345,7 @@ def prepare_demand_features(sales_df, weather_df, products_df):
     ])
     
     # Add lag features
-    feature_cols.extend(['sales7dayavg', 'sales30dayavg', 'dayofweek_avg'])
+    feature_cols.extend(['sales7dayavg', 'sales14dayavg', 'sales30dayavg', 'sales7daystd', 'dayofweek_avg'])
     
     # Add category
     if 'category_encoded' in sales_df.columns:
@@ -393,18 +403,21 @@ def train_demand_model(X, y, feature_cols):
     logger.info(f"   Test samples: {len(X_test):,}")
     logger.info(f"   Total features: {len(feature_cols)}")
     
-    model = GradientBoostingRegressor(
-        n_estimators=300,
-        max_depth=10,
+    
+    # Optimized Gradient Boosting parameters for better accuracy
+    # Target: RMSE < 10, MAPE < 15%
+    # Using HistGradientBoostingRegressor for speed (LightGBM inspired)
+    model = HistGradientBoostingRegressor(
+        max_iter=500,               # Equivalent to n_estimators
         learning_rate=0.05,
-        min_samples_split=15,
-        min_samples_leaf=8,
-        subsample=0.8,
-        max_features='sqrt',
+        max_depth=7,
+        max_leaf_nodes=31,
+        early_stopping=True,
+        validation_fraction=0.1,
+        n_iter_no_change=20,
         random_state=42,
         verbose=1
     )
-    
     logger.info("\n   🔄 Training in progress (optimized for multi-year patterns)...")
     logger.info("   ⏳ This may take several minutes...")
     model.fit(X_train, y_train)
@@ -445,45 +458,55 @@ def train_demand_model(X, y, feature_cols):
     
     # Feature importance analysis
     logger.info(f"\n🔍 Feature Importance Analysis:")
-    importance = sorted(zip(feature_cols, model.feature_importances_), key=lambda x: -x[1])
-    
-    logger.info(f"\n   📊 Top 15 Most Important Features:")
-    for i, (feat, imp) in enumerate(importance[:15], 1):
-        logger.info(f"      {i:2d}. {feat:30s} - {imp:.4f}")
-    
-    # Group importance by category
-    weather_features = ['avgtemperaturec', 'temphot', 'tempcool', 'tempmoderate', 
-                       'rainfallmm', 'israiny', 'isheavyrain', 'isdryday', 'rainfall7dayavg',
-                       'humiditypercent', 'highhumidity']
-    
-    cultural_features = ['ispoyaday', 'isnewyear', 'isves ak', 'isramadanperiod', 'ischristmasseason']
-    
-    monsoon_features = ['isswmonsoon', 'isnemonsoon', 'isintermonsoon']
-    
-    interaction_features = ['hotweather_beverage', 'hotweather_icecream', 
-                           'rainyday_packagedgoods', 'poyaday_vegdemand', 'poyaday_meatdecline']
-    
-    year_features = ['year', 'yeartrend', 'is2022crisis']
-    
-    lag_features = ['sales7dayavg', 'sales30dayavg', 'dayofweek_avg']
-    
-    def get_category_importance(feature_list):
-        return sum(imp for feat, imp in importance if feat in feature_list)
-    
-    weather_imp = get_category_importance(weather_features)
-    cultural_imp = get_category_importance(cultural_features)
-    monsoon_imp = get_category_importance(monsoon_features)
-    interaction_imp = get_category_importance(interaction_features)
-    year_imp = get_category_importance(year_features)
-    lag_imp = get_category_importance(lag_features)
-    
-    logger.info(f"\n   📁 Feature Category Impact:")
-    logger.info(f"      - Weather Features:          {weather_imp:.4f} ({weather_imp*100:.1f}%)")
-    logger.info(f"      - Cultural Events:           {cultural_imp:.4f} ({cultural_imp*100:.1f}%)")
-    logger.info(f"      - Monsoon Patterns:          {monsoon_imp:.4f} ({monsoon_imp*100:.1f}%)")
-    logger.info(f"      - Weather-Category Interact: {interaction_imp:.4f} ({interaction_imp*100:.1f}%)")
-    logger.info(f"      - Year/Economic Factors:     {year_imp:.4f} ({year_imp*100:.1f}%)")
-    logger.info(f"      - Lag/Historical Patterns:   {lag_imp:.4f} ({lag_imp*100:.1f}%)")
+    try:
+        importance = sorted(zip(feature_cols, model.feature_importances_), key=lambda x: -x[1])
+        
+        logger.info(f"\n   📊 Top 15 Most Important Features:")
+        for i, (feat, imp) in enumerate(importance[:15], 1):
+            logger.info(f"      {i:2d}. {feat:30s} - {imp:.4f}")
+        
+        # Group importance by category
+        weather_features = ['avgtemperaturec', 'temphot', 'tempcool', 'tempmoderate', 
+                           'rainfallmm', 'israiny', 'isheavyrain', 'isdryday', 'rainfall7dayavg',
+                           'humiditypercent', 'highhumidity']
+        
+        cultural_features = ['ispoyaday', 'isnewyear', 'isves ak', 'isramadanperiod', 'ischristmasseason']
+        
+        monsoon_features = ['isswmonsoon', 'isnemonsoon', 'isintermonsoon']
+        
+        interaction_features = ['hotweather_beverage', 'hotweather_icecream', 
+                               'rainyday_packagedgoods', 'poyaday_vegdemand', 'poyaday_meatdecline']
+        
+        year_features = ['year', 'yeartrend', 'is2022crisis']
+        lag_features = ['sales7dayavg', 'sales14dayavg', 'sales30dayavg', 'sales7daystd', 'dayofweek_avg']
+        
+        def get_category_importance(feature_list):
+            return sum(imp for feat, imp in importance if feat in feature_list)
+        
+        weather_imp = get_category_importance(weather_features)
+        cultural_imp = get_category_importance(cultural_features)
+        monsoon_imp = get_category_importance(monsoon_features)
+        interaction_imp = get_category_importance(interaction_features)
+        year_imp = get_category_importance(year_features)
+        lag_imp = get_category_importance(lag_features)
+        
+        logger.info(f"\n   📁 Feature Category Impact:")
+        logger.info(f"      - Weather Features:          {weather_imp:.4f} ({weather_imp*100:.1f}%)")
+        logger.info(f"      - Cultural Events:           {cultural_imp:.4f} ({cultural_imp*100:.1f}%)")
+        logger.info(f"      - Monsoon Patterns:          {monsoon_imp:.4f} ({monsoon_imp*100:.1f}%)")
+        logger.info(f"      - Weather-Category Interact: {interaction_imp:.4f} ({interaction_imp*100:.1f}%)")
+        logger.info(f"      - Year/Economic Factors:     {year_imp:.4f} ({year_imp*100:.1f}%)")
+        logger.info(f"      - Lag/Historical Patterns:   {lag_imp:.4f} ({lag_imp*100:.1f}%)")
+        
+    except AttributeError:
+        logger.info("   ℹ️ Feature importance not available for HistGradientBoostingRegressor (skipped)")
+        importance = []
+        weather_imp = 0.0
+        cultural_imp = 0.0
+        monsoon_imp = 0.0
+        interaction_imp = 0.0
+        year_imp = 0.0
+        lag_imp = 0.0
     
     model_path = MODELS_DIR / "demand_forecast_model.pkl"
     with open(model_path, 'wb') as f:

@@ -12,6 +12,7 @@ import UserManagement from '../components/dashboard/UserManagement';
 import StoreSettings from '../components/dashboard/StoreSettings';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
 import Forecasting from './Forecasting';
+import WastagePrevention from './WastagePrevention';
 
 const DashboardLayout = ({ children }) => {
     return (
@@ -80,6 +81,7 @@ const Dashboard = () => {
                 <Route path="/settings/store" element={<StoreSettings />} />
                 <Route path="/settings/profile" element={<ProfileSettings />} />
                 <Route path="/forecasting" element={<Forecasting />} />
+                <Route path="/inventory/wastage" element={<WastagePrevention />} />
             </Routes>
         </DashboardLayout>
     );
