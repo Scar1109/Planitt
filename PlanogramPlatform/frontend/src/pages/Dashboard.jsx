@@ -11,6 +11,8 @@ import Settings from '../components/dashboard/Settings';
 import UserManagement from '../components/dashboard/UserManagement';
 import StoreSettings from '../components/dashboard/StoreSettings';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
+import Forecasting from './Forecasting';
+import WastagePrevention from './WastagePrevention';
 import ComplianceDashboard from './ComplianceDashboard';
 import SystemAnalysis from './SystemAnalysis';
 import ComplianceHistory from './ComplianceHistory';
@@ -96,10 +98,12 @@ const Dashboard = () => {
                 <Route path="/settings/users" element={<UserManagement />} />
                 <Route path="/settings/store" element={<StoreSettings />} />
                 <Route path="/settings/profile" element={<ProfileSettings />} />
+                <Route path="/forecasting" element={<Forecasting />} />
+                <Route path="/inventory/wastage" element={<WastagePrevention />} />
                 <Route path="/promotional-forecasting/forecast" element={<ForecastPage />} />
                 <Route path="/promotional-forecasting/suggested" element={<RecommendationsPage />} />
-            </Routes>
-        </DashboardLayout>
+            </Routes >
+        </DashboardLayout >
     );
 };
 
