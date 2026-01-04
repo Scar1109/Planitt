@@ -21,6 +21,7 @@ import planogramRoutes from './routes/planogramRoutes.js';
 import storeRoutes from './routes/storeRoutes.js';
 // Check which product routes file exists, assuming productRoutes.js is the standard in dev
 import productRoutes from './routes/productRoutes.js';
+import productRoutesNew from './routes/product.routes.js';
 import weatherRoutes from './routes/weather.routes.js';
 import eventsRoutes from './routes/events.routes.js';
 import externalFactorsRoutes from './routes/externalFactors.routes.js';
@@ -29,6 +30,7 @@ import complianceRoutes from './routes/compliance.routes.js';
 
 app.use('/api/stores', storeRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/inventory/products', productRoutesNew); // Dedicated route for Inventory Forecasting
 app.use('/api/weather', weatherRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/external-factors', externalFactorsRoutes);
@@ -38,7 +40,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/promotions', promotionRoutes);
 app.use('/api/planograms', planogramRoutes);
 app.use('/api/compliance', complianceRoutes);
-app.use('/api/products', productRoutes);
+
 
 
 app.get('/health', (req, res) => {

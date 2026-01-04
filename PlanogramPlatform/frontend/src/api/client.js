@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Python ML Service (Demand Forecasting) - port 8000
-const ML_API_BASE = 'http://localhost:8000';
+const ML_API_BASE = 'http://localhost:8003';
 
 // Node.js Backend (Auth, Users, Stores) - port 3000
 const NODE_API_BASE = 'http://localhost:3000/api';
@@ -88,7 +88,7 @@ export const api = {
         if (limit) params.append('limit', limit.toString());
         if (sortBy) params.append('sortBy', sortBy);
 
-        const response = await nodeClient.get(`/products?${params.toString()}`);
+        const response = await nodeClient.get(`/inventory/products?${params.toString()}`);
         return response.data;
     },
 

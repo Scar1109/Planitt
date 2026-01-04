@@ -60,14 +60,6 @@ const Sidebar = () => {
                 { name: 'Compliance History', path: '/dashboard/compliance/history' }
             ]
         },
-        { name: 'Analytics', path: '/dashboard/analytics', icon: FaChartLine },
-        { name: 'Store Info', path: '/dashboard/store', icon: FaStore },
-        {
-            name: 'Settings',
-            path: '/dashboard/settings',
-            icon: FaCog,
-            subItems: settingsSubItems.length > 0 ? settingsSubItems : undefined
-        },
         {
             name: 'Inventory',
             path: '/dashboard/inventory',
@@ -76,6 +68,12 @@ const Sidebar = () => {
                 { name: 'Forecasting', path: '/dashboard/forecasting' },
                 { name: 'Wastage Prevention', path: '/dashboard/inventory/wastage' }
             ]
+        },
+        {
+            name: 'Settings',
+            path: '/dashboard/settings',
+            icon: FaCog,
+            subItems: settingsSubItems.length > 0 ? settingsSubItems : undefined
         },
     ];
 
