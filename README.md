@@ -1,5 +1,7 @@
 # Planitt
 
+![Architecture Diagram](resources/Arcitecture.png)
+
 Planitt is an intelligent planning platform for retail, integrating POS, Planogram optimization, and forecasting.
 
 ## Modules

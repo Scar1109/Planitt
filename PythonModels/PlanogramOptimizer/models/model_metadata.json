@@ -1,0 +1,28 @@
+{
+    "training_date": "2026-01-05T00:35:19.508894",
+    "mse": 85.27553577674267,
+    "r2_score": 0.9339924572293343,
+    "feature_importances": {
+        "sku_encoded": 0.013067367973789294,
+        "week": 0.029208987480961558,
+        "avg_daily_sales": 0.8427256490159196,
+        "seasonality_index": 0.08584985127027407,
+        "low_stock_ratio": 0.007878159832697506,
+        "total_discard": 0.0,
+        "turnover_days": 0.021269984426357993
+    },
+    "features": [
+        "sku_encoded",
+        "week",
+        "avg_daily_sales",
+        "seasonality_index",
+        "low_stock_ratio",
+        "total_discard",
+        "turnover_days"
+    ],
+    "data_years": [
+        "2022",
+        "2023",
+        "2024"
+    ]
+}
