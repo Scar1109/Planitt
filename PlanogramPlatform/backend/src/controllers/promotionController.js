@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const PYTHON_SERVICE_URL = 'http://localhost:8000/api/v1';
+const PYTHON_SERVICE_URL = 'http://localhost:8001/api/v1';
 
 export const simulatePromotion = async (req, res) => {
     try {

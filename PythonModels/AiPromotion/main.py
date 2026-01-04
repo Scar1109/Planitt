@@ -35,4 +35,4 @@ def health_check():
 
 if __name__ == "__main__":
     # In production, use standard port (e.g. 8000)
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)

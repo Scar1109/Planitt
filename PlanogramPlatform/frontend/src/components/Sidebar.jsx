@@ -37,7 +37,6 @@ const Sidebar = () => {
                 { name: 'Products', path: '/dashboard/optimization/products' },
                 { name: 'Constraints', path: '/dashboard/optimization/constraints' },
                 { name: 'Runs & Evaluation', path: '/dashboard/optimization/runs' },
-                { name: 'AI Promotion', path: '/dashboard/planograms/ai-promotion' },
             ]
         },
         {
@@ -45,6 +44,7 @@ const Sidebar = () => {
             path: '/dashboard/promotional-forecasting',
             icon: FaChartLine,
             subItems: [
+                { name: 'AI Promotion', path: '/dashboard/planograms/ai-promotion' },
                 { name: 'Forecast', path: '/dashboard/promotional-forecasting/forecast' },
                 { name: 'Recommendations', path: '/dashboard/promotional-forecasting/suggested' },
             ]
