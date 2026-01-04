@@ -3,5 +3,5 @@ __pycache__/
 venv/
 .env
 .pytest_cache/
-*.csv
 sales_model.pkl
+*.csv

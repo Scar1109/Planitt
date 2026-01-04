@@ -1,16 +1,18 @@
 {
-    "timestamp": "2026-01-04T03:39:41.513883",
+    "timestamp": "2026-01-04T21:56:17.063470",
     "metrics": {
-        "MAE": 55.379006466966956,
-        "RMSE": 85.97815865574513,
-        "MAPE": 7.580197539317838e+16,
-        "R2_Score": 0.0565237829482349,
-        "Accuracy_Percent": 5.65
+        "MAE": 1.405713438987732,
+        "RMSE": 2.0447079201363243,
+        "MAPE": 0.2285989373922348,
+        "R2_Score": 0.9074990749359131,
+        "Accuracy_Percent": 90.75
     },
     "params": {
-        "model": "RandomForestRegressor",
-        "n_estimators": 200,
-        "seed": 42
+        "subsample": 0.9,
+        "n_estimators": 500,
+        "max_depth": 7,
+        "learning_rate": 0.05,
+        "colsample_bytree": 0.8
     },
     "features": [
         "UnitPriceLKR",
@@ -19,7 +21,15 @@
         "IsWeekend",
         "IsHoliday",
         "Month",
-        "DayOfWeek"
+        "DayOfWeek",
+        "Price_Level_Interaction",
+        "CustomerCount",
+        "PromotionFlag",
+        "PromotionType_Code"
     ],
-    "sanity_check_uplift_percent": 410.744682874723
+    "sanity_check_uplift_percent": 54.82466125488281,
+    "model_type": "XGBRegressor",
+    "baseline_inference": {
+        "avg_customer_count": 3.675241225298108
+    }
 }

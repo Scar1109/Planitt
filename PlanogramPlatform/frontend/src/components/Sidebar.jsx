@@ -44,7 +44,8 @@ const Sidebar = () => {
             icon: FaRobot,
             subItems: [
                 { name: 'System Forensics', path: '/dashboard/compliance/analysis' },
-                { name: 'Compliance Intelligence', path: '/dashboard/compliance' }
+                { name: 'Compliance Intelligence', path: '/dashboard/compliance', end: true },
+                { name: 'Compliance History', path: '/dashboard/compliance/history' }
             ]
         },
         { name: 'Store Info', path: '/dashboard/store', icon: FaStore },
@@ -125,6 +126,7 @@ const Sidebar = () => {
                                         <NavLink
                                             key={sub.name}
                                             to={sub.path}
+                                            end={sub.end}
                                             className={({ isActive }) =>
                                                 classNames(
                                                     'flex items-center pl-14 pr-6 py-2 text-sm font-medium transition-colors duration-200',

@@ -55,6 +55,7 @@ const ComplianceDashboard = () => {
             // 2. Construct Payload
             const payload = {
                 current_planogram: {
+                    _id: currentData.planogram._id,
                     placements: currentData.placements // Already formatted by backend controller
                 },
                 optimized_planogram: {
@@ -64,6 +65,11 @@ const ComplianceDashboard = () => {
 
             // 3. Send to Compliance Engine
             const response = await api.post('/compliance/check', payload);
+
+            if (response.data.save_error) {
+                console.error("Save Error:", response.data.save_error);
+                // Optionally show toast or alert?
+            }
 
             setReport(response.data);
             setAgentInsight(response.data.agent_summary);
@@ -127,7 +133,10 @@ const ComplianceDashboard = () => {
                             ))}
                         </select>
                     </div>
+
+
                 </div>
+
                 <button
                     onClick={runCheck}
                     disabled={status === 'loading'}

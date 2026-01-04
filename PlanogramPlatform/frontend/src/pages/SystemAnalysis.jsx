@@ -33,8 +33,8 @@ const SystemAnalysis = () => {
                 {/* Model Card */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Active Model</h3>
-                    <div className="text-lg font-bold text-blue-600 truncate" title={metadata.ml_model?.params?.model}>
-                        {metadata.ml_model?.params?.model || "Unknown"}
+                    <div className="text-lg font-bold text-blue-600 truncate" title={metadata.ml_model?.model_type}>
+                        {metadata.ml_model?.model_type || "Unknown"}
                     </div>
                     <div className="mt-2 text-sm text-gray-500">
                         Training Date: <span className="font-mono text-gray-700">{metadata.ml_model?.timestamp ? new Date(metadata.ml_model.timestamp).toLocaleDateString() : "N/A"}</span>
@@ -43,12 +43,12 @@ const SystemAnalysis = () => {
 
                 {/* ML Accuracy Card */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">ML Accuracy (RMSE)</h3>
+                    <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Model Accuracy (R2)</h3>
                     <div className="text-3xl font-bold text-emerald-600">
-                        {metadata.ml_model?.metrics?.RMSE ? metadata.ml_model.metrics.RMSE.toFixed(2) : "0.00"}
+                        {metadata.ml_model?.metrics?.R2_Score ? (metadata.ml_model.metrics.R2_Score * 100).toFixed(1) + "%" : "N/A"}
                     </div>
                     <div className="mt-2 text-xs text-gray-500">
-                        Stochastic Error Margin
+                        RMSE: {metadata.ml_model?.metrics?.RMSE ? metadata.ml_model.metrics.RMSE.toFixed(2) : "0.00"} (Error Margin)
                     </div>
                 </div>
 
@@ -95,7 +95,7 @@ const SystemAnalysis = () => {
             </div>
 
             {/* Academic Architecture Diagram */}
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center">
+            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center mb-8">
                 <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center justify-center gap-2">
                     Compliance Intelligence Architecture
                 </h3>
@@ -128,6 +128,8 @@ const SystemAnalysis = () => {
                     </div>
                 </div>
             </div>
+
+
         </div>
     );
 };

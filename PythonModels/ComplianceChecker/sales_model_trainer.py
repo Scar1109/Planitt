@@ -3,8 +3,8 @@ import numpy as np
 import joblib
 import json
 import os
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from xgboost import XGBRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_absolute_error, mean_squared_error, mean_absolute_percentage_error, r2_score
 from datetime import datetime
@@ -29,6 +29,9 @@ def normalize_cols(df):
     if 'unitpricelkr' in cols: mapping[cols['unitpricelkr']] = 'UnitPriceLKR'
     if 'totalrevenuelkr' in cols: mapping[cols['totalrevenuelkr']] = 'TotalRevenueLKR'
     if 'category' in cols: mapping[cols['category']] = 'Category'
+    if 'promotionflag' in cols: mapping[cols['promotionflag']] = 'PromotionFlag'
+    if 'promotiontype' in cols: mapping[cols['promotiontype']] = 'PromotionType'
+    if 'customercount' in cols: mapping[cols['customercount']] = 'CustomerCount'
     # Apply
     return df.rename(columns=mapping)
 
@@ -165,7 +168,7 @@ def augment_data(df):
     return df
 
 def train_model():
-    """Pipeline: Load -> Augment -> Preprocess -> Train -> Eval -> Save"""
+    """Pipeline: Load -> Augment -> Preprocess -> Tune -> Train -> Eval -> Save"""
     
     # 1. Setup
     if not os.path.exists(ARTIFACTS_DIR):
@@ -176,39 +179,67 @@ def train_model():
     # 2. Data
     df, df_product_master = load_data() 
     
-    # Augment
+    # Augment (Adds Shelf_Level and Price_Level_Interaction)
     df = augment_data(df)
     
     # 3. Features
-    # Encode Categoricals using FULL Product Catalog to ensure completeness
+    
+    # -- PRE-PROCESSING: NEW FEATURES --
+    # CustomerCount
+    if 'CustomerCount' not in df.columns:
+        print("Warning: CustomerCount missing, imputing with 0")
+        df['CustomerCount'] = 0
+    else:
+        df['CustomerCount'] = df['CustomerCount'].fillna(df['CustomerCount'].mean())
+        
+    avg_customer_count = df['CustomerCount'].mean()
+    print(f"Average Customer Count (for inference baseline): {avg_customer_count:.2f}")
+
+    # PromotionFlag
+    if 'PromotionFlag' not in df.columns:
+        df['PromotionFlag'] = False
+    df['PromotionFlag'] = df['PromotionFlag'].astype(int)
+    
+    # PromotionType
+    if 'PromotionType' not in df.columns:
+        df['PromotionType'] = 'None'
+    df['PromotionType'] = df['PromotionType'].fillna('None').astype(str)
+    
+    # Encode Categories
     le_cat = LabelEncoder()
-    # Fit on ALL known categories from master + 'Unknown'
     if 'Category' not in df_product_master.columns:
          df_product_master['Category'] = 'Unknown'
          
     all_categories = df_product_master['Category'].astype(str).unique()
     le_cat.fit(all_categories)
     
-    # Transform training data
-    # Handle any categories in training that somehow aren't in master (unlikely but safe)
     df['Category'] = df['Category'].astype(str)
-    
-    # Filter out or map unknown
-    # Ideally we'd map to 'Unknown', but for now finding common ground
     known_cats = set(le_cat.classes_)
     df['Category'] = df['Category'].apply(lambda x: x if x in known_cats else 'Unknown')
     
-    # If 'Unknown' wasn't in master, we might have an issue. 
-    # Let's ensure 'Unknown' is in classes
     if 'Unknown' not in known_cats:
-        # Re-fit including Unknown
         all_categories = np.append(all_categories, 'Unknown')
         le_cat.fit(all_categories)
         
     df['Category_Code'] = le_cat.transform(df['Category'])
     
-    features = ['UnitPriceLKR', 'Shelf_Level', 'Category_Code', 'IsWeekend', 'IsHoliday', 'Month', 'DayOfWeek']
+    # Encode PromotionType
+    le_promo = LabelEncoder()
+    df['PromotionType_Code'] = le_promo.fit_transform(df['PromotionType'])
+    
+    # --- Feature Engineering ---
+    # Interaction: High Price items at High Shelf Levels might behave differently
+    df['Price_Level_Interaction'] = df['UnitPriceLKR'] * df['Shelf_Level']
+    
+    features = [
+        'UnitPriceLKR', 'Shelf_Level', 'Category_Code', 
+        'IsWeekend', 'IsHoliday', 'Month', 'DayOfWeek', 
+        'Price_Level_Interaction',
+        'CustomerCount', 'PromotionFlag', 'PromotionType_Code'
+    ]
     target = 'Augmented_UnitsSold'
+    
+    print(f"Features used: {features}")
     
     X = df[features]
     y = df[target]
@@ -216,51 +247,86 @@ def train_model():
     # 4. Split (80/20)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_SEED)
     
-    # 5. Train
-    print("Training Random Forest Regressor (Optimized)...")
-    model = RandomForestRegressor(n_estimators=200, max_depth=None, random_state=RANDOM_SEED, n_jobs=-1)
-    model.fit(X_train, y_train)
+    # 5. Tune & Train (XGBoost)
+    print("Initializing XGBoost with Hyperparameter Tuning...")
+    
+    xgb = XGBRegressor(random_state=RANDOM_SEED, n_jobs=-1, objective='reg:squarederror')
+    
+    param_dist = {
+        'n_estimators': [100, 300, 500],
+        'learning_rate': [0.01, 0.05, 0.1, 0.2],
+        'max_depth': [3, 5, 7, 10, 12],
+        'subsample': [0.7, 0.8, 0.9, 1.0],
+        'colsample_bytree': [0.7, 0.8, 0.9, 1.0]
+    }
+    
+    search = RandomizedSearchCV(
+        xgb, 
+        param_distributions=param_dist, 
+        n_iter=10, 
+        cv=3, 
+        scoring='r2', 
+        verbose=1, 
+        random_state=RANDOM_SEED,
+        n_jobs=-1
+    )
+    
+    print("Searching for best hyperparameters...")
+    search.fit(X_train, y_train)
+    
+    best_model = search.best_estimator_
+    print(f"Best Params: {search.best_params_}")
     
     # 6. Evaluate
-    predictions = model.predict(X_test)
+    predictions = best_model.predict(X_test)
+    predictions = np.maximum(predictions, 0)
+    
     mae = mean_absolute_error(y_test, predictions)
     rmse = np.sqrt(mean_squared_error(y_test, predictions))
     mape = mean_absolute_percentage_error(y_test, predictions)
     r2 = r2_score(y_test, predictions)
     
-    print(f"Model Evaluation:\n MAE: {mae:.4f}\n RMSE: {rmse:.4f}\n R2 Score: {r2:.4f}")
+    print(f"Model Evaluation (XGBoost):\n MAE: {mae:.4f}\n RMSE: {rmse:.4f}\n R2 Score: {r2:.4f}")
     
     # 7. Consistency Checks
-    # Verify that higher shelf level predicts higher sales for a sample
     sample_item = X_test.iloc[0].copy()
-    sample_item['Shelf_Level'] = 1
-    pred_low = model.predict(pd.DataFrame([sample_item]))[0]
-    sample_item['Shelf_Level'] = 5
-    pred_high = model.predict(pd.DataFrame([sample_item]))[0]
     
-    uplift_check = ((pred_high - pred_low) / pred_low) * 100
+    # Calculate Uplift
+    sample_item['Shelf_Level'] = 1
+    sample_item['Price_Level_Interaction'] = sample_item['UnitPriceLKR'] * 1
+    pred_low = best_model.predict(pd.DataFrame([sample_item]))[0]
+    
+    sample_item['Shelf_Level'] = 5
+    sample_item['Price_Level_Interaction'] = sample_item['UnitPriceLKR'] * 5
+    pred_high = best_model.predict(pd.DataFrame([sample_item]))[0]
+    
+    uplift_check = 0
+    if pred_low > 0:
+        uplift_check = ((pred_high - pred_low) / pred_low) * 100
+        
     print(f"Sanity Check (Level 1 vs 5 Uplift): {uplift_check:.2f}%")
     
     # 8. Save Artifacts
-    joblib.dump(model, MODEL_FILE)
+    joblib.dump(best_model, MODEL_FILE)
     joblib.dump(le_cat, os.path.join(ARTIFACTS_DIR, "category_encoder.pkl"))
+    joblib.dump(le_promo, os.path.join(ARTIFACTS_DIR, "promo_type_encoder.pkl"))
     
     metadata = {
         "timestamp": start_time,
         "metrics": {
-            "MAE": mae,
-            "RMSE": rmse,
-            "MAPE": mape,
-            "R2_Score": r2,
-            "Accuracy_Percent": round(max(0, r2) * 100, 2)
+            "MAE": float(mae),
+            "RMSE": float(rmse),
+            "MAPE": float(mape),
+            "R2_Score": float(r2),
+            "Accuracy_Percent": round(max(0, float(r2)) * 100, 2)
         },
-        "params": {
-            "model": "RandomForestRegressor",
-            "n_estimators": 200,
-            "seed": RANDOM_SEED
-        },
+        "params": search.best_params_,
         "features": features,
-        "sanity_check_uplift_percent": uplift_check
+        "sanity_check_uplift_percent": float(uplift_check),
+        "model_type": "XGBRegressor",
+        "baseline_inference": {
+            "avg_customer_count": float(avg_customer_count)
+        }
     }
     
     with open(METADATA_FILE, 'w') as f:
