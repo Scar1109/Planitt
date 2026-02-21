@@ -78,9 +78,6 @@ class DemandModelTrainer:
         sku_global_avg = sales_df.groupby('sku')['units_sold'].mean().reset_index()
         sku_global_avg.rename(columns={'units_sold': 'global_avg'}, inplace=True)
         
-        # Join to get weekly seasonality
-        # This is a simplified seasonality (Current Week Sales / Global Avg Daily * 7)
-        # Better: Average sales for this specific week number across years vs global average
         
         # Let's calculate avg sales for each week number across years per SKU
         seasonality_df = sales_df.groupby(['sku', 'week'])['units_sold'].mean().reset_index()
@@ -95,8 +92,6 @@ class DemandModelTrainer:
         inventory_stats = pd.DataFrame()
         if all_inventory:
             inv_df = pd.concat(all_inventory, ignore_index=True)
-            # Assuming 'stock_on_hand' or 'opening_stock' exists. checking cols...
-            # From earlier `head` output: 'OpeningStock', 'SoldQty', 'Discarded' (maybe)
             
             # Map columns loosely
             cols_map = {
@@ -111,9 +106,6 @@ class DemandModelTrainer:
             
             logger.info(f"Inventory Columns after rename: {inv_df.columns.tolist()}")
             
-            # Low Stock Ratio: Count of days with stock < threshold
-            # We treat 'stock' column as daily snapshot if date exists, else aggregate
-            # Assuming 'date' in inv_df
             inv_df['is_low_stock'] = inv_df['stock'] < 10 # Arbitrary threshold
             
             agg_dict = {
@@ -138,9 +130,6 @@ class DemandModelTrainer:
             
             inventory_stats = inv_stats
 
-        # --- Merge Features ---
-        # Base: Weekly Sales (Target is next week? For sim usage we predict "Demand" generally)
-        # Let's frame it: Predict Weekly Sales based on features.
         
         dataset = weekly_sales.merge(sku_yearly_stats, on=['sku', 'year'], how='left')
         dataset = dataset.merge(seasonality_df[['sku', 'week', 'seasonality_index']], on=['sku', 'week'], how='left')

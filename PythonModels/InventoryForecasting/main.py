@@ -251,8 +251,8 @@ def get_product_category(product_id: str, product_name: str = "") -> str:
     Crucial for applying correct holiday multipliers.
     """
     # 1. Try explicit info first
-    info = _get_cached_product_info(product_id)
-    if info and info.get('category'):
+    info = _get_cached_product_info(product_id) or {}
+    if info.get('category'):
         cat = info['category'].lower()
         if cat not in ['unknown', 'general']:
             return _normalize_category(cat)

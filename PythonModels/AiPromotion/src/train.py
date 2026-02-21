@@ -15,12 +15,6 @@ def main():
     # 1. Load Data (Relative to this script in src/)
     # Dataset is at ../../../Dataset relative to src (PythonModels/AiPromotion/src)
     dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Dataset")) # Actually ../../ is PythonModels/Dataset. User confirmed Dataset is at ../../../Dataset relative to scripts. Scripts was at AiPromotion/scripts. Src is at AiPromotion/src. So depth is same.
-    # Wait, list_dir showed c:\Users\kavee\Downloads\Planitt-suouni\Dataset
-    # File is at c:\Users\kavee\Downloads\Planitt-suouni\PythonModels\AiPromotion\src\train.py
-    # .. -> AiPromotion
-    # ../.. -> PythonModels
-    # ../../../ -> Planitt-suouni
-    # So ../../../Dataset is correct.
     dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../Dataset"))
     loader = DataLoader(dataset_path=dataset_path)
     
