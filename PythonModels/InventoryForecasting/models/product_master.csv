@@ -1,0 +1,414 @@
+sku,barcode,productname,category,brand,unitsize,baseunitpricelkr,typicalshelflifedays,supplier,casesize,maxshelfcapacityunits,widthcm,heightcm,depthcm,unitcostlkr,minfacings,maxfacings
+LK-RIC-XAJI0,4798196001333,Araliya Supiri Samba Rice 1kg,Rice & Grains,Araliya,1kg,265.91,383,Araliya Rice Mills,23,115,9.4,23.9,16.8,244.21,1,4
+LK-RIC-ZMF8M,4791615594072,Araliya White Raw Rice 5kg,Rice & Grains,Araliya,5kg,1252.17,567,Araliya Rice Mills,23,92,21.6,24.7,17.6,1078.89,3,4
+LK-RIC-ZBIKC,4793164752552,CIC Basmathi Rice White 1kg,Rice & Grains,CIC,1kg,215.62,253,CIC Agri Businesses,11,33,8.3,18.2,19.8,194.92,3,8
+LK-RIC-UY41I,4790564139532,CIC Red Suduru Rice 5kg,Rice & Grains,CIC,5kg,1341.58,649,CIC Agri Businesses,14,42,9.9,23.2,7.5,1202.41,3,6
+LK-RIC-6OH9S,4791012269160,CIC Sudu Suduru Rice 1kg,Rice & Grains,CIC,1kg,244.88,721,CIC Agri Businesses,23,46,18.6,11.1,18.0,210.65,2,8
+LK-RIC-MKFAZ,4794828148933,CIC Suwandel Rice 1kg,Rice & Grains,CIC,1kg,205.98,723,CIC Agri Businesses,16,80,5.4,33.1,17.9,180.08,2,4
+LK-RIC-C58DR,4791822782484,CIC Kaluheenati Rice 1kg,Rice & Grains,CIC,1kg,328.31,396,CIC Agri Businesses,12,48,13.0,26.1,9.3,293.71,3,6
+LK-RIC-EIMVI,4793010310516,Catch Rice Suduru Samba 1kg,Rice & Grains,Catch,1kg,267.41,677,Ceylon Catch PLC,23,69,19.5,31.8,12.8,241.55,1,6
+LK-RIC-3GDPP,4797010651334,Akshata Suwandel Rice 4kg,Rice & Grains,Akshata,4kg,864.13,612,Akshata Agri Products,14,70,10.0,32.9,10.5,771.74,3,3
+LK-RIC-B9487,4793267736022,Akshata Kuruluthuda Rice 800g,Rice & Grains,Akshata,800g,234.43,451,Akshata Agri Products,15,75,18.9,27.7,16.3,201.82,3,8
+LK-RIC-RGHC0,4790500978829,Akshata Pachchaperumal Rice 800g,Rice & Grains,Akshata,800g,179.67,370,Akshata Agri Products,8,24,13.1,33.4,12.7,159.82,3,7
+LK-RIC-BCXUL,4794353462474,Akshata Kaluheenati Rice 800g,Rice & Grains,Akshata,800g,223.75,254,Akshata Agri Products,20,40,6.5,13.8,7.5,195.76,2,3
+LK-RIC-5NF4Z,4799808412417,Ariya Pure Basmathi Rice 1kg,Rice & Grains,Ariya,1kg,331.25,339,Ariya Trading,15,45,19.4,13.5,13.8,289.99,2,7
+LK-RIC-R64DP,4794005242782,India Gate Basmati Rice Excel 5kg,Rice & Grains,India Gate,5kg,1379.25,294,KRBL Limited (India),10,20,21.7,23.7,5.5,1222.49,1,3
+LK-RIC-L6246,4793315869238,India Gate Basmati Rice Exotic 1kg,Rice & Grains,India Gate,1kg,326.98,361,KRBL Limited (India),6,18,19.7,17.0,18.8,281.67,3,8
+LK-RIC-3J2D5,4797337543305,Dunar Basmathi Rice Daily 5kg,Rice & Grains,Dunar,5kg,1345.02,465,Dunar Foods (India),14,56,17.8,18.8,19.7,1205.26,3,5
+LK-RIC-7E8G8,4794019655691,Dunar Basmathi Rice Nawazish 1kg,Rice & Grains,Dunar,1kg,347.32,374,Dunar Foods (India),7,35,5.0,33.0,12.2,317.12,3,8
+LK-RIC-0HP87,4799514846568,Tilda Pure Original Basmathi 5kg,Rice & Grains,Tilda,5kg,1372.91,376,Tilda Limited (UK),18,54,17.3,16.1,12.3,1217.41,1,5
+LK-RIC-KPUXQ,4797387214897,Turkey Basmathi Rice 2kg,Rice & Grains,Turkey,2kg,467.26,420,Turkey Foods Lanka,15,45,21.1,12.0,3.8,406.93,2,7
+LK-RIC-4COWG,4796763201636,Prima Chakki Fresh Atta 1kg,Rice & Grains,Prima,1kg,209.9,710,Prima Ceylon Limited,7,21,23.3,11.3,5.3,181.04,2,8
+LK-RIC-TUL1P,4798687277438,Prima Self Raising Flour 1kg,Rice & Grains,Prima,1kg,322.78,713,Prima Ceylon Limited,13,52,13.8,27.3,7.0,291.59,2,5
+LK-RIC-6CFNF,4793166587602,Foodlink Chakki Fresh Atta Flour 1kg,Rice & Grains,Foodlink,1kg,215.16,200,Foodlink Lanka,18,90,5.1,17.5,15.8,192.52,2,7
+LK-RIC-0TVHH,4796706562725,Harischandra Kurakkan Flour 400g,Rice & Grains,Harischandra,400g,198.07,583,Harischandra Mills PLC,24,48,6.7,19.6,17.7,175.88,1,3
+LK-RIC-JLQM5,4794641708055,Star Gold Chakki Atta Flour 1kg,Rice & Grains,Star Gold,1kg,218.12,221,Star Gold Trading,13,39,21.8,24.8,7.1,199.77,2,8
+LK-RIC-E8QJN,4799912419043,Star Gold White Rice String Hopper Flour 1kg,Rice & Grains,Star Gold,1kg,277.89,564,Star Gold Trading,12,24,16.8,30.4,7.1,240.52,3,5
+LK-RIC-4VE92,4795865185066,Star Gold Red Rice String Hopper Flour 1kg,Rice & Grains,Star Gold,1kg,319.8,550,Star Gold Trading,20,60,13.7,27.8,19.4,292.19,2,7
+LK-RIC-3TRP0,4794531473797,Araliya Supiri Samba Rice 1kg,Rice & Grains,Araliya,1kg,283.76,209,Araliya Rice Mills,16,48,14.8,17.6,7.4,254.61,2,7
+LK-RIC-ZJA8D,4796783777012,Araliya White Raw Rice 5kg,Rice & Grains,Araliya,5kg,1070.68,429,Araliya Rice Mills,24,96,14.5,22.3,10.2,959.05,3,7
+LK-RIC-LZJJE,4793518233744,CIC Basmathi Rice White 1kg,Rice & Grains,CIC,1kg,303.18,717,CIC Agri Businesses,15,30,21.7,16.0,9.1,261.16,2,3
+LK-RIC-ZEBBK,4792710947770,CIC Red Suduru Rice 5kg,Rice & Grains,CIC,5kg,1105.53,438,CIC Agri Businesses,9,18,13.0,10.0,13.7,953.04,1,4
+LK-RIC-FUK9E,4796999386770,CIC Sudu Suduru Rice 1kg,Rice & Grains,CIC,1kg,230.55,619,CIC Agri Businesses,24,48,17.2,28.0,19.1,203.96,1,8
+LK-RIC-HXFGC,4790679740340,CIC Suwandel Rice 1kg,Rice & Grains,CIC,1kg,300.18,644,CIC Agri Businesses,13,52,20.8,24.9,14.2,263.5,1,6
+LK-RIC-EIFJF,4790249947179,CIC Kaluheenati Rice 1kg,Rice & Grains,CIC,1kg,297.08,458,CIC Agri Businesses,23,115,13.8,24.1,18.1,260.84,3,5
+LK-RIC-VAIY4,4799049027876,Catch Rice Suduru Samba 1kg,Rice & Grains,Catch,1kg,335.73,626,Ceylon Catch PLC,21,42,14.4,19.0,8.5,305.22,1,4
+LK-RIC-LYK83,4798071545167,Akshata Suwandel Rice 800g,Rice & Grains,Akshata,800g,317.03,181,Akshata Agri Products,23,115,13.3,13.1,9.2,275.98,2,8
+LK-RIC-PBJEK,4797109324804,Akshata Kuruluthuda Rice 800g,Rice & Grains,Akshata,800g,263.88,296,Akshata Agri Products,9,27,15.0,27.3,11.7,241.29,2,6
+LK-RIC-49ITN,4799821465841,Akshata Pachchaperumal Rice 800g,Rice & Grains,Akshata,800g,309.49,485,Akshata Agri Products,24,120,22.3,20.1,11.2,279.48,2,7
+LK-RIC-1N759,4793963605769,Akshata Kaluheenati Rice 800g,Rice & Grains,Akshata,800g,235.63,335,Akshata Agri Products,7,21,15.0,23.9,17.8,207.4,2,3
+LK-RIC-SQ0OX,4792174596156,Ariya Pure Basmathi Rice 1kg,Rice & Grains,Ariya,1kg,324.9,569,Ariya Trading,21,42,17.3,14.3,14.6,282.16,2,4
+LK-RIC-0PDW5,4797240050457,India Gate Basmati Rice Excel 5kg,Rice & Grains,India Gate,5kg,1131.13,723,KRBL Limited (India),24,72,8.4,10.1,17.8,1030.76,3,8
+LK-RIC-I6FQJ,4794074821758,India Gate Basmati Rice Exotic 1kg,Rice & Grains,India Gate,1kg,347.9,614,KRBL Limited (India),14,70,21.9,13.4,9.5,313.82,2,3
+LK-RIC-IUU9K,4796409097432,Dunar Basmathi Rice Daily 5kg,Rice & Grains,Dunar,5kg,1305.3,374,Dunar Foods (India),14,42,17.6,32.4,14.0,1173.28,2,6
+LK-RIC-BNE6L,4796232858842,Dunar Basmathi Rice Nawazish 1kg,Rice & Grains,Dunar,1kg,321.18,673,Dunar Foods (India),16,32,14.4,10.0,15.8,290.53,1,8
+LK-RIC-0982N,4796048175492,Tilda Pure Original Basmathi 5kg,Rice & Grains,Tilda,5kg,1135.77,560,Tilda Limited (UK),13,65,5.5,31.9,12.5,1001.39,3,4
+LK-RIC-XWQZX,4791200471139,Turkey Basmathi Rice 2kg,Rice & Grains,Turkey,2kg,643.92,644,Turkey Foods Lanka,23,115,16.7,27.6,18.1,587.16,3,3
+LK-DRY-4W7KY,4793773515852,Anchor Mysoor Dhal 1kg,Dry Rations,Anchor,1kg,314.51,305,Fonterra Brands Lanka,17,51,17.8,24.1,3.4,277.85,2,4
+LK-DRY-92H3T,4799335290427,Catch Channa Dhal 500g,Dry Rations,Catch,500g,416.76,997,Ceylon Catch PLC,19,38,7.6,17.7,16.4,361.58,3,5
+LK-DRY-AJEPE,4791775891783,Catch Green Gram Dhal 500g,Dry Rations,Catch,500g,217.6,924,Ceylon Catch PLC,45,180,14.2,34.0,4.0,187.81,2,6
+LK-DRY-PDZP6,4795921249985,Catch Toor Dhal 500g,Dry Rations,Catch,500g,345.16,791,Ceylon Catch PLC,30,150,15.1,19.6,16.5,302.76,1,8
+LK-DRY-X1ZHQ,4793657661569,Catch Chick Peas 500g,Dry Rations,Catch,500g,241.26,336,Ceylon Catch PLC,42,84,6.8,10.3,10.3,213.44,3,8
+LK-DRY-NEC8U,4791656049456,Catch Kidney Beans 250g,Dry Rations,Catch,250g,94.5,338,Ceylon Catch PLC,42,126,21.9,17.5,12.5,82.17,1,5
+LK-DRY-U3493,4799809402448,MD Curry Powder 100g,Dry Rations,MD,100g,170.58,365,MD Holdings (Private) Limited,48,240,6.4,28.0,19.5,149.93,1,8
+LK-DRY-TNQFL,4795991022907,MD Chilli Powder 200g,Dry Rations,MD,200g,234.36,857,MD Holdings (Private) Limited,43,215,13.3,13.8,11.7,207.1,2,6
+LK-DRY-DYVSL,4793690034320,MD Turmeric Powder 50g,Dry Rations,MD,50g,84.67,302,MD Holdings (Private) Limited,43,215,8.5,18.3,15.0,74.73,3,7
+LK-DRY-43C5B,4790715969667,Catch Curry Powder 200g,Dry Rations,Catch,200g,180.53,512,Ceylon Catch PLC,41,164,6.8,30.8,7.1,158.09,3,6
+LK-DRY-SOLML,4792181883553,Catch Chilli Powder 100g,Dry Rations,Catch,100g,147.29,1014,Ceylon Catch PLC,27,54,7.9,13.3,13.2,125.32,3,3
+LK-DRY-G1R11,4797995527174,Catch Pepper Powder 50g,Dry Rations,Catch,50g,63.74,461,Ceylon Catch PLC,15,60,15.1,16.4,10.7,56.21,1,5
+LK-DRY-3C54W,4798679807933,MA's Curry Powder 100g,Dry Rations,MA's,100g,98.58,334,MA's Kitchen (Private) Limited,40,80,21.2,30.6,19.7,85.91,1,7
+LK-DRY-XBZ9S,4799255466599,MA's Chilli Powder 250g,Dry Rations,MA's,250g,87.33,522,MA's Kitchen (Private) Limited,33,66,16.2,18.4,7.3,75.29,3,7
+LK-DRY-5MUFM,4796291486529,MA's Roasted Curry Powder 100g,Dry Rations,MA's,100g,140.41,936,MA's Kitchen (Private) Limited,45,90,17.9,19.4,9.2,119.39,2,5
+LK-DRY-GH8RI,4792214188808,Wijaya Curry Powder 250g,Dry Rations,Wijaya,250g,172.67,812,Wijaya Products (Private) Limited,36,108,8.2,30.4,16.1,146.32,1,8
+LK-DRY-POYIP,4794738347358,Wijaya Chilli Powder 100g,Dry Rations,Wijaya,100g,141.4,631,Wijaya Products (Private) Limited,30,150,15.1,19.3,5.8,122.42,1,7
+LK-DRY-EJX5T,4791814124780,Mccurrie Roasted Curry Powder 200g,Dry Rations,Mccurrie,200g,160.63,407,McCurrie Products (Private) Limited,34,68,13.3,18.7,9.4,140.35,2,3
+LK-DRY-NB74X,4792204727796,Mccurrie Unroasted Curry Powder 100g,Dry Rations,Mccurrie,100g,60.63,442,McCurrie Products (Private) Limited,21,105,7.2,15.8,8.1,54.28,1,4
+LK-DRY-P2QD6,4799808932465,Marina Coconut Oil 2.9L,Dry Rations,Marina,2.9L,1501.56,764,Ceylon Oils & Fats Corporation,23,46,15.5,17.7,19.2,1319.62,3,7
+LK-DRY-2SA5B,4796540515314,Marina Sunflower Oil 500ml,Dry Rations,Marina,500ml,408.6,520,Ceylon Oils & Fats Corporation,14,56,15.9,30.0,6.0,349.72,3,6
+LK-DRY-9RGEZ,4797043030540,Fortune Sunflower Oil 500ml,Dry Rations,Fortune,500ml,306.15,736,Adani Wilmar Limited,28,56,20.1,13.2,9.1,257.37,1,8
+LK-DRY-LEN60,4796527758413,Fortune Coconut Oil 1L,Dry Rations,Fortune,1L,963.54,796,Adani Wilmar Limited,46,184,11.4,10.2,14.2,862.62,2,6
+LK-DRY-VPYMB,4795964016582,Fortune Corn Oil 1L,Dry Rations,Fortune,1L,1000.55,211,Adani Wilmar Limited,40,80,7.5,14.4,14.0,859.71,2,6
+LK-DRY-8BFQN,4797192856541,Renuka Coconut Milk Powder 300g,Dry Rations,Renuka,300g,322.43,933,Renuka Agri Foods PLC,43,215,23.3,11.2,16.2,287.99,3,6
+LK-DRY-HWY9H,4792172715511,Maggi Coconut Milk Powder 300g,Dry Rations,Maggi,300g,373.5,487,Nestle Lanka PLC,23,92,15.2,11.3,6.4,329.64,1,4
+LK-DRY-2ATN2,4798291146786,Marina Coconut Milk Powder 150g,Dry Rations,Marina,150g,229.3,768,Ceylon Oils & Fats Corporation,20,80,17.8,20.1,14.6,200.74,2,4
+LK-DRY-52XG8,4796801824223,Anchor Mysoor Dhal 1kg,Dry Rations,Anchor,1kg,463.92,534,Fonterra Brands Lanka,30,60,10.0,25.1,12.4,397.78,1,8
+LK-DRY-KTSG7,4792299590015,Catch Channa Dhal 500g,Dry Rations,Catch,500g,171.82,770,Ceylon Catch PLC,25,125,17.4,8.8,18.1,148.03,3,5
+LK-DRY-XKI3O,4797102767738,Catch Green Gram Dhal 500g,Dry Rations,Catch,500g,248.45,1062,Ceylon Catch PLC,32,128,24.5,11.5,9.3,221.46,3,3
+LK-DRY-LQJID,4794696325955,Catch Toor Dhal 500g,Dry Rations,Catch,500g,209.36,707,Ceylon Catch PLC,43,172,14.9,10.4,9.7,186.42,2,4
+LK-DRY-HMBR5,4797480162453,Catch Chick Peas 500g,Dry Rations,Catch,500g,358.6,590,Ceylon Catch PLC,48,144,12.3,15.8,9.6,314.87,2,7
+LK-DRY-K9YE9,4796558523981,Catch Kidney Beans 250g,Dry Rations,Catch,250g,136.19,219,Ceylon Catch PLC,33,165,15.4,12.0,18.2,122.24,1,5
+LK-DRY-7LOW4,4799588879479,MD Curry Powder 200g,Dry Rations,MD,200g,254.2,869,MD Holdings (Private) Limited,38,152,20.9,27.6,14.7,223.16,1,7
+LK-DRY-R821U,4790972896232,MD Chilli Powder 100g,Dry Rations,MD,100g,63.79,292,MD Holdings (Private) Limited,13,65,11.3,12.1,14.7,53.78,2,7
+LK-DRY-1750C,4792838578658,MD Turmeric Powder 50g,Dry Rations,MD,50g,97.18,725,MD Holdings (Private) Limited,46,184,18.5,31.4,14.6,84.78,3,5
+LK-DRY-VGIUI,4794437575847,Catch Curry Powder 100g,Dry Rations,Catch,100g,94.53,736,Ceylon Catch PLC,37,148,24.1,29.7,7.9,81.82,2,8
+LK-DRY-C7X0H,4798484219938,Catch Chilli Powder 200g,Dry Rations,Catch,200g,173.94,723,Ceylon Catch PLC,26,52,7.0,16.9,11.0,149.56,3,4
+LK-DRY-AT7O7,4797734540198,Catch Pepper Powder 50g,Dry Rations,Catch,50g,50.09,1050,Ceylon Catch PLC,23,115,22.6,12.7,18.6,42.86,2,6
+LK-DRY-G05KB,4794991547885,MA's Curry Powder 250g,Dry Rations,MA's,250g,149.15,1051,MA's Kitchen (Private) Limited,41,164,8.9,11.0,5.8,125.84,2,8
+LK-DRY-JG02U,4793296685162,MA's Chilli Powder 100g,Dry Rations,MA's,100g,140.31,323,MA's Kitchen (Private) Limited,32,96,5.1,18.4,10.6,124.72,2,5
+LK-DRY-K0AXY,4790174268417,MA's Roasted Curry Powder 100g,Dry Rations,MA's,100g,136.65,556,MA's Kitchen (Private) Limited,26,78,24.1,20.9,10.7,115.27,3,5
+LK-DRY-OTQTX,4793391878513,Wijaya Curry Powder 100g,Dry Rations,Wijaya,100g,170.07,1028,Wijaya Products (Private) Limited,44,132,16.5,12.0,8.6,151.92,3,6
+LK-DRY-EHUDS,4790728679089,Wijaya Chilli Powder 250g,Dry Rations,Wijaya,250g,144.73,920,Wijaya Products (Private) Limited,37,148,21.3,28.1,12.8,123.25,1,6
+LK-DRY-MC97C,4797046226568,Mccurrie Roasted Curry Powder 200g,Dry Rations,Mccurrie,200g,202.8,566,McCurrie Products (Private) Limited,17,51,18.1,17.4,6.0,171.36,3,6
+LK-DRY-T0IAA,4794786863374,Mccurrie Unroasted Curry Powder 250g,Dry Rations,Mccurrie,250g,128.46,1076,McCurrie Products (Private) Limited,19,38,21.2,19.3,16.0,113.49,1,4
+LK-DRY-HDBVZ,4790306738306,Marina Coconut Oil 1L,Dry Rations,Marina,1L,670.07,419,Ceylon Oils & Fats Corporation,48,192,16.5,28.9,16.9,563.12,1,5
+LK-DRY-59SOJ,4798926870567,Marina Sunflower Oil 1L,Dry Rations,Marina,1L,992.9,606,Ceylon Oils & Fats Corporation,21,84,12.5,28.4,11.0,874.62,1,5
+LK-DRY-4FQCO,4796882634353,Fortune Sunflower Oil 500ml,Dry Rations,Fortune,500ml,358.68,1047,Adani Wilmar Limited,17,51,6.0,18.2,13.3,302.96,1,3
+LK-DRY-G10UR,4795403317393,Fortune Coconut Oil 1L,Dry Rations,Fortune,1L,951.88,425,Adani Wilmar Limited,32,128,12.6,22.4,9.1,834.04,2,5
+LK-BEV-SRD9Q,4795355609324,Elephant House Cream Soda 500ml,Beverages,Elephant House,500ml,152.11,479,Ceylon Cold Stores PLC,23,115,10.9,13.3,6.9,114.95,3,4
+LK-BEV-RXYJ3,4797725228722,Elephant House Ginger Beer 1L,Beverages,Elephant House,1L,433.38,508,Ceylon Cold Stores PLC,20,40,21.8,10.0,16.9,327.91,1,3
+LK-BEV-O4IZA,4798750997706,Elephant House Necto 1.5L,Beverages,Elephant House,1.5L,301.45,186,Ceylon Cold Stores PLC,20,80,15.7,15.7,11.5,227.86,3,8
+LK-BEV-P7G7S,4793398454611,Elephant House Orange Crush 2L,Beverages,Elephant House,2L,480.72,469,Ceylon Cold Stores PLC,23,69,11.0,30.4,4.4,368.96,3,3
+LK-BEV-DNTCA,4792176591807,Elephant House Lemonade 500ml,Beverages,Elephant House,500ml,179.87,534,Ceylon Cold Stores PLC,19,76,5.9,10.0,18.7,130.93,3,7
+LK-BEV-XG4AH,4792614293966,Elephant House EGB 1.5L,Beverages,Elephant House,1.5L,448.95,376,Ceylon Cold Stores PLC,14,28,15.0,34.3,3.9,339.75,2,4
+LK-BEV-4M18O,4795047735867,Coca-Cola Original 1050ml,Beverages,Coca-Cola,1050ml,340.46,518,Coca-Cola Beverages Sri Lanka Limited,13,52,21.0,27.3,4.4,253.86,1,6
+LK-BEV-ZW0LD,4790475412120,Coca-Cola Zero 2L,Beverages,Coca-Cola,2L,496.36,442,Coca-Cola Beverages Sri Lanka Limited,13,26,6.8,23.0,13.1,374.97,2,6
+LK-BEV-AO20U,4793982622440,Sprite Regular 2L,Beverages,Sprite,2L,452.47,265,Coca-Cola Beverages Sri Lanka Limited,16,80,11.0,29.1,9.1,356.69,1,8
+LK-BEV-WVHDK,4796596575690,Sprite Zero 400ml,Beverages,Sprite,400ml,154.97,535,Coca-Cola Beverages Sri Lanka Limited,19,76,8.6,18.8,8.4,120.0,3,8
+LK-BEV-W82LK,4796519398283,Fanta Orange 1050ml,Beverages,Fanta,1050ml,283.77,542,Coca-Cola Beverages Sri Lanka Limited,19,76,21.6,9.9,17.4,210.51,2,8
+LK-BEV-RWIXZ,4796179796887,Fanta Cream Soda 1.5L,Beverages,Fanta,1.5L,503.17,394,Coca-Cola Beverages Sri Lanka Limited,12,48,19.0,29.9,13.1,367.53,1,3
+LK-BEV-1XMXB,4796561014384,Fanta Portello 400ml,Beverages,Fanta,400ml,222.15,532,Coca-Cola Beverages Sri Lanka Limited,15,75,12.5,20.5,14.6,167.8,3,7
+LK-BEV-F9RK7,4791125457386,Pepsi Cola 1.5L,Beverages,Pepsi,1.5L,406.24,404,Varun Beverages Lanka (Private) Limited,23,115,11.4,16.1,16.8,309.52,1,3
+LK-BEV-4XYF9,4793828258673,Pepsi Can 250ml,Beverages,Pepsi,250ml,442.6,274,Varun Beverages Lanka (Private) Limited,22,110,12.9,27.9,18.0,339.74,2,7
+LK-BEV-PAHKZ,4791918255373,7 Up Regular 2L,Beverages,7 Up,2L,410.77,430,Varun Beverages Lanka (Private) Limited,22,88,16.9,24.5,13.0,306.58,2,5
+LK-BEV-4W3ZK,4799912513413,Mirinda Orange 1.5L,Beverages,Mirinda,1.5L,340.27,441,Varun Beverages Lanka (Private) Limited,18,54,16.5,19.4,11.3,253.34,3,8
+LK-BEV-77GGK,4792579050727,Mountain Dew Bottle 1.5L,Beverages,Mountain Dew,1.5L,342.93,467,Varun Beverages Lanka (Private) Limited,22,110,13.2,21.3,15.1,263.81,2,6
+LK-BEV-GU2HB,4793842797882,Mountain Dew Can 250ml,Beverages,Mountain Dew,250ml,410.57,458,Varun Beverages Lanka (Private) Limited,20,40,20.2,19.9,6.7,324.7,2,3
+LK-BEV-0XI5B,4794517133950,Kist Orange Nectar 1L,Beverages,Kist,1L,422.21,399,Kist Products (Private) Limited,21,63,20.7,30.0,16.7,317.16,3,5
+LK-BEV-TVG9K,4799481260428,Kist Mixed Fruit Nectar 200ml,Beverages,Kist,200ml,150.14,254,Kist Products (Private) Limited,17,51,20.2,26.3,11.3,118.52,3,8
+LK-BEV-JOQW5,4791684577594,Kist Mango Nectar 1L,Beverages,Kist,1L,250.49,227,Kist Products (Private) Limited,19,76,22.0,29.5,9.8,184.88,2,4
+LK-BEV-RLKTE,4797500170123,Kist Woodapple Nectar 200ml,Beverages,Kist,200ml,124.13,399,Kist Products (Private) Limited,23,69,22.6,16.2,17.9,99.3,2,3
+LK-BEV-XJN6F,4796436110371,MD Cordial Mixed Fruit 750ml,Beverages,MD,750ml,190.91,445,MD Holdings (Private) Limited,19,38,5.2,17.3,5.1,143.66,2,8
+LK-BEV-ECN0D,4795542622181,MD Cordial Mango 400ml,Beverages,MD,400ml,201.96,264,MD Holdings (Private) Limited,17,51,17.6,12.1,10.0,151.71,3,6
+LK-BEV-4DD1V,4796565234139,MD Cordial Passion Fruit 750ml,Beverages,MD,750ml,257.48,491,MD Holdings (Private) Limited,24,48,22.0,25.8,8.1,193.62,3,7
+LK-BEV-S0KB6,4793761379183,Milo Malt Drink 200g,Beverages,Milo,200g,616.62,364,Nestle Lanka PLC,14,70,22.2,23.3,9.2,492.7,3,4
+LK-BEV-181AC,4794300684867,Nestomalt Malt Drink 175g,Beverages,Nestomalt,175g,405.89,507,Nestle Lanka PLC,20,60,10.5,16.4,11.7,311.65,1,4
+LK-BEV-TOW4Y,4791463031613,Horlicks Malted Food Drink 400g,Beverages,Horlicks,400g,899.35,338,Unilever Sri Lanka Limited,23,69,7.4,27.1,14.9,675.68,1,6
+LK-BEV-8S2ZG,4792410564819,Aquafina Bottled Drinking Water 1.5L,Beverages,Aquafina,1.5L,357.85,501,Varun Beverages Lanka (Private) Limited,19,95,15.2,9.5,17.6,258.37,1,5
+LK-BEV-F16YE,4798000307569,Red Bull Energy Drink 250ml,Beverages,Red Bull,250ml,628.46,198,Red Bull Lanka (Private) Limited,24,120,9.5,14.7,18.6,493.77,2,5
+LK-BEV-3UEYB,4793806174452,Elephant House Cream Soda 1L,Beverages,Elephant House,1L,267.28,368,Ceylon Cold Stores PLC,16,64,19.8,14.5,9.3,204.06,2,4
+LK-BEV-0T2F7,4790385050641,Elephant House Ginger Beer 500ml,Beverages,Elephant House,500ml,163.51,301,Ceylon Cold Stores PLC,19,38,24.5,11.8,7.8,123.88,1,4
+LK-BEV-6SZN9,4791918261992,Elephant House Necto 1L,Beverages,Elephant House,1L,262.46,246,Ceylon Cold Stores PLC,16,64,22.0,33.0,9.7,196.06,3,5
+LK-BEV-LJCH2,4799121277564,Elephant House Orange Crush 1.5L,Beverages,Elephant House,1.5L,326.56,286,Ceylon Cold Stores PLC,16,80,10.3,11.2,5.7,251.89,3,5
+LK-BEV-3ZB4L,4791356804423,Elephant House Lemonade 1.5L,Beverages,Elephant House,1.5L,306.84,411,Ceylon Cold Stores PLC,23,69,6.9,10.8,16.5,235.55,1,3
+LK-BEV-C2IHO,4791994101373,Elephant House EGB 500ml,Beverages,Elephant House,500ml,255.21,349,Ceylon Cold Stores PLC,12,60,6.0,33.0,10.4,202.29,3,6
+LK-BEV-RNPM6,4794472099933,Coca-Cola Original 400ml,Beverages,Coca-Cola,400ml,211.2,461,Coca-Cola Beverages Sri Lanka Limited,12,24,10.6,11.7,6.4,160.53,3,4
+LK-BEV-W2292,4795787598562,Coca-Cola Zero 400ml,Beverages,Coca-Cola,400ml,169.75,485,Coca-Cola Beverages Sri Lanka Limited,12,48,6.2,34.8,12.0,135.45,3,4
+LK-BEV-9DXJ3,4790396522397,Sprite Regular 400ml,Beverages,Sprite,400ml,174.98,363,Coca-Cola Beverages Sri Lanka Limited,12,48,24.0,23.2,12.6,129.65,1,6
+LK-BEV-TGBCV,4790870593257,Sprite Zero 400ml,Beverages,Sprite,400ml,218.86,345,Coca-Cola Beverages Sri Lanka Limited,12,36,16.7,32.8,16.2,159.0,3,5
+LK-BEV-8N7OD,4794522675285,Fanta Orange 1.5L,Beverages,Fanta,1.5L,452.58,362,Coca-Cola Beverages Sri Lanka Limited,22,66,12.6,27.8,8.0,328.43,1,8
+LK-BEV-AZU41,4799029593919,Fanta Cream Soda 400ml,Beverages,Fanta,400ml,243.04,219,Coca-Cola Beverages Sri Lanka Limited,17,68,8.4,31.9,4.5,191.7,3,8
+LK-BEV-X5QJI,4791541006762,Fanta Portello 1050ml,Beverages,Fanta,1050ml,415.67,432,Coca-Cola Beverages Sri Lanka Limited,17,85,7.0,20.9,17.7,303.12,3,8
+LK-BEV-IQ2BA,4794115262182,Pepsi Cola 2L,Beverages,Pepsi,2L,634.3,353,Varun Beverages Lanka (Private) Limited,21,105,19.1,19.6,14.1,457.81,3,6
+LK-BEV-FDHGZ,4798444310699,Pepsi Can 250ml,Beverages,Pepsi,250ml,528.41,207,Varun Beverages Lanka (Private) Limited,12,60,6.8,30.2,13.6,401.97,2,4
+LK-BEV-DHW9R,4791467741860,7 Up Regular 1.5L,Beverages,7 Up,1.5L,340.67,369,Varun Beverages Lanka (Private) Limited,19,38,10.3,20.6,6.8,248.4,2,7
+LK-BEV-C1YDM,4798693806868,Mirinda Orange 2L,Beverages,Mirinda,2L,640.72,423,Varun Beverages Lanka (Private) Limited,15,75,11.0,18.7,17.5,477.36,1,7
+LK-BEV-USU9F,4797223320614,Mountain Dew Bottle 500ml,Beverages,Mountain Dew,500ml,278.48,501,Varun Beverages Lanka (Private) Limited,21,84,11.4,27.6,16.7,213.08,1,6
+LK-BEV-UT4S7,4790998616227,Mountain Dew Can 250ml,Beverages,Mountain Dew,250ml,532.98,231,Varun Beverages Lanka (Private) Limited,21,42,20.7,31.4,18.0,401.54,2,5
+LK-BEV-NRVBJ,4792996065304,Kist Orange Nectar 200ml,Beverages,Kist,200ml,154.57,370,Kist Products (Private) Limited,17,68,11.2,30.8,17.6,112.27,3,3
+LK-BEV-9IK01,4795469137362,Kist Mixed Fruit Nectar 1L,Beverages,Kist,1L,398.19,371,Kist Products (Private) Limited,20,60,6.3,27.2,9.9,294.36,3,7
+LK-BEV-BG34I,4797053457863,Kist Mango Nectar 200ml,Beverages,Kist,200ml,143.54,195,Kist Products (Private) Limited,17,85,16.9,12.8,17.8,113.41,3,7
+LK-BEV-MF60Y,4794060293330,Kist Woodapple Nectar 1L,Beverages,Kist,1L,385.54,389,Kist Products (Private) Limited,12,24,14.5,11.6,5.9,300.13,1,4
+LK-BEV-J2K8X,4796657437486,MD Cordial Mixed Fruit 400ml,Beverages,MD,400ml,230.67,232,MD Holdings (Private) Limited,20,80,16.2,24.0,7.8,177.21,3,3
+LK-BEV-RMJLJ,4794328309650,MD Cordial Mango 750ml,Beverages,MD,750ml,275.31,515,MD Holdings (Private) Limited,16,64,23.1,18.9,15.5,204.36,3,8
+LK-BEV-93MZY,4797584282415,MD Cordial Passion Fruit 400ml,Beverages,MD,400ml,191.79,466,MD Holdings (Private) Limited,22,88,18.1,14.0,6.8,142.06,2,6
+LK-BEV-2LJK4,4797099917383,Milo Malt Drink 400g,Beverages,Milo,400g,715.9,451,Nestle Lanka PLC,18,36,22.4,12.1,19.9,533.74,2,6
+LK-BEV-969F5,4792175250071,Nestomalt Malt Drink 400g,Beverages,Nestomalt,400g,800.44,266,Nestle Lanka PLC,24,72,14.8,28.6,4.5,591.61,3,6
+LK-BEV-WO8NB,4793505830031,Horlicks Malted Food Drink 400g,Beverages,Horlicks,400g,774.45,339,Unilever Sri Lanka Limited,13,65,15.1,16.3,4.1,565.23,1,5
+LK-DAI-8QSSP,4792575326031,Anchor Milk Powder Full Cream 400g,Dairy (Shelf-Stable),Anchor,400g,727.67,144,Fonterra Brands Lanka,13,39,7.5,27.2,16.5,597.35,2,8
+LK-DAI-JTB9X,4790016761847,Anchor Milk Powder Shape Up 1kg,Dairy (Shelf-Stable),Anchor,1kg,1921.84,267,Fonterra Brands Lanka,12,48,13.4,10.7,11.8,1673.56,3,7
+LK-DAI-ZP6SW,4794117393488,Anchor Milk UHT 1L,Dairy (Shelf-Stable),Anchor,1L,593.28,194,Fonterra Brands Lanka,22,44,16.0,32.6,14.7,509.35,2,5
+LK-DAI-IADDU,4797218114372,Anchor Butter Salted 227g,Dairy (Shelf-Stable),Anchor,227g,478.19,208,Fonterra Brands Lanka,18,54,22.5,31.0,9.1,412.31,3,5
+LK-DAI-PE46A,4792255794150,Anchor Butter Unsalted 227g,Dairy (Shelf-Stable),Anchor,227g,450.39,192,Fonterra Brands Lanka,41,164,21.7,26.6,11.1,391.4,2,8
+LK-DAI-5GE09,4792169797292,Anchor Cheese Slices 200g,Dairy (Shelf-Stable),Anchor,200g,682.53,97,Fonterra Brands Lanka,20,100,23.4,11.0,10.0,585.94,1,3
+LK-DAI-JLZY1,4799935889168,Kotmale Fresh Milk Full Cream 200ml,Dairy (Shelf-Stable),Kotmale,200ml,136.32,178,Kotmale Holdings PLC,36,108,21.8,23.1,19.8,117.93,1,3
+LK-DAI-XF445,4791753540832,Kotmale Fresh Milk Low Fat 1L,Dairy (Shelf-Stable),Kotmale,1L,487.62,150,Kotmale Holdings PLC,41,205,21.0,20.1,17.6,418.03,2,5
+LK-DAI-ERXDO,4798801994883,Kotmale Fresh Milk Non Fat 1L,Dairy (Shelf-Stable),Kotmale,1L,401.71,177,Kotmale Holdings PLC,15,45,21.9,17.0,16.0,337.32,3,6
+LK-DAI-ZNQDX,4790554885104,Kotmale Milk Chocolate 1L,Dairy (Shelf-Stable),Kotmale,1L,574.22,194,Kotmale Holdings PLC,28,84,8.8,33.1,9.7,488.35,2,4
+LK-DAI-ZDO74,4799177982702,Kotmale Milk Vanilla 180ml,Dairy (Shelf-Stable),Kotmale,180ml,117.13,200,Kotmale Holdings PLC,42,126,18.8,12.7,16.9,102.73,1,6
+LK-DAI-XVL5P,4799346547220,Kotmale Milk Faluda 1L,Dairy (Shelf-Stable),Kotmale,1L,453.19,221,Kotmale Holdings PLC,47,188,19.2,33.3,13.8,379.77,1,4
+LK-DAI-WKMY9,4792885158797,Ambewela Milk Plain 200ml,Dairy (Shelf-Stable),Ambewela,200ml,129.94,196,Ambewela Products (Private) Limited,46,184,22.5,19.4,3.2,109.15,1,3
+LK-DAI-NBCJ2,4794420438050,Ambewela Milk Chocolate 1L,Dairy (Shelf-Stable),Ambewela,1L,553.51,262,Ambewela Products (Private) Limited,47,141,19.8,23.2,7.0,483.69,3,5
+LK-DAI-YBNO2,4795800439735,Ambewela Milk Vanilla 1L,Dairy (Shelf-Stable),Ambewela,1L,577.87,255,Ambewela Products (Private) Limited,46,138,20.5,34.0,8.0,484.09,1,8
+LK-DAI-C80EB,4794842294050,Ambewela Milk Non Fat 1L,Dairy (Shelf-Stable),Ambewela,1L,466.58,100,Ambewela Products (Private) Limited,32,64,20.5,24.9,17.3,384.35,2,6
+LK-DAI-2TCZS,4792818268869,Richlife Milk Full Cream UHT 180ml,Dairy (Shelf-Stable),Richlife,180ml,86.44,144,Richlife Dairies (Private) Limited,33,132,12.2,13.9,15.8,74.92,3,6
+LK-DAI-939AY,4797399305613,Richlife Milk Low Fat UHT 1L,Dairy (Shelf-Stable),Richlife,1L,446.47,162,Richlife Dairies (Private) Limited,45,180,15.3,21.7,11.3,378.42,2,8
+LK-DAI-GS8G8,4798801336133,Richlife Milk Non Fat UHT 1L,Dairy (Shelf-Stable),Richlife,1L,484.44,201,Richlife Dairies (Private) Limited,16,48,5.5,27.4,3.6,405.88,1,3
+LK-DAI-GJC36,4796676650613,Richlife Chocolate Milk 180ml,Dairy (Shelf-Stable),Richlife,180ml,117.44,248,Richlife Dairies (Private) Limited,14,28,12.2,21.6,7.9,98.83,3,5
+LK-DAI-VK7N3,4790728326846,Highland Milk Full Cream UHT 450ml,Dairy (Shelf-Stable),Highland,450ml,443.22,263,Highland Dairies (Private) Limited,35,70,16.1,23.0,5.1,386.2,1,7
+LK-DAI-VT8K0,4795368222398,Highland Milk Chocolate UHT 180ml,Dairy (Shelf-Stable),Highland,180ml,138.43,136,Highland Dairies (Private) Limited,48,96,22.0,33.2,19.9,120.2,2,8
+LK-DAI-TKCD0,4797552314919,Highland Milk Vanilla UHT 180ml,Dairy (Shelf-Stable),Highland,180ml,143.01,205,Highland Dairies (Private) Limited,31,93,16.3,17.8,8.4,123.12,2,4
+LK-DAI-AIH0P,4795257775479,Milkmaid Sweetened Condensed Milk 510g,Dairy (Shelf-Stable),Milkmaid,510g,546.88,245,Nestle Lanka PLC,29,87,22.8,13.3,15.5,475.49,3,3
+LK-DAI-064W3,4799693084881,Astra Multi-Purpose Fat Spread 100g,Dairy (Shelf-Stable),Astra,100g,211.37,183,HA & GS De Zoysa (Private) Limited,26,104,7.7,21.5,4.5,176.17,2,7
+LK-DAI-AI89Y,4798272299272,Happy Cow Cheese Regular Slices 400g,Dairy (Shelf-Stable),Happy Cow,400g,1070.8,214,Happy Cow Lanka (Private) Limited,16,64,12.4,9.2,6.5,939.71,2,6
+LK-DAI-QQB9L,4798449892664,Happy Cow Cheese Wedges 120g,Dairy (Shelf-Stable),Happy Cow,120g,453.06,109,Happy Cow Lanka (Private) Limited,28,140,24.5,14.0,9.9,380.93,2,6
+LK-DAI-25A5P,4793184322254,Anchor Milk Powder Full Cream 400g,Dairy (Shelf-Stable),Anchor,400g,908.97,259,Fonterra Brands Lanka,38,152,19.4,21.0,11.1,755.34,1,7
+LK-DAI-F4ABU,4792280920241,Anchor Milk Powder Shape Up 400g,Dairy (Shelf-Stable),Anchor,400g,1062.77,193,Fonterra Brands Lanka,48,96,22.6,27.7,17.0,902.29,1,4
+LK-DAI-Q95G3,4799292984254,Anchor Milk UHT 1L,Dairy (Shelf-Stable),Anchor,1L,580.59,107,Fonterra Brands Lanka,36,180,7.6,8.4,11.9,490.14,3,8
+LK-DAI-PFDRW,4790881172984,Anchor Butter Salted 100g,Dairy (Shelf-Stable),Anchor,100g,257.58,263,Fonterra Brands Lanka,39,195,12.4,9.2,12.0,212.81,1,6
+LK-DAI-2NV01,4799162473147,Anchor Butter Unsalted 227g,Dairy (Shelf-Stable),Anchor,227g,415.73,155,Fonterra Brands Lanka,12,24,16.6,11.2,3.1,352.28,3,4
+LK-DAI-YLNFX,4794486959469,Anchor Cheese Slices 100g,Dairy (Shelf-Stable),Anchor,100g,248.15,232,Fonterra Brands Lanka,23,92,16.2,21.1,19.8,212.22,3,5
+LK-DAI-1OE5E,4793721386589,Kotmale Fresh Milk Full Cream 1L,Dairy (Shelf-Stable),Kotmale,1L,503.51,103,Kotmale Holdings PLC,36,72,21.1,30.2,11.0,422.41,3,6
+LK-DAI-DJNV0,4796984902770,Kotmale Fresh Milk Low Fat 1L,Dairy (Shelf-Stable),Kotmale,1L,352.68,222,Kotmale Holdings PLC,24,48,20.7,21.8,14.9,292.36,3,4
+LK-DAI-YMX9D,4794656693803,Kotmale Fresh Milk Non Fat 1L,Dairy (Shelf-Stable),Kotmale,1L,534.23,113,Kotmale Holdings PLC,30,120,11.9,30.0,6.8,467.92,1,6
+LK-DAI-7UJOD,4791845184890,Kotmale Milk Chocolate 180ml,Dairy (Shelf-Stable),Kotmale,180ml,97.51,186,Kotmale Holdings PLC,42,126,20.1,34.0,10.8,83.22,2,7
+LK-DAI-5RJN2,4793356588044,Kotmale Milk Vanilla 1L,Dairy (Shelf-Stable),Kotmale,1L,412.06,262,Kotmale Holdings PLC,33,66,16.1,12.8,8.3,360.31,1,7
+LK-DAI-J8Y6R,4793334333390,Kotmale Milk Faluda 180ml,Dairy (Shelf-Stable),Kotmale,180ml,104.92,120,Kotmale Holdings PLC,43,86,20.3,22.6,3.7,87.43,2,5
+LK-DAI-WR965,4797284639205,Ambewela Milk Plain 1L,Dairy (Shelf-Stable),Ambewela,1L,481.43,228,Ambewela Products (Private) Limited,44,176,12.9,26.5,6.0,411.43,1,8
+LK-BAK-SLAYN,4791559428433,Munchee Super Cream Cracker 85g,Packaged Bakery,Munchee,85g,141.55,117,Ceylon Biscuits Limited (CBL),17,85,13.5,19.3,15.8,106.57,2,6
+LK-BAK-KGEUI,4791438663221,Munchee Chocolate Cream 400g,Packaged Bakery,Munchee,400g,393.52,137,Ceylon Biscuits Limited (CBL),16,64,20.7,16.1,12.6,322.42,3,3
+LK-BAK-OYC3R,4791754558843,Munchee Lemon Puff 100g,Packaged Bakery,Munchee,100g,121.3,119,Ceylon Biscuits Limited (CBL),30,90,24.6,15.7,8.5,95.97,3,6
+LK-BAK-1QCWQ,4792256996119,Munchee Nice 400g,Packaged Bakery,Munchee,400g,318.88,111,Ceylon Biscuits Limited (CBL),34,136,17.1,18.7,18.1,256.39,2,8
+LK-BAK-V8OGA,4793413261118,Munchee Ginger 80g,Packaged Bakery,Munchee,80g,174.94,43,Ceylon Biscuits Limited (CBL),36,180,15.5,34.9,4.8,137.66,3,4
+LK-BAK-D7OI0,4797228200553,Munchee Milk Short Cake 200g,Packaged Bakery,Munchee,200g,322.85,168,Ceylon Biscuits Limited (CBL),29,145,7.7,33.6,12.2,254.18,3,7
+LK-BAK-Q05PX,4798457831747,Munchee Milk Cream 110g,Packaged Bakery,Munchee,110g,186.58,107,Ceylon Biscuits Limited (CBL),12,36,11.9,20.7,3.1,149.6,2,6
+LK-BAK-K12V2,4798536866325,Munchee Chocolate Puff 200g,Packaged Bakery,Munchee,200g,292.99,126,Ceylon Biscuits Limited (CBL),20,40,13.4,14.5,16.0,227.0,3,8
+LK-BAK-YK03O,4791224179745,Maliban Cream Cracker 500g,Packaged Bakery,Maliban,500g,502.12,112,Maliban Biscuit Manufactories (Private) Limited,16,32,24.4,8.6,19.5,394.45,2,5
+LK-BAK-EPADA,4793564757058,Maliban Chocolate Cream 400g,Packaged Bakery,Maliban,400g,299.25,67,Maliban Biscuit Manufactories (Private) Limited,20,100,6.4,20.7,6.3,229.66,2,6
+LK-BAK-3E1I1,4797303718379,Maliban Lemon Puff 100g,Packaged Bakery,Maliban,100g,126.69,112,Maliban Biscuit Manufactories (Private) Limited,32,64,19.9,22.8,5.1,95.36,2,8
+LK-BAK-KMBY9,4793650249160,Maliban Nice 435g,Packaged Bakery,Maliban,435g,507.83,40,Maliban Biscuit Manufactories (Private) Limited,34,102,12.4,10.4,5.7,416.1,1,8
+LK-BAK-W79WC,4792812735855,Maliban Gold Marie 75g,Packaged Bakery,Maliban,75g,164.44,79,Maliban Biscuit Manufactories (Private) Limited,34,170,12.2,11.6,18.3,129.79,2,8
+LK-BAK-PKZGG,4795574982185,Maliban Orange Cream 400g,Packaged Bakery,Maliban,400g,317.21,97,Maliban Biscuit Manufactories (Private) Limited,26,52,20.5,21.7,15.5,253.55,1,7
+LK-BAK-41IZX,4798638782943,Maliban Custard Cream 100g,Packaged Bakery,Maliban,100g,118.71,58,Maliban Biscuit Manufactories (Private) Limited,28,56,5.9,33.3,6.0,92.02,1,4
+LK-BAK-DGBXN,4797899405394,Little Lion Golden Cow Rusk Original 110g,Packaged Bakery,Little Lion,110g,221.78,83,Ceylon Biscuits Limited (CBL),14,70,21.0,9.6,12.5,181.66,2,5
+LK-BAK-2CWT0,4794138113867,Little Lion Golden Cow Rusk Banana 70g,Packaged Bakery,Little Lion,70g,115.16,93,Ceylon Biscuits Limited (CBL),29,145,19.9,28.7,12.8,90.19,3,6
+LK-BAK-ZPD2T,4798528975585,Harischandra Cream Crackers 500g,Packaged Bakery,Harischandra,500g,577.78,125,Harischandra Mills PLC,36,180,21.5,16.7,7.1,460.65,3,4
+LK-BAK-NT0MQ,4796004908249,Harischandra Papadam 70g,Packaged Bakery,Harischandra,70g,100.53,84,Harischandra Mills PLC,12,48,23.4,21.8,12.7,75.51,3,4
+LK-BAK-DQFJ6,4793344196930,Munchee Super Cream Cracker 500g,Packaged Bakery,Munchee,500g,510.91,153,Ceylon Biscuits Limited (CBL),27,54,16.9,16.1,15.4,393.07,3,6
+LK-BAK-CC1M3,4796139060485,Munchee Chocolate Cream 100g,Packaged Bakery,Munchee,100g,84.94,68,Ceylon Biscuits Limited (CBL),28,84,8.1,26.2,20.0,66.44,2,7
+LK-BAK-UDP2F,4795179086417,Munchee Lemon Puff 200g,Packaged Bakery,Munchee,200g,229.71,63,Ceylon Biscuits Limited (CBL),27,81,14.8,25.6,6.3,181.38,3,8
+LK-BAK-SIJPY,4799116655353,Munchee Nice 100g,Packaged Bakery,Munchee,100g,121.34,108,Ceylon Biscuits Limited (CBL),23,115,17.5,19.9,18.7,93.93,1,4
+LK-BAK-YF0D0,4793924051475,Munchee Ginger 400g,Packaged Bakery,Munchee,400g,393.09,167,Ceylon Biscuits Limited (CBL),18,72,16.0,24.8,19.9,313.2,3,8
+LK-BAK-YN6SJ,4790439407018,Munchee Milk Short Cake 85g,Packaged Bakery,Munchee,85g,151.09,122,Ceylon Biscuits Limited (CBL),12,48,22.3,25.5,6.9,121.02,2,7
+LK-BAK-9DL5T,4792387800385,Munchee Milk Cream 255g,Packaged Bakery,Munchee,255g,322.69,70,Ceylon Biscuits Limited (CBL),23,92,12.1,16.2,19.9,253.54,3,5
+LK-BAK-3W563,4790843256219,Munchee Chocolate Puff 100g,Packaged Bakery,Munchee,100g,167.59,88,Ceylon Biscuits Limited (CBL),19,57,13.5,16.4,13.3,131.32,2,7
+LK-BAK-EXUYH,4792482629256,Maliban Cream Cracker 125g,Packaged Bakery,Maliban,125g,156.78,60,Maliban Biscuit Manufactories (Private) Limited,22,66,19.5,28.7,18.0,122.71,2,6
+LK-BAK-K03W0,4792312209948,Maliban Chocolate Cream 100g,Packaged Bakery,Maliban,100g,152.67,89,Maliban Biscuit Manufactories (Private) Limited,33,66,12.2,26.6,11.1,118.65,3,7
+LK-BAK-QXGNR,4792330604633,Maliban Lemon Puff 200g,Packaged Bakery,Maliban,200g,298.47,82,Maliban Biscuit Manufactories (Private) Limited,17,85,22.3,21.2,8.5,224.1,2,4
+LK-INS-P1V3Z,4796999880810,Prima Kottu Mee Hot & Spicy 75g,Instant Foods,Prima,75g,78.06,201,Prima Ceylon Limited,57,285,24.7,9.1,9.6,59.49,3,3
+LK-INS-GP51K,4792649082771,Prima Kottu Mee Chicken 78g,Instant Foods,Prima,78g,68.62,272,Prima Ceylon Limited,58,174,12.9,16.7,3.4,53.86,2,7
+LK-INS-665DL,4792111751860,Prima Kottu Mee Cheese Onion 80g,Instant Foods,Prima,80g,97.71,493,Prima Ceylon Limited,48,240,5.9,12.6,8.7,73.45,3,4
+LK-INS-FF1BL,4797421230944,Prima Kottu Mee Masala 78g,Instant Foods,Prima,78g,65.49,435,Prima Ceylon Limited,24,120,9.8,23.9,11.1,51.42,2,6
+LK-INS-CVITW,4798302205020,Prima Stella Chicken 74g,Instant Foods,Prima,74g,94.15,488,Prima Ceylon Limited,45,90,6.0,19.3,6.0,72.81,3,5
+LK-INS-VYV2G,4797950145566,Prima Stella Curry 75g,Instant Foods,Prima,75g,92.81,461,Prima Ceylon Limited,42,210,7.7,26.8,7.7,71.18,3,6
+LK-INS-SZWD0,4798179469549,Prima Stella Prawn 75g,Instant Foods,Prima,75g,81.02,361,Prima Ceylon Limited,60,300,15.4,25.1,11.4,60.79,1,7
+LK-INS-IKGEQ,4791396605585,Prima Stella Vegetable 74g,Instant Foods,Prima,74g,92.24,507,Prima Ceylon Limited,42,168,20.8,16.3,11.6,74.27,2,3
+LK-INS-ELOU8,4792355770276,Maggi Noodles Chicken 335g,Instant Foods,Maggi,335g,244.86,454,Nestle Lanka PLC,53,265,23.6,9.5,11.9,192.89,3,8
+LK-INS-YTAUL,4795124056823,Maggi Noodles Curry 73g,Instant Foods,Maggi,73g,82.84,484,Nestle Lanka PLC,43,172,19.2,15.3,4.5,65.67,1,5
+LK-INS-Q8HKE,4790317807824,Maggi Noodles Devilled Chilli Chicken 76g,Instant Foods,Maggi,76g,176.08,448,Nestle Lanka PLC,44,132,20.4,10.7,19.7,133.0,3,8
+LK-INS-9HBN5,4791040915701,Raigam Noodles Deveni Batha Chicken 80g,Instant Foods,Raigam,80g,69.64,339,Raigam Marketing Services (Private) Limited,60,240,17.8,13.7,6.4,53.37,2,5
+LK-INS-T1YJF,4791098813851,Raigam Noodles Deveni Batha Curry 80g,Instant Foods,Raigam,80g,89.72,540,Raigam Marketing Services (Private) Limited,60,180,8.4,16.4,18.2,71.87,3,6
+LK-INS-BB6BN,4791662997956,Raigam Noodles Deveni Batha Sea Food 85g,Instant Foods,Raigam,85g,85.62,545,Raigam Marketing Services (Private) Limited,58,116,24.5,28.4,10.9,65.31,1,3
+LK-INS-37QQY,4797733294566,MD Noodles 400g,Instant Foods,MD,400g,316.67,349,MD Holdings (Private) Limited,53,265,5.6,20.8,9.0,239.34,2,4
+LK-INS-KMUSO,4791581487699,Sera Kottu Kottu Chicken 375g,Instant Foods,Sera,375g,320.29,460,Sera Foods Lanka,54,270,6.3,13.6,14.8,248.72,2,6
+LK-INS-UMYGY,4799719975810,Sera Kottu Kottu Hot & Spicy 65g,Instant Foods,Sera,65g,82.88,387,Sera Foods Lanka,30,150,11.5,25.4,4.0,66.94,1,4
+LK-INS-56WAF,4792784699735,Knorr Chicken Cube 280g,Instant Foods,Knorr,280g,441.13,333,Unilever Sri Lanka Limited,43,215,19.4,32.7,19.8,334.63,3,3
+LK-INS-WS44C,4798008514037,Cirio Pasta Sauce Napoletana 420g,Instant Foods,Cirio,420g,636.34,500,Cirio Imports Lanka,48,240,12.6,22.7,14.3,495.51,2,4
+LK-INS-GN74F,4792201027622,Cirio Pasta Sauce Arrabbiata 420g,Instant Foods,Cirio,420g,566.93,392,Cirio Imports Lanka,51,153,14.1,19.5,16.9,439.4,2,5
+LK-INS-IPAR0,4798468950093,Prima Kottu Mee Hot & Spicy 400g,Instant Foods,Prima,400g,376.65,477,Prima Ceylon Limited,29,87,19.6,22.2,17.6,299.14,2,6
+LK-INS-SSVIW,4791894905804,Prima Kottu Mee Chicken 78g,Instant Foods,Prima,78g,83.75,420,Prima Ceylon Limited,45,225,12.1,34.4,8.0,65.67,1,3
+LK-INS-ZVK2J,4797929049048,Prima Kottu Mee Cheese Onion 80g,Instant Foods,Prima,80g,86.81,219,Prima Ceylon Limited,40,120,17.3,15.4,7.4,70.41,3,3
+LK-INS-V60XN,4792437280518,Prima Kottu Mee Masala 78g,Instant Foods,Prima,78g,103.69,258,Prima Ceylon Limited,50,250,9.8,19.9,13.8,80.7,1,7
+LK-INS-0MX1E,4792767478364,Prima Stella Chicken 74g,Instant Foods,Prima,74g,87.34,314,Prima Ceylon Limited,57,285,5.2,33.0,10.6,69.23,3,5
+LK-INS-8YB7W,4796945441492,Prima Stella Curry 75g,Instant Foods,Prima,75g,75.65,303,Prima Ceylon Limited,36,144,18.6,34.8,8.3,57.94,1,8
+LK-INS-ACOSY,4795344300911,Prima Stella Prawn 75g,Instant Foods,Prima,75g,62.28,291,Prima Ceylon Limited,31,62,6.7,24.3,9.4,48.48,3,7
+LK-INS-2GDGK,4791746542140,Prima Stella Vegetable 74g,Instant Foods,Prima,74g,91.08,350,Prima Ceylon Limited,40,160,8.6,9.9,19.7,72.25,1,7
+LK-INS-OXDTP,4799174101199,Maggi Noodles Chicken 146g,Instant Foods,Maggi,146g,178.2,189,Nestle Lanka PLC,33,66,23.7,25.9,7.5,136.43,3,5
+LK-INS-6US7R,4796618306714,Maggi Noodles Curry 73g,Instant Foods,Maggi,73g,82.69,363,Nestle Lanka PLC,43,215,6.1,34.9,14.0,62.39,2,7
+LK-INS-4M41K,4793280634619,Maggi Noodles Devilled Chilli Chicken 76g,Instant Foods,Maggi,76g,352.25,223,Nestle Lanka PLC,52,156,7.8,13.2,15.2,279.99,3,4
+LK-INS-RCTLT,4797005050616,Raigam Noodles Deveni Batha Chicken 80g,Instant Foods,Raigam,80g,74.53,447,Raigam Marketing Services (Private) Limited,58,174,19.8,14.3,4.2,57.7,3,4
+LK-INS-RA6WI,4792020417925,Raigam Noodles Deveni Batha Curry 80g,Instant Foods,Raigam,80g,102.59,234,Raigam Marketing Services (Private) Limited,55,165,6.3,13.5,8.7,83.66,3,8
+LK-INS-OEYTL,4793092511429,Raigam Noodles Deveni Batha Sea Food 85g,Instant Foods,Raigam,85g,107.88,369,Raigam Marketing Services (Private) Limited,34,170,9.9,23.7,5.3,87.19,3,7
+LK-INS-NF5CA,4791946723240,MD Noodles 85g,Instant Foods,MD,85g,96.15,269,MD Holdings (Private) Limited,26,78,19.3,24.5,4.5,76.07,2,5
+LK-SNK-PUG99,4799588373403,Ritzbury Chocolate Fingers 110g,Snacks & Confectionery,Ritzbury,110g,212.93,295,Ceylon Biscuits Limited (CBL),39,117,8.2,32.9,3.9,132.95,2,5
+LK-SNK-HJW6Q,4791082207819,Ritzbury Choco Mo 220g,Snacks & Confectionery,Ritzbury,220g,474.8,233,Ceylon Biscuits Limited (CBL),42,168,13.4,28.2,18.3,328.45,1,3
+LK-SNK-LD05N,4793179706236,Ritzbury Revello Almond 100g,Snacks & Confectionery,Ritzbury,100g,335.58,219,Ceylon Biscuits Limited (CBL),28,140,19.4,25.1,19.6,223.3,1,5
+LK-SNK-EYCE4,4797625349299,Ritzbury Revello Cashew 170g,Snacks & Confectionery,Ritzbury,170g,576.39,261,Ceylon Biscuits Limited (CBL),26,130,22.1,21.2,19.9,375.01,3,6
+LK-SNK-4K00I,4795693929061,Ritzbury Revello Fruit & Nut 100g,Snacks & Confectionery,Ritzbury,100g,346.04,240,Ceylon Biscuits Limited (CBL),48,96,13.5,18.6,16.8,247.49,3,3
+LK-SNK-QIUA0,4793254310747,Ritzbury Revello Hazelnut 100g,Snacks & Confectionery,Ritzbury,100g,182.36,266,Ceylon Biscuits Limited (CBL),42,84,24.5,20.5,5.4,121.25,3,6
+LK-SNK-G5WZA,4791658046491,Kandos Milk Chocolate 45g,Snacks & Confectionery,Kandos,45g,174.24,321,Ceylon Chocolates Limited,26,104,19.7,9.5,19.1,108.84,3,5
+LK-SNK-5DNWN,4792818325388,Kandos Cashewnut 100g,Snacks & Confectionery,Kandos,100g,172.71,360,Ceylon Chocolates Limited,46,138,20.1,28.5,8.4,114.43,2,7
+LK-SNK-YJCMR,4798178847959,Kandos Fruit & Nut 160g,Snacks & Confectionery,Kandos,160g,533.98,327,Ceylon Chocolates Limited,30,150,6.7,18.5,6.0,323.89,1,3
+LK-SNK-FEFFH,4790468275671,Kandos Caramel 45g,Snacks & Confectionery,Kandos,45g,193.77,168,Ceylon Chocolates Limited,24,72,21.7,22.0,8.7,139.01,3,5
+LK-SNK-X2RXT,4798774924245,Cadbury Dairy Milk 55g,Snacks & Confectionery,Cadbury,55g,174.95,193,Mondelez Lanka (Private) Limited,28,112,10.7,33.8,13.5,118.16,1,8
+LK-SNK-TGGZ6,4792231059273,Cadbury Dairy Milk Silk 150g,Snacks & Confectionery,Cadbury,150g,204.16,263,Mondelez Lanka (Private) Limited,25,100,24.6,12.0,10.6,142.48,1,7
+LK-SNK-K7ORF,4797520885472,Cadbury Fruit & Nut 36g,Snacks & Confectionery,Cadbury,36g,162.72,313,Mondelez Lanka (Private) Limited,45,135,21.0,27.7,18.7,98.23,2,8
+LK-SNK-ERBYE,4790693751506,M&M Milk Chocolate 45g,Snacks & Confectionery,M&M,45g,180.82,254,Mars Lanka (Private) Limited,48,192,8.9,10.3,17.4,125.96,3,8
+LK-SNK-89ORV,4798056265653,M&M Peanut 45g,Snacks & Confectionery,M&M,45g,121.22,198,Mars Lanka (Private) Limited,41,82,9.3,32.0,15.6,82.26,2,6
+LK-SNK-K38P6,4792991234781,Snickers Chocolate Bar 50g,Snacks & Confectionery,Snickers,50g,228.66,365,Mars Lanka (Private) Limited,48,240,6.8,19.1,18.5,162.82,2,4
+LK-SNK-UZ1EG,4796487049477,Mars Chocolate Bar 33g,Snacks & Confectionery,Mars,33g,123.56,126,Mars Lanka (Private) Limited,28,112,11.0,25.3,13.8,82.09,1,8
+LK-SNK-XKG6X,4790147195979,KitKat Chocolate 45g,Snacks & Confectionery,KitKat,45g,176.56,280,Nestle Lanka PLC,39,78,12.5,27.8,3.3,108.73,2,4
+LK-SNK-UFQYM,4790456504486,Ferrero Rocher Chocolate 62.5g,Snacks & Confectionery,Ferrero Rocher,62.5g,422.23,169,Ferrero Trading Lanka,29,58,17.0,12.5,8.5,300.11,2,8
+LK-SNK-2JZNT,4795202845769,Toblerone Milk Chocolate 200g,Snacks & Confectionery,Toblerone,200g,532.3,146,Mondelez Lanka (Private) Limited,28,84,21.6,29.5,12.5,325.08,3,7
+LK-SNK-4ZZ2P,4791120754527,Ritzbury Chocolate Fingers 110g,Snacks & Confectionery,Ritzbury,110g,318.9,272,Ceylon Biscuits Limited (CBL),48,192,8.4,16.2,15.7,195.56,1,4
+LK-SNK-EYYLH,4791611076039,Ritzbury Choco Mo 220g,Snacks & Confectionery,Ritzbury,220g,487.74,251,Ceylon Biscuits Limited (CBL),25,125,7.4,14.8,4.1,304.76,3,3
+LK-SNK-127H6,4792501249557,Ritzbury Revello Almond 100g,Snacks & Confectionery,Ritzbury,100g,182.11,306,Ceylon Biscuits Limited (CBL),31,62,7.0,23.6,3.2,120.18,1,8
+LK-SNK-GK6T9,4791387592719,Ritzbury Revello Cashew 170g,Snacks & Confectionery,Ritzbury,170g,395.21,217,Ceylon Biscuits Limited (CBL),30,90,13.2,28.6,8.3,267.72,2,3
+LK-SNK-SRNKZ,4791571647942,Ritzbury Revello Fruit & Nut 100g,Snacks & Confectionery,Ritzbury,100g,287.41,177,Ceylon Biscuits Limited (CBL),37,148,24.7,19.6,17.6,177.93,2,8
+LK-SNK-NAYYO,4798112669128,Ritzbury Revello Hazelnut 100g,Snacks & Confectionery,Ritzbury,100g,162.94,206,Ceylon Biscuits Limited (CBL),43,215,7.5,30.6,15.3,98.25,2,8
+LK-SNK-1V127,4795796784277,Kandos Milk Chocolate 45g,Snacks & Confectionery,Kandos,45g,130.8,247,Ceylon Chocolates Limited,44,132,5.6,27.9,17.1,90.24,2,8
+LK-SNK-AGVLK,4799118773475,Kandos Cashewnut 45g,Snacks & Confectionery,Kandos,45g,169.03,207,Ceylon Chocolates Limited,41,82,24.1,8.9,10.3,116.39,1,6
+LK-SNK-Q4PBG,4794276246717,Kandos Fruit & Nut 90g,Snacks & Confectionery,Kandos,90g,322.39,261,Ceylon Chocolates Limited,41,205,14.5,31.1,11.6,213.14,2,5
+LK-SNK-R8WM9,4795009025593,Kandos Caramel 45g,Snacks & Confectionery,Kandos,45g,122.69,207,Ceylon Chocolates Limited,27,135,11.9,17.6,9.0,75.21,3,4
+LK-SNK-IXV6C,4794152085072,Cadbury Dairy Milk 55g,Snacks & Confectionery,Cadbury,55g,222.35,251,Mondelez Lanka (Private) Limited,32,64,18.9,23.9,19.8,148.82,2,7
+LK-SNK-OU3DY,4795785294565,Cadbury Dairy Milk Silk 150g,Snacks & Confectionery,Cadbury,150g,180.7,321,Mondelez Lanka (Private) Limited,41,123,10.7,9.3,19.9,116.33,2,4
+LK-SNK-W8ZUV,4794198763514,Cadbury Fruit & Nut 180g,Snacks & Confectionery,Cadbury,180g,555.91,325,Mondelez Lanka (Private) Limited,37,148,9.0,18.9,13.6,380.12,2,8
+LK-SNK-1GAZ5,4799737489696,M&M Milk Chocolate 28g,Snacks & Confectionery,M&M,28g,116.33,171,Mars Lanka (Private) Limited,38,114,9.8,28.2,16.0,82.92,2,6
+LK-SNK-L3CHO,4794249363120,M&M Peanut 45g,Snacks & Confectionery,M&M,45g,139.19,331,Mars Lanka (Private) Limited,38,190,16.2,19.8,14.0,96.11,1,4
+LK-SNK-FEJ2X,4792070015942,Snickers Chocolate Bar 50g,Snacks & Confectionery,Snickers,50g,216.72,224,Mars Lanka (Private) Limited,45,90,12.9,30.7,17.3,132.62,1,3
+LK-SNK-USEXU,4798471391555,Mars Chocolate Bar 33g,Snacks & Confectionery,Mars,33g,139.94,326,Mars Lanka (Private) Limited,47,141,23.7,13.9,4.8,88.38,1,5
+LK-SNK-PJVRN,4791586734255,KitKat Chocolate 38g,Snacks & Confectionery,KitKat,38g,133.27,198,Nestle Lanka PLC,44,88,21.8,25.9,19.0,90.07,3,8
+LK-SNK-ITL8N,4791837606447,Ferrero Rocher Chocolate 62.5g,Snacks & Confectionery,Ferrero Rocher,62.5g,334.44,180,Ferrero Trading Lanka,30,90,23.3,25.0,18.0,207.78,3,6
+LK-SNK-2JC2R,4796561248154,Toblerone Milk Chocolate 200g,Snacks & Confectionery,Toblerone,200g,558.89,260,Mondelez Lanka (Private) Limited,34,170,18.9,28.6,13.9,353.49,1,8
+LK-TEA-PXAHK,4799112382963,Dilmah Tea Bags 50s,Tea & Coffee,Dilmah,50s,502.31,854,Dilmah Ceylon Tea Company PLC,28,112,8.5,24.0,8.6,415.73,2,4
+LK-TEA-DNON4,4799300893172,Dilmah Tea Leaf Premium 200g,Tea & Coffee,Dilmah,200g,469.39,537,Dilmah Ceylon Tea Company PLC,36,180,17.0,12.0,19.3,375.94,1,7
+LK-TEA-EZP7Q,4797133344762,Dilmah Tea Strong 100g,Tea & Coffee,Dilmah,100g,246.04,979,Dilmah Ceylon Tea Company PLC,33,99,13.4,19.0,5.5,194.39,2,5
+LK-TEA-IQIUX,4791072563666,Dilmah Tea Earl Grey 125g,Tea & Coffee,Dilmah,125g,427.22,462,Dilmah Ceylon Tea Company PLC,25,50,11.7,14.3,18.4,355.47,3,8
+LK-TEA-8V0BJ,4799646528097,Dilmah Tea English Breakfast 125g,Tea & Coffee,Dilmah,125g,315.87,869,Dilmah Ceylon Tea Company PLC,38,114,6.8,27.2,10.4,264.73,2,3
+LK-TEA-L9R9K,4795644948561,Dilmah Tea Green Pure Ceylon 75g,Tea & Coffee,Dilmah,75g,304.97,868,Dilmah Ceylon Tea Company PLC,41,205,6.1,12.0,6.9,252.49,1,6
+LK-TEA-JZP97,4790758777120,Lipton Ceylonta Black Tea Bags 50s,Tea & Coffee,Lipton,50s,348.44,655,Unilever Sri Lanka Limited,29,116,16.3,25.9,6.6,293.89,1,7
+LK-TEA-1G7IR,4791504165918,Lipton Ceylonta Black Tea 500g,Tea & Coffee,Lipton,500g,1527.73,448,Unilever Sri Lanka Limited,46,230,14.1,33.8,13.1,1282.13,1,5
+LK-TEA-8X8L0,4799230450186,Lipton Pure Green Tea Bag 26g,Tea & Coffee,Lipton,26g,333.27,773,Unilever Sri Lanka Limited,29,87,24.3,31.4,4.5,274.38,1,4
+LK-TEA-NOX8F,4794764925155,Zesta Tea 250g,Tea & Coffee,Zesta,250g,705.06,762,Akbar Brothers (Private) Limited,32,160,6.8,19.4,9.3,575.14,1,6
+LK-TEA-WDS9Y,4792788147614,Zesta Green Tea 25s,Tea & Coffee,Zesta,25s,307.01,517,Akbar Brothers (Private) Limited,45,180,21.8,22.1,8.0,250.69,1,7
+LK-TEA-CBDPD,4799454918011,Watawala Tea 1kg,Tea & Coffee,Watawala,1kg,2910.77,551,Sunshine Holdings PLC,25,50,13.3,27.0,8.3,2379.84,3,6
+LK-TEA-1Q3M7,4792321941686,Watawala Green Tea 20s,Tea & Coffee,Watawala,20s,182.15,378,Sunshine Holdings PLC,44,220,14.2,18.9,14.2,149.79,3,7
+LK-TEA-0K3WY,4796412203103,Maliban Tea 400g,Tea & Coffee,Maliban,400g,1202.42,392,Maliban Biscuit Manufactories (Private) Limited,39,117,18.0,19.8,13.6,1006.21,3,4
+LK-TEA-D1FPE,4792777079339,Nescafe Classic 50g,Tea & Coffee,Nescafe,50g,158.33,766,Nestle Lanka PLC,34,68,7.1,30.9,10.3,125.39,2,6
+LK-TEA-0VTKR,4797899730809,Nescafe Gold 100g,Tea & Coffee,Nescafe,100g,304.4,430,Nestle Lanka PLC,44,220,22.8,11.2,13.6,252.01,3,5
+LK-TEA-QPF0Q,4797383959723,Nescafe Gold Espresso 100g,Tea & Coffee,Nescafe,100g,396.63,764,Nestle Lanka PLC,45,180,20.9,29.6,17.4,317.06,3,4
+LK-TEA-K0YEH,4799716743382,Harischandra Coffee 200g,Tea & Coffee,Harischandra,200g,416.47,632,Harischandra Mills PLC,45,135,8.5,31.2,11.6,353.47,1,5
+LK-HOU-PWEIJ,4795508428918,Sunlight Washing Powder 500g,Household & Cleaning,Sunlight,500g,435.41,1626,Unilever Sri Lanka Limited,24,48,24.5,29.1,13.4,341.86,1,7
+LK-HOU-BDW56,4792478712559,Sunlight Soap Yellow 360g,Household & Cleaning,Sunlight,360g,389.26,1143,Unilever Sri Lanka Limited,18,36,9.9,29.8,8.8,327.52,3,4
+LK-HOU-DN1MX,4792863266674,Sunlight Dishwash Liquid 1.5L,Household & Cleaning,Sunlight,1.5L,1325.92,1470,Unilever Sri Lanka Limited,19,57,20.4,27.4,11.8,1079.13,1,3
+LK-HOU-MO1PO,4790290846681,Surf Excel Washing Powder Extra Clean 500g,Household & Cleaning,Surf Excel,500g,472.18,1372,Unilever Sri Lanka Limited,12,48,23.0,24.5,5.5,377.5,2,6
+LK-HOU-X5WWP,4795634108562,Surf Excel Matic Washing Powder 1kg,Household & Cleaning,Surf Excel,1kg,831.79,988,Unilever Sri Lanka Limited,20,80,9.3,21.8,8.3,663.93,2,8
+LK-HOU-FB2VI,4794681054853,Rin Washing Powder 1kg,Household & Cleaning,Rin,1kg,573.24,985,Unilever Sri Lanka Limited,16,32,14.1,34.5,16.7,456.9,3,7
+LK-HOU-Z7X4I,4794492683150,Diva Detergent Powder 400g,Household & Cleaning,Diva,400g,337.8,1469,Hemas Consumer Brands,13,39,19.2,30.4,4.4,282.58,1,6
+LK-HOU-5RQNS,4799886497672,Diva Liquid Detergent 1L,Household & Cleaning,Diva,1L,834.94,1583,Hemas Consumer Brands,14,42,14.7,20.4,19.5,654.3,3,7
+LK-HOU-EHR07,4795196115947,Vim Dishwash Bar 200g,Household & Cleaning,Vim,200g,133.63,1490,Unilever Sri Lanka Limited,17,68,10.9,8.8,5.4,112.15,3,6
+LK-HOU-B66H3,4797018510671,Vim Dishwash Liquid 500ml,Household & Cleaning,Vim,500ml,469.0,1421,Unilever Sri Lanka Limited,19,57,20.2,21.6,10.8,380.08,2,8
+LK-HOU-Q5L2X,4796636580745,Harpic Toilet Bowl Cleaner 500ml,Household & Cleaning,Harpic,500ml,487.94,780,Reckitt Benckiser Lanka Limited,22,88,16.2,11.3,12.5,385.17,1,7
+LK-HOU-T18S1,4798018204331,Harpic Bathroom Cleaner 500ml,Household & Cleaning,Harpic,500ml,535.72,1639,Reckitt Benckiser Lanka Limited,24,96,13.0,9.2,17.7,423.9,1,5
+LK-HOU-PO4LJ,4791182422419,Domex Toilet Cleaner 500ml,Household & Cleaning,Domex,500ml,360.1,1076,Unilever Sri Lanka Limited,21,84,8.6,27.3,8.1,282.08,1,5
+LK-HOU-F6J76,4790339937882,Dettol Antiseptic Liquid 1L,Household & Cleaning,Dettol,1L,722.47,854,Reckitt Benckiser Lanka Limited,19,95,6.3,8.8,13.8,608.28,1,5
+LK-HOU-TVD1X,4792496718328,Dettol Hand Wash 200ml,Household & Cleaning,Dettol,200ml,249.32,1232,Reckitt Benckiser Lanka Limited,18,90,5.8,29.9,19.3,194.73,3,5
+LK-HOU-XGC7J,4794653984027,Mortein Mosquito Coil 10s,Household & Cleaning,Mortein,10s,193.92,1345,Reckitt Benckiser Lanka Limited,18,36,21.6,27.6,20.0,157.19,2,4
+LK-HOU-V8LYM,4794743553799,Mortein Vaporiser Refill 45 Nights,Household & Cleaning,Mortein,45 Nights,465.69,1003,Reckitt Benckiser Lanka Limited,12,60,5.1,8.3,6.0,366.04,3,8
+LK-HOU-Z1T2X,4791807156958,Comfort Fabric Conditioner 860ml,Household & Cleaning,Comfort,860ml,647.63,747,Unilever Sri Lanka Limited,19,76,23.7,20.0,6.8,512.44,1,5
+LK-HOU-YZG3W,4793375047935,Sunlight Washing Powder 500g,Household & Cleaning,Sunlight,500g,281.57,1541,Unilever Sri Lanka Limited,16,80,8.4,13.2,15.6,219.93,3,8
+LK-HOU-VGV0E,4799384308944,Sunlight Soap Yellow 360g,Household & Cleaning,Sunlight,360g,365.72,734,Unilever Sri Lanka Limited,22,44,22.1,16.7,17.4,288.25,2,5
+LK-HOU-ESRSB,4793046875065,Sunlight Dishwash Liquid 1.5L,Household & Cleaning,Sunlight,1.5L,947.3,781,Unilever Sri Lanka Limited,15,75,24.2,32.8,6.3,799.78,2,5
+LK-HOU-CWBPA,4795431735053,Surf Excel Washing Powder Extra Clean 500g,Household & Cleaning,Surf Excel,500g,394.33,879,Unilever Sri Lanka Limited,21,105,20.3,24.9,12.8,328.65,1,3
+LK-HOU-7N6Y2,4790704961108,Surf Excel Matic Washing Powder 1kg,Household & Cleaning,Surf Excel,1kg,760.48,1511,Unilever Sri Lanka Limited,13,65,9.7,24.2,14.2,630.71,1,6
+LK-HOU-N25WM,4790785931106,Rin Washing Powder 1kg,Household & Cleaning,Rin,1kg,775.93,1126,Unilever Sri Lanka Limited,14,56,12.1,21.0,13.6,655.87,1,4
+LK-HOU-EBEVS,4795498227492,Diva Detergent Powder 400g,Household & Cleaning,Diva,400g,308.29,746,Hemas Consumer Brands,21,63,6.1,21.7,17.2,254.09,1,6
+LK-HOU-M9XHC,4793779599597,Diva Liquid Detergent 1L,Household & Cleaning,Diva,1L,690.86,944,Hemas Consumer Brands,24,48,14.9,32.8,13.9,571.34,3,4
+LK-HOU-QHR13,4796362050154,Vim Dishwash Bar 200g,Household & Cleaning,Vim,200g,132.7,1325,Unilever Sri Lanka Limited,15,60,5.9,8.8,6.4,111.73,1,4
+LK-HOU-5ZMTG,4790241026155,Vim Dishwash Liquid 500ml,Household & Cleaning,Vim,500ml,563.39,1221,Unilever Sri Lanka Limited,24,96,18.2,33.4,19.6,466.85,3,6
+LK-HOU-5CF72,4793865596301,Harpic Toilet Bowl Cleaner 500ml,Household & Cleaning,Harpic,500ml,518.4,1332,Reckitt Benckiser Lanka Limited,17,51,6.1,29.5,17.8,419.33,3,7
+LK-HOU-5HCQX,4791286857872,Harpic Bathroom Cleaner 500ml,Household & Cleaning,Harpic,500ml,366.54,1806,Reckitt Benckiser Lanka Limited,19,95,14.5,23.7,13.8,293.28,3,8
+LK-PER-BHH5O,4794669254817,Signal Toothpaste Strong Teeth 70g,Personal Care,Signal,70g,133.43,820,Unilever Sri Lanka Limited,23,69,16.7,20.6,13.6,105.85,2,6
+LK-PER-QO2LN,4792734151481,Signal Toothpaste Charcoal White 120g,Personal Care,Signal,120g,282.05,648,Unilever Sri Lanka Limited,15,30,6.4,9.0,6.4,211.12,1,8
+LK-PER-LK3YJ,4799284044560,Closeup Red Hot Toothpaste 40g,Personal Care,Closeup,40g,155.67,1036,Unilever Sri Lanka Limited,27,81,22.3,14.1,15.3,114.3,1,6
+LK-PER-IVTQ3,4795153663771,Closeup Lemon Splash 120g,Personal Care,Closeup,120g,336.47,507,Unilever Sri Lanka Limited,16,64,23.9,8.3,16.8,268.37,2,5
+LK-PER-IP11Y,4794590902252,Colgate Toothpaste Total 120g,Personal Care,Colgate,120g,290.91,987,Colgate-Palmolive Lanka (Private) Limited,24,120,9.1,18.5,12.1,214.13,1,6
+LK-PER-DUQ6D,4791820970234,Colgate Toothpaste Max Fresh 150g,Personal Care,Colgate,150g,293.9,655,Colgate-Palmolive Lanka (Private) Limited,19,76,18.2,9.9,4.0,212.48,3,3
+LK-PER-G4OFD,4798671632342,Sensodyne Toothpaste Rapid Relief 75g,Personal Care,Sensodyne,75g,201.86,851,GlaxoSmithKline Consumer Healthcare Lanka,31,124,16.7,21.6,14.6,150.03,2,4
+LK-PER-AFCO3,4798597779015,Sunsilk Shampoo Black Shine 340ml,Personal Care,Sunsilk,340ml,672.13,832,Unilever Sri Lanka Limited,34,136,12.8,30.2,17.4,490.33,2,4
+LK-PER-GWPNX,4799160324847,Sunsilk Shampoo Thick & Long 180ml,Personal Care,Sunsilk,180ml,453.33,587,Unilever Sri Lanka Limited,25,50,24.9,10.1,4.8,360.24,2,6
+LK-PER-QJSQC,4797656360041,Sunsilk Shampoo Smooth Nourish 180ml,Personal Care,Sunsilk,180ml,342.94,699,Unilever Sri Lanka Limited,35,175,14.7,9.8,12.3,249.19,1,8
+LK-PER-8F34G,4790912418623,Dove Shampoo Hair Fall Rescue 180ml,Personal Care,Dove,180ml,335.52,1058,Unilever Sri Lanka Limited,16,80,12.2,13.9,3.6,247.92,3,7
+LK-PER-HZ43X,4791647090061,Dove Shampoo Intense Repair 340ml,Personal Care,Dove,340ml,825.48,748,Unilever Sri Lanka Limited,18,36,5.3,8.8,3.2,599.05,1,8
+LK-PER-YH523,4792206815583,Head & Shoulders Shampoo Cool Menthol 170ml,Personal Care,Head & Shoulders,170ml,386.55,919,Procter & Gamble Lanka (Private) Limited,25,50,9.6,10.9,8.5,289.92,1,6
+LK-PER-XAHHX,4794950136495,Head & Shoulders Shampoo Anti Hair Fall 330ml,Personal Care,Head & Shoulders,330ml,699.87,1094,Procter & Gamble Lanka (Private) Limited,30,90,10.0,10.6,8.5,504.44,3,8
+LK-PER-N71EG,4795715099765,Clear Shampoo Ice Cool 80ml,Personal Care,Clear,80ml,304.41,880,Unilever Sri Lanka Limited,34,68,9.7,24.6,18.2,225.46,2,4
+LK-PER-01WCN,4794326303971,Pantene Shampoo Hair Fall Control 170ml,Personal Care,Pantene,170ml,405.67,649,Procter & Gamble Lanka (Private) Limited,32,64,15.4,34.4,14.0,313.87,2,3
+LK-PER-I0MHB,4793396852709,Pantene Shampoo Long Black 340ml,Personal Care,Pantene,340ml,600.68,562,Procter & Gamble Lanka (Private) Limited,32,96,23.8,11.4,6.0,456.92,3,4
+LK-PER-IC0LZ,4793629344971,Dettol Soap Original 110g,Personal Care,Dettol,110g,315.48,857,Reckitt Benckiser Lanka Limited,23,115,12.6,20.7,10.2,247.3,3,8
+LK-PER-PF8R1,4796149828242,Dettol Soap Cool 70g,Personal Care,Dettol,70g,158.05,655,Reckitt Benckiser Lanka Limited,29,145,6.4,11.7,11.0,122.57,1,4
+LK-PER-A50NO,4796656749160,Lifebuoy Soap Total 100g,Personal Care,Lifebuoy,100g,454.0,492,Unilever Sri Lanka Limited,30,90,8.9,19.8,7.3,327.15,3,5
+LK-PER-SRYZX,4796337050240,Lifebuoy Soap Cool Fresh 100g,Personal Care,Lifebuoy,100g,342.17,515,Unilever Sri Lanka Limited,19,57,5.2,28.8,14.0,247.89,2,6
+LK-PER-Z9C65,4792644886947,Lux Soap 100g,Personal Care,Lux,100g,393.57,456,Unilever Sri Lanka Limited,32,128,21.3,15.3,6.6,291.16,3,6
+LK-PER-ZAGRD,4796864622521,Nivea Body Lotion 100ml,Personal Care,Nivea,100ml,305.61,551,Beiersdorf Lanka (Private) Limited,15,75,16.3,13.7,6.4,239.65,3,4
+LK-PER-3G95P,4799121416147,Vaseline Body Lotion Healthy White 400ml,Personal Care,Vaseline,400ml,600.56,605,Unilever Sri Lanka Limited,27,54,5.2,15.2,19.2,479.02,3,7
+LK-PER-2BH2N,4798477596558,Parachute Coconut Oil 100ml,Personal Care,Parachute,100ml,302.28,687,Marico Lanka (Private) Limited,23,115,12.6,9.5,9.1,233.53,2,3
+LK-PER-A5O47,4790918435792,Signal Toothpaste Strong Teeth 120g,Personal Care,Signal,120g,309.79,892,Unilever Sri Lanka Limited,33,99,5.1,25.2,19.0,226.27,2,3
+LK-PER-W580Y,4793976915671,Signal Toothpaste Charcoal White 40g,Personal Care,Signal,40g,158.95,467,Unilever Sri Lanka Limited,24,96,17.1,27.2,17.8,116.26,3,8
+LK-PER-SE2KY,4798727178336,Closeup Red Hot Toothpaste 120g,Personal Care,Closeup,120g,233.86,1040,Unilever Sri Lanka Limited,14,28,13.7,27.3,5.7,173.0,2,6
+LK-PER-1HJR6,4791287153997,Closeup Lemon Splash 120g,Personal Care,Closeup,120g,210.35,755,Unilever Sri Lanka Limited,32,160,21.2,14.0,5.0,162.5,1,3
+LK-PER-D070E,4795256904092,Colgate Toothpaste Total 120g,Personal Care,Colgate,120g,285.7,798,Colgate-Palmolive Lanka (Private) Limited,36,144,21.0,33.2,5.1,209.2,3,7
+LK-BAB-VDA4L,4794377294204,Huggies Dry Pants S 4s,Baby Products,Huggies,4s,381.81,1070,Kimberly-Clark Lanka (Private) Limited,8,40,17.6,13.8,8.0,321.28,2,3
+LK-BAB-9L3H0,4793027642082,Huggies Dry Pants M 16s,Baby Products,Huggies,16s,787.3,849,Kimberly-Clark Lanka (Private) Limited,12,60,12.8,22.3,7.8,657.12,3,4
+LK-BAB-ZTDL2,4790472927740,Huggies Dry Pants L 4s,Baby Products,Huggies,4s,432.53,565,Kimberly-Clark Lanka (Private) Limited,11,22,12.2,31.1,4.7,366.53,1,6
+LK-BAB-8P47D,4797201859624,Pampers Baby Pants S 20s,Baby Products,Pampers,20s,950.79,399,Procter & Gamble Lanka (Private) Limited,7,35,14.8,26.6,19.2,794.63,3,8
+LK-BAB-NY2X1,4796475011110,Pampers Baby Pants M 4s,Baby Products,Pampers,4s,363.17,886,Procter & Gamble Lanka (Private) Limited,6,30,10.5,28.1,16.5,297.75,1,6
+LK-BAB-RXPUD,4791826068881,Pampers Baby Pants L 20s,Baby Products,Pampers,20s,895.43,963,Procter & Gamble Lanka (Private) Limited,11,22,20.1,13.6,14.2,742.19,1,4
+LK-BAB-5ZAQL,4790293218409,Pampers Baby Pants XL 20s,Baby Products,Pampers,20s,733.84,670,Procter & Gamble Lanka (Private) Limited,10,30,13.5,33.5,3.0,625.61,2,3
+LK-BAB-8S2XQ,4799758598834,Baby Cheramy Baby Diapers S 24s,Baby Products,Baby Cheramy,24s,1681.55,410,Hemas Consumer Brands,6,18,7.8,31.1,6.7,1379.28,1,7
+LK-BAB-TVJ0P,4798446267144,Baby Cheramy Baby Diapers M 4s,Baby Products,Baby Cheramy,4s,395.01,511,Hemas Consumer Brands,7,14,17.6,15.3,13.8,317.43,3,4
+LK-BAB-ZUXSF,4792566093140,Baby Cheramy Baby Diapers L 24s,Baby Products,Baby Cheramy,24s,1287.23,926,Hemas Consumer Brands,6,24,17.8,17.8,8.7,1098.52,2,4
+LK-BAB-5IAN8,4796112849717,Baby Cheramy Baby Diapers XL 24s,Baby Products,Baby Cheramy,24s,1570.27,653,Hemas Consumer Brands,8,16,22.9,12.6,19.1,1284.44,2,4
+LK-BAB-M08TV,4796792408228,Johnson's Baby Powder 200g,Baby Products,Johnson's,200g,348.53,638,Johnson & Johnson Lanka (Private) Limited,11,44,19.2,14.7,13.3,287.87,3,6
+LK-BAB-G92SJ,4796834146514,Johnson's Baby Soap 75g,Baby Products,Johnson's,75g,150.77,610,Johnson & Johnson Lanka (Private) Limited,7,14,6.7,15.7,18.8,128.97,1,6
+LK-BAB-Y7ERY,4798160930683,Johnson's Baby Wipes 80pcs,Baby Products,Johnson's,80pcs,637.42,1042,Johnson & Johnson Lanka (Private) Limited,11,22,17.1,34.0,14.5,538.84,3,4
+LK-BAB-GNEMB,4797625153810,Johnson's Baby Shampoo 100ml,Baby Products,Johnson's,100ml,329.31,636,Johnson & Johnson Lanka (Private) Limited,6,30,9.3,16.2,18.9,273.66,3,7
+LK-BAB-3BQWR,4795097545102,Lactogen Comfopro 1 350g,Baby Products,Lactogen,350g,2149.72,776,Nestle Lanka PLC,6,12,13.6,13.3,12.0,1755.58,1,6
+LK-BAB-ERFXI,4796545628415,Lactogen Comfopro 2 350g,Baby Products,Lactogen,350g,2789.37,814,Nestle Lanka PLC,7,28,19.9,8.2,18.0,2289.02,3,4
+LK-BAB-DKEPL,4790237416786,Cow & Gate Milk Powder Blue 400g,Baby Products,Cow & Gate,400g,2295.57,495,Danone Nutricia Lanka,12,60,15.0,32.9,17.3,1880.29,2,4
+LK-BAB-DDAFS,4793056906742,Cow & Gate Milk Powder Premium 200g,Baby Products,Cow & Gate,200g,376.44,804,Danone Nutricia Lanka,10,30,19.6,13.0,7.8,321.87,1,5
+LK-BAB-9I3HZ,4791892392316,Huggies Dry Pants S 18s,Baby Products,Huggies,18s,696.3,561,Kimberly-Clark Lanka (Private) Limited,9,18,17.3,10.5,3.9,597.22,2,7
+LK-FRZ-LWIMR,4798604145451,Elephant House Ice Cream Vanilla 500ml,Frozen (Non-Meat),Elephant House,500ml,672.13,204,Ceylon Cold Stores PLC,6,12,6.0,28.1,6.6,510.98,2,5
+LK-FRZ-6DG8N,4794110825559,Elephant House Ice Cream Chocolate 1L,Frozen (Non-Meat),Elephant House,1L,1221.47,489,Ceylon Cold Stores PLC,7,28,9.2,18.4,18.1,895.2,1,8
+LK-FRZ-0EV6X,4793371189547,Elephant House Ice Cream Strawberry 500ml,Frozen (Non-Meat),Elephant House,500ml,675.84,283,Ceylon Cold Stores PLC,11,33,5.9,13.2,12.4,473.65,2,7
+LK-FRZ-96QZ6,4791768802949,McCain French Fries 750g,Frozen (Non-Meat),McCain,750g,1093.85,203,McCain Foods Lanka,6,18,19.8,18.7,14.6,841.92,3,3
+LK-FRZ-F1N2O,4794320293902,Aviko Super Crunch Fries 750g,Frozen (Non-Meat),Aviko,750g,1157.7,413,Aviko Lanka (Private) Limited,11,44,11.1,13.9,15.0,829.78,3,3
+LK-FRZ-GBIBF,4794240338103,Aviko Shoestring Fries 1kg,Frozen (Non-Meat),Aviko,1kg,1317.3,368,Aviko Lanka (Private) Limited,6,24,19.4,19.0,13.4,960.82,2,3
+LK-FRZ-WAM0K,4794089164987,Birds Eye Green Peas 500g,Frozen (Non-Meat),Birds Eye,500g,611.85,346,Birds Eye Foods Lanka,7,35,8.1,14.3,15.3,455.6,2,4
+LK-FRZ-6DGG5,4793972404223,Birds Eye Mixed Vegetables 500g,Frozen (Non-Meat),Birds Eye,500g,795.25,276,Birds Eye Foods Lanka,7,14,13.5,20.3,14.0,576.56,2,3
+LK-FRZ-0E1AD,4796010023141,Crescent Chicken Nuggets 200g,Frozen (Non-Meat),Crescent,200g,348.53,186,Crescent Foods Lanka,12,24,15.8,30.1,17.5,254.36,1,4
+LK-FRZ-F163L,4797230848101,Crescent Chicken Fingers 500g,Frozen (Non-Meat),Crescent,500g,797.48,331,Crescent Foods Lanka,10,50,7.8,32.6,3.4,615.47,2,6
+LK-FRZ-FXI5N,4791721314519,Crescent Fish Fingers 240g,Frozen (Non-Meat),Crescent,240g,473.14,223,Crescent Foods Lanka,10,30,8.6,22.3,13.2,364.57,3,6
+LK-FRZ-FYK3M,4791475410222,Finagle Paratha 600g,Frozen (Non-Meat),Finagle,600g,746.08,424,Finagle Lanka (Private) Limited,6,30,24.2,15.5,4.5,558.63,1,4
+LK-FRZ-1MRR9,4799523668786,Finagle Chapathi 450g,Frozen (Non-Meat),Finagle,450g,542.77,297,Finagle Lanka (Private) Limited,6,30,15.5,29.0,16.8,400.24,1,8
+LK-FRZ-DNH4N,4797210552479,Finagle Naan Bread 350g,Frozen (Non-Meat),Finagle,350g,431.71,395,Finagle Lanka (Private) Limited,7,21,6.1,11.7,19.4,307.26,3,4
+LK-FRZ-NA8NZ,4799179202525,Elephant House Ice Cream Vanilla 2L,Frozen (Non-Meat),Elephant House,2L,1571.09,471,Ceylon Cold Stores PLC,7,21,14.4,11.8,12.0,1215.76,2,6

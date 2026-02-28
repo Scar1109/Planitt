@@ -11,7 +11,12 @@ import Settings from '../components/dashboard/Settings';
 import UserManagement from '../components/dashboard/UserManagement';
 import StoreSettings from '../components/dashboard/StoreSettings';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
-import AiPromotion from '../components/dashboard/AiPromotion';
+import Forecasting from './Forecasting';
+import WastagePrevention from './WastagePrevention';
+import ComplianceDashboard from './ComplianceDashboard';
+import SystemAnalysis from './SystemAnalysis';
+import ComplianceHistory from './ComplianceHistory';
+import PromotionForecasting from '../components/dashboard/PromotionForecasting';
 import ForecastPage from './promotional-forecasting/ForecastPage';
 import RecommendationsPage from './promotional-forecasting/RecommendationsPage';
 
@@ -81,7 +86,7 @@ const Dashboard = () => {
                 <Route path="/optimization/constraints" element={<Constraints />} />
                 <Route path="/optimization/runs" element={<RunsAndEvaluation />} />
 
-                <Route path="/planograms/ai-promotion" element={<AiPromotion />} />
+                <Route path="/planograms/ai-promotion" element={<PromotionForecasting />} />
 
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/store" element={<StoreInfo />} />
