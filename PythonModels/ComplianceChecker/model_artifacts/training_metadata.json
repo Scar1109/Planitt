@@ -1,0 +1,35 @@
+{
+    "timestamp": "2026-01-05T01:45:34.843505",
+    "metrics": {
+        "MAE": 1.4054921865463257,
+        "RMSE": 2.046580169643395,
+        "MAPE": 0.2285243719816208,
+        "R2_Score": 0.9073295593261719,
+        "Accuracy_Percent": 90.73
+    },
+    "params": {
+        "subsample": 0.9,
+        "n_estimators": 500,
+        "max_depth": 7,
+        "learning_rate": 0.05,
+        "colsample_bytree": 0.8
+    },
+    "features": [
+        "UnitPriceLKR",
+        "Shelf_Level",
+        "Category_Code",
+        "IsWeekend",
+        "IsHoliday",
+        "Month",
+        "DayOfWeek",
+        "Price_Level_Interaction",
+        "CustomerCount",
+        "PromotionFlag",
+        "PromotionType_Code"
+    ],
+    "sanity_check_uplift_percent": 54.28278350830078,
+    "model_type": "XGBRegressor",
+    "baseline_inference": {
+        "avg_customer_count": 3.675241225298108
+    }
+}

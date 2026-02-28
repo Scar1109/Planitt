@@ -1,15 +1,15 @@
 {
-    "training_date": "2026-01-04T05:05:15.872092",
-    "mse": 7746.761335608974,
-    "r2_score": 0.9542935457685751,
+    "training_date": "2026-01-05T00:35:19.508894",
+    "mse": 85.27553577674267,
+    "r2_score": 0.9339924572293343,
     "feature_importances": {
-        "sku_encoded": 0.0037497307064792,
-        "week": 0.010019727985445814,
-        "avg_daily_sales": 0.9232042427685988,
-        "seasonality_index": 0.05062378994113136,
-        "low_stock_ratio": 0.004977183061972339,
+        "sku_encoded": 0.013067367973789294,
+        "week": 0.029208987480961558,
+        "avg_daily_sales": 0.8427256490159196,
+        "seasonality_index": 0.08584985127027407,
+        "low_stock_ratio": 0.007878159832697506,
         "total_discard": 0.0,
-        "turnover_days": 0.007425325536372382
+        "turnover_days": 0.021269984426357993
     },
     "features": [
         "sku_encoded",

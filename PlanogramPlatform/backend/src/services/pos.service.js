@@ -1,2 +1,2 @@
 // POS Service
-module.exports = {};
+export default {};

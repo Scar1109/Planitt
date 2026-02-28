@@ -78,8 +78,11 @@ const OptimizationHome = () => {
 
         try {
             // Include dummy planogramId for now as per controller update
+            // Generate a readable timestamp for versioning: Planogram_YYYY-MM-DD_HH-mm-ss
+            const timestamp = new Date().toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
+
             const payload = {
-                planogramId: "generated_" + Date.now(),
+                planogramId: "Planogram_" + timestamp,
                 config: config
             };
 

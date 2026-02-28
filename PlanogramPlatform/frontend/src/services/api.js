@@ -5,4 +5,8 @@ const api = axios.create({
     withCredentials: true
 });
 
+export const getComplianceRuns = () => api.get('/compliance/runs');
+export const deleteComplianceRun = (id) => api.delete(`/compliance/runs/${id}`);
+export const rerunComplianceCheck = (id) => api.post(`/compliance/runs/${id}/rerun`);
+
 export default api;
