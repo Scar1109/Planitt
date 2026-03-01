@@ -8,6 +8,7 @@ const {
     updateBillItem,
     suspendBill,
     resumeBill,
+    assignCustomer,
     listSuspendedBills,
     getBillById,
     checkoutBill,
@@ -30,6 +31,7 @@ router.post('/', validate(createBillSchema), createDraftBill);
 router.get('/:id', getBillById);
 router.post('/:id/items', validate(addItemSchema), addBillItem);
 router.patch('/:id/items/:lineId', validate(updateLineSchema), updateBillItem);
+router.post('/:id/customer', assignCustomer);
 router.post('/:id/suspend', suspendBill);
 router.post('/:id/resume', resumeBill);
 router.post('/:id/checkout', validate(checkoutSchema), checkoutBill);

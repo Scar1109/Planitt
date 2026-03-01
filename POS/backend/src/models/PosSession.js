@@ -7,9 +7,9 @@ const posSessionSchema = new mongoose.Schema({
     businessDate: { type: String, required: true, index: true },
     status: { type: String, enum: ['open', 'closed'], default: 'open', index: true },
     openingFloatLKR: { type: Number, default: 0 },
-    closingCashLKR: { type: Number, default: null },
-    expectedCashLKR: { type: Number, default: null },
-    varianceLKR: { type: Number, default: null },
+    expectedCashLKR: { type: Number, default: null }, // System calculated
+    actualClosingCashLKR: { type: Number, default: null }, // Counted by cashier
+    varianceLKR: { type: Number, default: null }, // Actual - Expected
     openedAt: { type: Date, default: Date.now },
     closedAt: { type: Date, default: null },
     note: { type: String, default: '' },

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const path = require('path');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/dashboard', require('./routes/dashboard.routes'));
 app.use('/api/sessions', require('./routes/sessions.routes'));
 app.use('/api/bills', require('./routes/bills.routes'));
+app.use('/api/customers', require('./routes/customers.routes'));
 app.use('/api/printing', require('./routes/printing.routes'));
 app.use('/api/sales', require('./routes/sales.routes'));
 app.use('/api/products', require('./routes/products.routes'));
@@ -34,7 +36,18 @@ app.use('/api/purchase-orders', require('./routes/purchaseOrders.routes'));
 app.use('/api/reports', require('./routes/reports.routes'));
 app.use('/api/returns-voids', require('./routes/returnsVoids.routes'));
 
-app.use(require('./middleware/notFound'));
+// API 404 Handler
+app.use('/api', require('./middleware/notFound'));
+
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Catch-all route to serve frontend React app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
+// Generic Error Handler
 app.use(require('./middleware/errorHandler'));
 
 module.exports = app;

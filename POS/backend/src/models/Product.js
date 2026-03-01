@@ -13,6 +13,15 @@ const productSchema = new mongoose.Schema({
     supplier: { type: String, default: '' },
     reorderLevel: { type: Number, default: 0 },
     reorderQty: { type: Number, default: 0 },
+    typicalShelfLifeDays: { type: Number, default: 0 },
+    caseSize: { type: Number, default: 1 },
+    maxShelfCapacityUnits: { type: Number, default: 0 },
+    widthCm: { type: Number, default: 10 },
+    heightCm: { type: Number, default: 10 },
+    depthCm: { type: Number, default: 10 },
+    minFacings: { type: Number, default: 1 },
+    maxFacings: { type: Number, default: 10 },
+    allowedTags: [{ type: String }],
     isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 

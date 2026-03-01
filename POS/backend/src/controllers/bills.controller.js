@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const PosBill = require('../models/PosBill');
 const PosSession = require('../models/PosSession');
+const PosCustomer = require('../models/PosCustomer');
 const Product = require('../models/Product');
 const Sale = require('../models/Sale');
 const Store = require('../models/Store');
@@ -111,6 +112,24 @@ const resumeBill = asyncHandler(async (req, res) => {
     res.json(bill);
 });
 
+const assignCustomer = asyncHandler(async (req, res) => {
+    const bill = await getEditableBillOrThrow(req.params.id, req.storeId);
+
+    if (req.body.customerId) {
+        const customer = await PosCustomer.findOne({ _id: req.body.customerId, storeId: req.storeId });
+        if (!customer) throw new HttpError(404, 'Customer not found');
+        bill.customerId = customer._id;
+    } else {
+        bill.customerId = null;
+    }
+
+    await bill.save();
+
+    // Populate the customer data before sending it back so the frontend can display it
+    await bill.populate('customerId', 'name phone loyaltyPoints');
+    res.json(bill);
+});
+
 const listSuspendedBills = asyncHandler(async (req, res) => {
     const bills = await PosBill.find({ storeId: req.storeId, status: 'suspended' })
         .sort({ suspendedAt: -1 })
@@ -119,7 +138,9 @@ const listSuspendedBills = asyncHandler(async (req, res) => {
 });
 
 const getBillById = asyncHandler(async (req, res) => {
-    const bill = await PosBill.findOne({ _id: req.params.id, storeId: req.storeId });
+    const bill = await PosBill.findOne({ _id: req.params.id, storeId: req.storeId })
+        .populate('customerId', 'name phone loyaltyPoints');
+
     if (!bill) {
         throw new HttpError(404, 'Bill not found');
     }
@@ -174,6 +195,20 @@ const checkoutBill = asyncHandler(async (req, res) => {
             bill.paidAmountLKR = req.body.paidAmountLKR;
             bill.changeAmountLKR = Number((req.body.paidAmountLKR - bill.grandTotalLKR).toFixed(2));
             bill.checkoutAt = new Date();
+
+            // Handle Loyalty Points if a customer is attached
+            if (bill.customerId) {
+                // Earn 1 point per 100 LKR spent
+                const pointsEarned = Math.floor(bill.grandTotalLKR / 100);
+                bill.pointsEarned = pointsEarned;
+
+                await PosCustomer.updateOne(
+                    { _id: bill.customerId },
+                    { $inc: { loyaltyPoints: pointsEarned } },
+                    { session: dbSession }
+                );
+            }
+
             await bill.save({ session: dbSession });
 
             const salesDocs = bill.items.map((line) => ({
@@ -360,6 +395,7 @@ module.exports = {
     updateBillItem,
     suspendBill,
     resumeBill,
+    assignCustomer,
     listSuspendedBills,
     getBillById,
     checkoutBill,
