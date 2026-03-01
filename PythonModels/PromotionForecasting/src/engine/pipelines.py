@@ -92,13 +92,17 @@ class FeaturePipeline:
         
         # Shifts (Autoregression)
         df['lag_1'] = g.shift(1)
+        df['lag_3'] = g.shift(3)
         df['lag_7'] = g.shift(7)
         df['lag_14'] = g.shift(14)
+        df['lag_21'] = g.shift(21)
         
         # Rolling Windows (Trend)
         df['rolling_mean_7'] = g.transform(lambda x: x.shift(1).rolling(7).mean())
+        df['rolling_mean_14'] = g.transform(lambda x: x.shift(1).rolling(14).mean())
         df['rolling_mean_30'] = g.transform(lambda x: x.shift(1).rolling(30).mean())
         df['rolling_std_7'] = g.transform(lambda x: x.shift(1).rolling(7).std())
+        df['rolling_std_30'] = g.transform(lambda x: x.shift(1).rolling(30).std())
         
         return df
 

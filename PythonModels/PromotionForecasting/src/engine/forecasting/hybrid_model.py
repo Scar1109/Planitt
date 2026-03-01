@@ -19,8 +19,9 @@ class HybridForecaster:
         self.model = None
         self.features = [
             'price_index', 'is_promo', 'discount_depth',
-            'lag_1', 'lag_7', 'lag_14', 
-            'rolling_mean_7', 'rolling_mean_30', 'rolling_std_7',
+            'lag_1', 'lag_3', 'lag_7', 'lag_14', 'lag_21',
+            'rolling_mean_7', 'rolling_mean_14', 'rolling_mean_30', 
+            'rolling_std_7', 'rolling_std_30',
             'month_sin', 'dow_sin', 'is_weekend', 'is_rainy', 'event_impact'
         ]
         os.makedirs(metadata_path, exist_ok=True)
@@ -32,8 +33,9 @@ class HybridForecaster:
         # Robust Features
         features = [
             'price_index', 'is_promo', 'discount_depth',
-            'lag_1', 'lag_7', 'lag_14', 
-            'rolling_mean_7', 'rolling_mean_30', 'rolling_std_7',
+            'lag_1', 'lag_3', 'lag_7', 'lag_14', 'lag_21',
+            'rolling_mean_7', 'rolling_mean_14', 'rolling_mean_30', 
+            'rolling_std_7', 'rolling_std_30',
             'month_sin', 'dow_sin', 'is_weekend', 'is_rainy', 'event_impact'
         ]
         
@@ -46,7 +48,7 @@ class HybridForecaster:
         # RandomForest is robust and rarely overfits wildly if params are sane.
         # It captures non-linearities well.
         self.model = RandomForestRegressor(
-            n_estimators=200,
+            n_estimators=300,
             max_depth=20,
             min_samples_split=5,
             min_samples_leaf=2,
@@ -96,8 +98,9 @@ class HybridForecaster:
         
         features = [
             'price_index', 'is_promo', 'discount_depth',
-            'lag_1', 'lag_7', 'lag_14', 
-            'rolling_mean_7', 'rolling_mean_30', 'rolling_std_7',
+            'lag_1', 'lag_3', 'lag_7', 'lag_14', 'lag_21',
+            'rolling_mean_7', 'rolling_mean_14', 'rolling_mean_30', 
+            'rolling_std_7', 'rolling_std_30',
             'month_sin', 'dow_sin', 'is_weekend', 'is_rainy', 'event_impact'
         ]
         

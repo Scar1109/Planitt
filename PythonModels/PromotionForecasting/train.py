@@ -53,7 +53,7 @@ def train_pipeline(data_path: str = "../../Dataset"):
     # 4. Train Uplift
     print("...Training Causal Uplift (T-Learner)")
     uplift_model = TLearnerUplift()
-    uplift_model.fit(featured_df, target='UnitsSold', treatment_col='is_promo')
+    uplift_model.fit(featured_df, target='TrueDemand', treatment_col='is_promo')
     uplift_model.save()
     
     print(">>> Training Complete. Models Saved.")

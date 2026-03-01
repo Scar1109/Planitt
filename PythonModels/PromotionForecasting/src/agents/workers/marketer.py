@@ -59,6 +59,10 @@ class MarketerAgent:
             # Assume Price Index drops by discount
             row['price_index'] = 1.0 - discount_depth 
             
+            # Map absolute monetary features for the S-Learner Optimizer
+            row['BaseUnitPriceLKR'] = sku.base_price
+            row['AvgPrice'] = sku.base_price * (1.0 - discount_depth)
+            
             future_rows.append(row)
             
         future_df = pd.DataFrame(future_rows)
