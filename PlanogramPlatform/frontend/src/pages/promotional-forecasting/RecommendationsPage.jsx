@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaArrowUp, FaArrowDown, FaCheck, FaTimes, FaFilter, FaDownload, FaSpinner, FaBullhorn, FaEye, FaRobot } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaCheck, FaTimes, FaFilter, FaDownload, FaSpinner, FaBullhorn, FaEye, FaRobot, FaChartLine } from 'react-icons/fa';
 
 const RecommendationsPage = () => {
     const [recommendations, setRecommendations] = useState([]);
@@ -296,13 +296,13 @@ const RecommendationsPage = () => {
                                     <p className="text-3xl font-bold text-green-800 relative z-10">{(selectedSim.baseline + selectedSim.uplift).toFixed(1)}</p>
                                     <p className="text-sm text-green-600 mt-1 relative z-10">+{selectedSim.uplift.toFixed(1)} Expected Uplift</p>
                                 </div>
-                                <div className={`p-5 rounded-xl border relative overflow-hidden ${selectedSim.profitLift >= 0 ? 'bg-indigo-50 border-indigo-100' : 'bg-red-50 border-red-100'}`}>
-                                    <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-8 -mt-8 opacity-50 ${selectedSim.profitLift >= 0 ? 'bg-indigo-100' : 'bg-red-100'}`}></div>
-                                    <p className={`text-xs mb-1 font-bold uppercase tracking-wider relative z-10 ${selectedSim.profitLift >= 0 ? 'text-indigo-700' : 'text-red-700'}`}>True Profit Lift</p>
-                                    <p className={`text-3xl font-bold relative z-10 ${selectedSim.profitLift >= 0 ? 'text-indigo-800' : 'text-red-800'}`}>
+                                <div className={`p-5 rounded-xl border relative overflow-hidden ${selectedSim.profitLift >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+                                    <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-8 -mt-8 opacity-50 ${selectedSim.profitLift >= 0 ? 'bg-green-100' : 'bg-red-100'}`}></div>
+                                    <p className={`text-xs mb-1 font-bold uppercase tracking-wider relative z-10 ${selectedSim.profitLift >= 0 ? 'text-green-700' : 'text-red-700'}`}>True Profit Lift</p>
+                                    <p className={`text-3xl font-bold relative z-10 ${selectedSim.profitLift >= 0 ? 'text-green-800' : 'text-red-800'}`}>
                                         {selectedSim.profitLift >= 0 ? '+' : ''}Rs. {selectedSim.profitLift.toLocaleString()}
                                     </p>
-                                    <p className={`text-sm mt-1 relative z-10 ${selectedSim.profitLift >= 0 ? 'text-indigo-600' : 'text-red-600'}`}>Net Economic Impact</p>
+                                    <p className={`text-sm mt-1 relative z-10 ${selectedSim.profitLift >= 0 ? 'text-green-600' : 'text-red-600'}`}>Net Economic Impact</p>
                                 </div>
                             </div>
 

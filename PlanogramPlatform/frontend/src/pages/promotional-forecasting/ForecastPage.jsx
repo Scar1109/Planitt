@@ -12,6 +12,7 @@ const ForecastPage = () => {
     const [isFindingOptimal, setIsFindingOptimal] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
+    const [top5Optimal, setTop5Optimal] = useState(null);
     const [formData, setFormData] = useState({
         sku_id: '',
         category: '',
@@ -65,6 +66,7 @@ const ForecastPage = () => {
         setLoading(true);
         setError(null);
         setResult(null);
+        setTop5Optimal(null);
 
         const payload = {
             sku: {
@@ -121,6 +123,7 @@ const ForecastPage = () => {
         setResult(null);
         setExplanation("");
         setSaveSuccess(false);
+        setTop5Optimal(null);
 
         const payload = {
             sku: {
@@ -140,6 +143,7 @@ const ForecastPage = () => {
             });
             setFormData(prev => ({ ...prev, test_discount: response.data.optimal_discount }));
             setResult(response.data.simulation);
+            setTop5Optimal(response.data.top_5);
             fetchExplanation(response.data.simulation, response.data.optimal_discount);
         } catch (err) {
             console.error(err);
@@ -256,15 +260,15 @@ const ForecastPage = () => {
                                     type="range"
                                     name="test_discount"
                                     min="0.05"
-                                    max="0.90"
-                                    step="0.05"
+                                    max="0.80"
+                                    step="0.01"
                                     value={formData.test_discount}
                                     onChange={handleChange}
                                     className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                                 />
                                 <div className="flex justify-between text-xs text-slate-400 mt-1">
                                     <span>5%</span>
-                                    <span>90%</span>
+                                    <span>80%</span>
                                 </div>
                             </div>
 
@@ -327,10 +331,10 @@ const ForecastPage = () => {
                                             Analysis for {result.sku_id} with {(formData.test_discount * 100).toFixed(0)}% Discount
                                         </p>
                                     </div>
-                                    <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-center">
-                                        <span className="text-xs uppercase tracking-wider opacity-75 block">Profit Lift</span>
-                                        <span className="text-xl font-bold">
-                                            Rs. {result.profit_lift?.toLocaleString()}
+                                    <div className={`bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-center border ${result.profit_lift >= 0 ? 'border-green-400/30' : 'border-red-400/30'}`}>
+                                        <span className="text-xs uppercase tracking-wider opacity-75 block mb-1">Profit Lift</span>
+                                        <span className={`text-xl font-bold ${result.profit_lift >= 0 ? 'text-green-300' : 'text-red-300'}`}>
+                                            {result.profit_lift >= 0 ? '+' : ''}Rs. {result.profit_lift?.toLocaleString()}
                                         </span>
                                     </div>
                                 </div>
@@ -381,6 +385,43 @@ const ForecastPage = () => {
                                         </p>
                                     )}
                                 </div>
+
+                                {/* Top 5 Optimal Rankings (Only shown on "Find Optimal") */}
+                                {top5Optimal && (
+                                    <div className="mt-6 border border-emerald-200 bg-emerald-50/30 rounded-xl p-5 shadow-sm">
+                                        <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3 flex items-center">
+                                            <FaSearchDollar className="text-emerald-600 mr-2" />
+                                            Top 5 Profit-Maximizing Discounts
+                                        </h3>
+                                        <div className="space-y-3">
+                                            {top5Optimal.map((opt, idx) => (
+                                                <div key={idx} className="bg-white border text-sm border-slate-200 p-3 rounded-lg flex items-center justify-between shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:border-emerald-300 transition-colors">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className={`flex items-center justify-center w-6 h-6 rounded-full font-bold text-xs ${idx === 0 ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-200' :
+                                                            idx < 3 ? 'bg-blue-50 text-blue-600' :
+                                                                'bg-slate-100 text-slate-500'
+                                                            }`}>
+                                                            #{idx + 1}
+                                                        </span>
+                                                        <span className="font-semibold text-slate-800">{(opt.discount * 100).toFixed(0)}% Off</span>
+                                                    </div>
+                                                    <div className="text-right flex items-center gap-4">
+                                                        <div>
+                                                            <div className={`font-bold ${opt.profit_lift >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                                                {opt.profit_lift >= 0 ? '+' : ''}Rs. {opt.profit_lift?.toLocaleString()}
+                                                            </div>
+                                                            <div className="text-xs text-slate-400 font-normal">Profit Lift</div>
+                                                        </div>
+                                                        <div className="text-right hidden sm:block">
+                                                            <div className="font-bold text-indigo-600">Rs. {opt.simulation.revenue_lift?.toLocaleString()}</div>
+                                                            <div className="text-xs text-slate-400 font-normal">Rev. Lift</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {result.risks && result.risks.length > 0 && (
                                     <div className="mt-6">

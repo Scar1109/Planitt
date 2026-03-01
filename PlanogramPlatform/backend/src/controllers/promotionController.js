@@ -111,21 +111,33 @@ export const explainSimulation = async (req, res) => {
 export const findOptimalDiscount = async (req, res) => {
     try {
         const payload = req.body; // should pass { sku: {...}, duration_days: X }
-        let bestDiscount = null;
-        let maxProfit = -Infinity;
-        let bestSim = null;
+        const requests = [];
 
-        // Iterate discounts from 5% to 90%
-        for (let discount = 0.05; discount <= 0.90; discount += 0.05) {
+        // Concurrently query discount levels from 5% to 80%
+        for (let d = 5; d <= 80; d++) {
+            const discount = d / 100;
             const simPayload = { ...payload, test_discount: discount };
-            const response = await axios.post(`${PYTHON_SERVICE_URL}/simulate/sku`, simPayload);
-            if (response.data.profit_lift > maxProfit) {
-                maxProfit = response.data.profit_lift;
-                bestDiscount = discount;
-                bestSim = response.data;
-            }
+            requests.push(
+                axios.post(`${PYTHON_SERVICE_URL}/simulate/sku`, simPayload).then(response => ({
+                    discount: discount,
+                    simulation: response.data,
+                    profit_lift: response.data.profit_lift
+                }))
+            );
         }
-        res.json({ optimal_discount: bestDiscount, simulation: bestSim });
+
+        const simulations = await Promise.all(requests);
+
+        // Sort by absolute profit generation descending
+        simulations.sort((a, b) => b.profit_lift - a.profit_lift);
+
+        const top5 = simulations.slice(0, 5);
+
+        res.json({
+            optimal_discount: top5[0].discount,
+            simulation: top5[0].simulation,
+            top_5: top5
+        });
     } catch (error) {
         console.error('Error finding optimal discount:', error.message);
         res.status(500).json({ message: 'Error finding optimal discount', error: error.message });
