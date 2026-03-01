@@ -9,7 +9,6 @@ from src.agents.workers.steward import InventorySteward
 from src.agents.workers.futurist import FuturistAgent
 from src.agents.workers.futurist import FuturistAgent
 from src.agents.workers.marketer import MarketerAgent
-from src.agents.workers.narrator import NarratorAgent
 
 class Orchestrator:
     """
@@ -22,7 +21,6 @@ class Orchestrator:
         # self.strategist = StrategistAgent()
         self.marketer = MarketerAgent()
         self.futurist = FuturistAgent()
-        self.narrator = NarratorAgent()
         
         # Centralized Data Access (Shared Memory)
         self.loader = DataLoader(dataset_path='../../Dataset')
@@ -57,7 +55,7 @@ class Orchestrator:
             # Simulate Options (Marketer)
             # Try 10%, 20%
             for discount in [0.10, 0.20]:
-                uplift = self.marketer.estimate_uplift(sku, discount, context_df)
+                uplift = self.marketer.estimate_uplift(sku, discount, 7, context_df)
                 
                 # Check Risk (Steward) - Initial Filter
                 risks = self.steward.analyze_risk(sku, baseline + uplift, 7)
@@ -68,10 +66,16 @@ class Orchestrator:
                 
                 # Calculate Metrics
                 promo_price = sku.base_price * (1 - discount)
-                revenue_lift = uplift * promo_price
-                margin_impact = (uplift * (promo_price - sku.cost_price)) - (baseline * (sku.base_price - sku.cost_price - (promo_price - sku.cost_price))) 
-                # Profit Lift logic is complex, simplified here: Incremental Profit
-                profit_lift = uplift * (promo_price - sku.cost_price) 
+                
+                # True Revenue Lift
+                total_promo_revenue = (baseline + uplift) * promo_price
+                total_baseline_revenue = baseline * sku.base_price
+                revenue_lift = total_promo_revenue - total_baseline_revenue
+                
+                # True Profit Lift
+                total_promo_profit = (baseline + uplift) * (promo_price - sku.cost_price)
+                total_baseline_profit = baseline * (sku.base_price - sku.cost_price)
+                profit_lift = total_promo_profit - total_baseline_profit
                 
                 cand = PromotionCandidate(
                     sku_id=sku.sku_id,
@@ -108,13 +112,12 @@ class Orchestrator:
         # 3. Final Critique (Steward) 
         # Double check the full plan aggregate risk? (Advanced)
         
-        # 4. Explanation (Narrator)
-        final_plan = self.narrator.explain_plan(selected_candidates, sku_map)
+        # 4. Narrator bypassed - Node.js backend handles LLM synthesis.
         
         return PromotionPlan(
             plan_id="PLAN-001",
             created_at=date.today(),
             objective=objective,
-            recommendations=final_plan,
-            summary_stats={"total_profit_lift": sum(c.profit_lift for c in final_plan)}
+            recommendations=selected_candidates,
+            summary_stats={"total_profit_lift": sum(c.profit_lift for c in selected_candidates)}
         )

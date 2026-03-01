@@ -3,15 +3,11 @@ from typing import List
 from pydantic import BaseModel
 from datetime import date
 
-from src.domain.entities import SKUInfo, Constraint, ObjectiveType, PromotionPlan, PromotionCandidate, PromotionType
+from src.domain.entities import SKUInfo, Constraint, ObjectiveType, PromotionPlan, PromotionCandidate, PromotionType, SimulationRequest
 from src.agents.orchestrator import Orchestrator
 
 router = APIRouter()
 orchestrator = Orchestrator()
-
-class SimulationRequest(BaseModel):
-    sku: SKUInfo
-    test_discount: float
 
 @router.post("/simulate/sku")
 def simulate_sku(request: SimulationRequest):
@@ -21,24 +17,32 @@ def simulate_sku(request: SimulationRequest):
     try:
         sku = request.sku
         discount = request.test_discount
+        duration = request.duration_days
         
         # 1. Get Context (Uses Orchestrator's shared cache)
         context_df = orchestrator._load_shared_context()
         
         # 2. Ask Futurist (Baseline)
-        baseline = orchestrator.futurist.predict_baseline(sku, 7, context_df)
+        baseline = orchestrator.futurist.predict_baseline(sku, duration, context_df)
         
         # 3. Ask Marketer (Uplift)
-        uplift = orchestrator.marketer.estimate_uplift(sku, discount, context_df)
+        uplift = orchestrator.marketer.estimate_uplift(sku, discount, duration, context_df)
         
         # 4. Ask Steward (Risk)
-        risks = orchestrator.steward.analyze_risk(sku, baseline + uplift, 7)
+        risks = orchestrator.steward.analyze_risk(sku, baseline + uplift, duration)
         
         # 5. Financials
         promo_price = sku.base_price * (1 - discount)
-        revenue_lift = uplift * promo_price
-        # Profit Lift (Simplified: Incremental Units * Margin)
-        profit_lift = uplift * (promo_price - sku.cost_price)
+        
+        # True Revenue Lift = (Total Promo Revenue) - (Total Baseline Revenue)
+        total_promo_revenue = (baseline + uplift) * promo_price
+        total_baseline_revenue = baseline * sku.base_price
+        revenue_lift = total_promo_revenue - total_baseline_revenue
+        
+        # True Profit Lift = (Total Promo Profit) - (Total Baseline Profit)
+        total_promo_profit = (baseline + uplift) * (promo_price - sku.cost_price)
+        total_baseline_profit = baseline * (sku.base_price - sku.cost_price)
+        profit_lift = total_promo_profit - total_baseline_profit
         
         return {
             "sku_id": sku.sku_id,

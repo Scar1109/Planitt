@@ -20,11 +20,15 @@ class SKUInfo(BaseModel):
     brand: str
     base_price: float
     cost_price: float
-    lead_time_days: int
     stock_level: int
     days_to_expiry: Optional[int] = None
     waste_risk_score: float = 0.0
     is_perishable: bool = False
+
+class SimulationRequest(BaseModel):
+    sku: SKUInfo
+    duration_days: int = 7
+    test_discount: float
 
 class SalesHistory(BaseModel):
     date: date
@@ -52,8 +56,7 @@ class PromotionCandidate(BaseModel):
     profit_lift: float = 0.0
     waste_saved: float = 0.0
     
-    # Agent Reasoning
-    reasoning: str = ""
+    # Advanced Metadata
     risk_flags: List[str] = []
 
 class PromotionPlan(BaseModel):

@@ -2,10 +2,30 @@ from ortools.linear_solver import pywraplp
 from typing import List, Dict, Optional
 from src.domain.entities import PromotionCandidate, PromotionPlan, Constraint, ObjectiveType, SKUInfo
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class StrategistAgent:
     """
     The Optimizer.
-    Uses Mixed Integer Programming (MIP) to solve the Knapsack Problem.
+    Uses Mixed Integer Programming (MIP) to solve the Knapsack Problem for retail promotions.
+    
+    Mathematical Formulation:
+    -------------------------
+    Maximize: 
+        Z = sum_i( x_i * value_i )
+    where:
+        x_i in {0, 1} indicates if PromotionCandidate i is selected.
+        value_i depends on the ObjectiveType:
+            - MAX_PROFIT: sum_i( x_i * profit_lift_i )
+            - MIN_WASTE: sum_i( x_i * waste_saved_i )
+            - MAX_REVENUE: sum_i( x_i * revenue_lift_i )
+
+    Subject to:
+        1. Capacity Constraint: sum_i( x_i ) <= max_slots
+        2. Category Diversity: sum_{i in Category(c)}( x_i ) <= max_per_category  (for all categories c)
+        3. Mutual Exclusivity: sum_{i in SKU(s)}( x_i ) <= 1                      (for all SKUs s)
     """
     
     def generate_plan(self, 
@@ -80,6 +100,16 @@ class StrategistAgent:
             solver.Add(sku_expr <= 1)
             
         # 5. Solve
+        
+        # Logging constraint parameters to ensure formal mathematical reproducibility
+        logger.info("=== Strategist Optimization Run ===")
+        logger.info(f"Objective Type: {objective.value}")
+        logger.info(f"Available Candidates: {len(candidates)}")
+        logger.info(f"Constraints - Max Slots: {constraints.max_slots}")
+        logger.info(f"Constraints - Max per Category: {constraints.max_per_category}")
+        logger.info("Solving Multi-Objective Integer Formulation...")
+        print(f">>> Strategist Opt: Obj={objective}, MaxSlots={constraints.max_slots}, MaxPerCat={constraints.max_per_category}, TotalCand={len(candidates)}")
+        
         status = solver.Solve()
         
         selected_candidates = []

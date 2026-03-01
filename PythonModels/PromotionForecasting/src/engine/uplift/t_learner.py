@@ -72,11 +72,9 @@ class TLearnerUplift:
         return df
 
     def save(self):
-        self.m0.save_model(os.path.join(self.metadata_path, 'uplift_m0.json'))
-        self.m1.save_model(os.path.join(self.metadata_path, 'uplift_m1.json'))
+        joblib.dump(self.m0, os.path.join(self.metadata_path, 'uplift_m0.joblib'))
+        joblib.dump(self.m1, os.path.join(self.metadata_path, 'uplift_m1.joblib'))
         
     def load(self):
-        self.m0 = xgb.XGBRegressor()
-        self.m0.load_model(os.path.join(self.metadata_path, 'uplift_m0.json'))
-        self.m1 = xgb.XGBRegressor()
-        self.m1.load_model(os.path.join(self.metadata_path, 'uplift_m1.json'))
+        self.m0 = joblib.load(os.path.join(self.metadata_path, 'uplift_m0.joblib'))
+        self.m1 = joblib.load(os.path.join(self.metadata_path, 'uplift_m1.joblib'))

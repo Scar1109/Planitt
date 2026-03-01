@@ -18,7 +18,7 @@ from src.engine.pipelines import FeaturePipeline
 from src.engine.forecasting.hybrid_model import HybridForecaster
 from src.engine.uplift.t_learner import TLearnerUplift
 
-def train_pipeline(data_path: str = "c:/D/Github/PlanItt--Copy/Dataset"):
+def train_pipeline(data_path: str = "../../Dataset"):
     print(">>> Starting AI Training Pipeline")
     
     # 1. Load & Validate

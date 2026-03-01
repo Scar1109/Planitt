@@ -25,13 +25,13 @@ class MarketerAgent:
             print("!! Marketer: No trained model found. Using rule-based fallback.")
             self.is_ready = False
             
-    def estimate_uplift(self, sku: SKUInfo, discount_depth: float, context_df: pd.DataFrame) -> float:
+    def estimate_uplift(self, sku: SKUInfo, discount_depth: float, days: int, context_df: pd.DataFrame) -> float:
         """
         Predicts total incremental units sold due to the discount.
         """
         if not self.is_ready:
             # Fallback: 1.5 Elasticity
-            base_sales = (sku.stock_level / 20) * 7 
+            base_sales = (sku.stock_level / 20) * days 
             return base_sales * (discount_depth * 1.5)
             
         sku_history = context_df[context_df['SKU'] == sku.sku_id].sort_values('Date')
@@ -39,9 +39,9 @@ class MarketerAgent:
         if sku_history.empty:
              return 0.0
              
-        # Scenario: Next 7 Days
+        # Scenario: Next 'days'
         last_date = sku_history['Date'].iloc[-1]
-        future_dates = [last_date + timedelta(days=i+1) for i in range(7)]
+        future_dates = [last_date + timedelta(days=i+1) for i in range(days)]
         last_row = sku_history.iloc[-1]
         
         future_rows = []
