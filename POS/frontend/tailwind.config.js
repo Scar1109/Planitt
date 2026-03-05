@@ -6,12 +6,19 @@ export default {
             colors: {
                 surface: '#f4f7fb',
                 ink: '#0f172a',
-                brand: {
-                    50: '#eef2ff',
-                    100: '#e0e7ff',
-                    500: '#4f46e5',
-                    600: '#4338ca',
-                    700: '#3730a3',
+                // Overriding the default indigo class entirely so the whole app adapts automatically to the #22C9B7 brand
+                indigo: {
+                    50: '#EAF9F8',
+                    100: '#CCF1EC',
+                    200: '#9EE2DA',
+                    300: '#62CCC1',
+                    400: '#31B0A6',
+                    500: '#22c9b7',
+                    600: '#1CA394',
+                    700: '#168074',
+                    800: '#14655D',
+                    900: '#12544E',
+                    950: '#09312E',
                 },
                 accent: '#0ea5a6',
             },

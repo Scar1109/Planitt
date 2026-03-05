@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { AlertTriangle, LogIn, Lock, User } from 'lucide-react';
+import PlanittLogo from '../assets/favicon.png';
 
 export default function LoginPage() {
     const { login } = useAuth();
@@ -39,8 +40,8 @@ export default function LoginPage() {
 
             <Card className="z-10 w-full max-w-md shadow-2xl border-slate-200/60 bg-white/90 backdrop-blur-xl">
                 <CardHeader className="space-y-4 pb-6 pt-8 px-8 text-center">
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg mb-2">
-                        <StoreIcon className="h-8 w-8 text-white" />
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-xl mb-2 border border-slate-100">
+                        <img src={PlanittLogo} alt="Planitt Logo" className="h-10 w-10 object-contain drop-shadow-sm" />
                     </div>
                     <div>
                         <p className="text-xs uppercase tracking-[0.2em] font-bold text-indigo-500 mb-1">Planitt</p>

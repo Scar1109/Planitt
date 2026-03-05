@@ -19,6 +19,28 @@ const searchCustomers = asyncHandler(async (req, res) => {
     res.json({ data: customers });
 });
 
+const getCustomers = asyncHandler(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const skip = (page - 1) * limit;
+
+    const customers = await PosCustomer.find({ storeId: req.storeId })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+
+    const total = await PosCustomer.countDocuments({ storeId: req.storeId });
+
+    res.json({
+        data: customers,
+        pagination: {
+            total,
+            page,
+            pages: Math.ceil(total / limit)
+        }
+    });
+});
+
 const createCustomer = asyncHandler(async (req, res) => {
     const { phone, name, email } = req.body;
 
@@ -43,5 +65,6 @@ const createCustomer = asyncHandler(async (req, res) => {
 
 module.exports = {
     searchCustomers,
+    getCustomers,
     createCustomer
 };

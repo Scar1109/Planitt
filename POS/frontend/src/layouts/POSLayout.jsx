@@ -1,46 +1,51 @@
 import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import PlanittLogo from '../assets/favicon.png';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Button } from '../components/ui/button';
 import {
-    LayoutDashboard,
-    MonitorSmartphone,
-    Clock,
-    CornerUpLeft,
-    Package,
-    Box,
-    ShoppingCart,
-    BarChart2,
-    Settings,
     LogOut,
+    LayoutDashboard,
+    ShoppingCart,
+    Package,
+    Settings,
+    FileText,
+    ArrowLeftRight,
+    Clock,
+    Box,
+    MonitorSmartphone,
+    Users,
     ChevronLeft,
     ChevronRight,
-    Store
+    BarChart2,
+    CornerUpLeft
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../components/ui/tooltip';
-import { Button } from '../components/ui/button';
 import { cn } from '../lib/utils';
-
-const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/cashier', label: 'Cashier', icon: MonitorSmartphone },
-    { path: '/orders/suspended', label: 'Suspended Bills', icon: Clock },
-    { path: '/returns-voids', label: 'Returns & Voids', icon: CornerUpLeft },
-    { path: '/inventory', label: 'Inventory', icon: Package },
-    { path: '/products', label: 'Products', icon: Box },
-    { path: '/purchase-orders', label: 'Purchase Orders', icon: ShoppingCart },
-    { path: '/reports', label: 'Reports', icon: BarChart2 },
-    { path: '/settings', label: 'Settings', icon: Settings },
-];
 
 export default function POSLayout() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     async function onLogout() {
         await logout();
         navigate('/login');
     }
+
+    const navItems = [
+        { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { path: '/cashier', label: 'Cashier', icon: MonitorSmartphone },
+        { path: '/orders/suspended', label: 'Suspended Bills', icon: Clock },
+        { path: '/returns-voids', label: 'Returns & Voids', icon: CornerUpLeft },
+        { path: '/inventory', label: 'Inventory', icon: Package },
+        { path: '/products', label: 'Products', icon: Box },
+        { path: '/orders', label: 'Purchase Orders', icon: ShoppingCart },
+        { path: '/customers', label: 'Loyalty Members', icon: Users },
+        { path: '/reports', label: 'Reports', icon: BarChart2 },
+        { path: '/settings', label: 'Settings', icon: Settings },
+    ];
 
     return (
         <TooltipProvider delayDuration={200}>
@@ -51,8 +56,8 @@ export default function POSLayout() {
                         isCollapsed ? "w-20" : "w-64"
                     )}
                 >
-                    <div className="flex h-16 shrink-0 items-center border-b border-slate-200 px-4">
-                        <Store className="h-6 w-6 text-indigo-600 shrink-0" />
+                    <div className="flex h-16 shrink-0 items-center border-b border-slate-200 px-4 relative">
+                        <img src={PlanittLogo} alt="Planitt Logo" className="h-8 w-8 object-contain shrink-0 drop-shadow-sm" />
                         {!isCollapsed && (
                             <div className="ml-3 flex flex-col overflow-hidden">
                                 <span className="truncate text-xs font-bold uppercase tracking-wider text-slate-500">Planitt</span>
@@ -69,12 +74,10 @@ export default function POSLayout() {
                         </Button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 md:py-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 md:py-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                         <style dangerouslySetInnerHTML={{
                             __html: `
-                            .scrollbar-hide::-webkit-scrollbar {
-                                display: none;
-                            }
+                            .scrollbar-hide::-webkit-scrollbar { display: none; }
                         `}} />
                         <nav className="space-y-1.5 md:space-y-2.5 px-3 md:px-4">
                             {navItems.map((item) => {
@@ -82,9 +85,9 @@ export default function POSLayout() {
                                     <NavLink
                                         key={item.path}
                                         to={item.path}
-                                        className={({ isActive }) => cn(
+                                        className={cn(
                                             "group flex items-center rounded-lg px-3 py-3 md:px-4 md:py-4 text-sm md:text-base font-medium transition-all active:scale-[0.98]",
-                                            isActive
+                                            location.pathname === item.path
                                                 ? "bg-indigo-50 text-indigo-700 font-bold"
                                                 : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                                         )}
@@ -100,7 +103,7 @@ export default function POSLayout() {
                                             <TooltipTrigger asChild>
                                                 {navLinkContent}
                                             </TooltipTrigger>
-                                            <TooltipContent side="right" className="font-medium">
+                                            <TooltipContent side="right" className="font-medium z-50">
                                                 {item.label}
                                             </TooltipContent>
                                         </Tooltip>
@@ -119,7 +122,7 @@ export default function POSLayout() {
                                         <LogOut className="h-5 w-5" />
                                     </Button>
                                 </TooltipTrigger>
-                                <TooltipContent side="right" className="font-medium text-red-600">
+                                <TooltipContent side="right" className="font-medium text-red-600 z-50">
                                     Logout
                                 </TooltipContent>
                             </Tooltip>
@@ -138,7 +141,7 @@ export default function POSLayout() {
                 </aside>
 
                 <main className="flex w-0 flex-1 flex-col overflow-hidden bg-slate-50">
-                    <div className="relative flex-1 overflow-y-auto">
+                    <div className="relative flex-1 overflow-y-auto overflow-x-hidden min-w-full">
                         <Outlet />
                     </div>
                 </main>

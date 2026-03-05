@@ -11,6 +11,7 @@ import ProductsPage from './pages/ProductsPage';
 import PurchaseOrdersPage from './pages/PurchaseOrdersPage';
 import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
+import CustomersPage from './pages/CustomersPage';
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth();
@@ -42,6 +43,7 @@ function AppRoutes() {
                 <Route path="cashier" element={<CashierPage />} />
                 <Route path="orders/suspended" element={<SuspendedOrdersPage />} />
                 <Route path="returns-voids" element={<ReturnsVoidsPage />} />
+                <Route path="customers" element={<CustomersPage />} />
                 <Route path="inventory" element={<InventoryPage />} />
                 <Route path="products" element={(
                     <RoleRoute allowedRoles={['admin', 'owner', 'manager']}>
