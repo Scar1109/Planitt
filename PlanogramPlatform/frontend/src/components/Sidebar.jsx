@@ -45,8 +45,8 @@ const Sidebar = () => {
             path: '/dashboard/promotional-forecasting',
             icon: FaChartLine,
             subItems: [
-                { name: 'AI Promotion', path: '/dashboard/planograms/ai-promotion' },
                 { name: 'Forecast', path: '/dashboard/promotional-forecasting/forecast' },
+                { name: 'Scenario Lab', path: '/dashboard/promotional-forecasting/scenario-lab' },
                 { name: 'Recommendations', path: '/dashboard/promotional-forecasting/suggested' },
             ]
         },

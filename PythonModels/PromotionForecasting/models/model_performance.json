@@ -1,0 +1,49 @@
+{
+    "training_date": "2026-03-01T16:44:03.963022",
+    "mse": 0.02088672536808926,
+    "r2_score": 0.9530888702128677,
+    "feature_importances": {
+        "price_index": 0.023708123703935522,
+        "is_promo": 0.00837086328468426,
+        "discount_depth": 0.014659422494237804,
+        "lag_1": 0.02200075299494541,
+        "lag_3": 0.007135396663142299,
+        "lag_7": 0.006380372558069781,
+        "lag_14": 0.006193004125397398,
+        "lag_21": 0.0063932241173814955,
+        "rolling_mean_7": 0.11061550274037986,
+        "rolling_mean_14": 0.1460855587622609,
+        "rolling_mean_30": 0.5552477372848351,
+        "rolling_std_7": 0.011897222706603438,
+        "rolling_std_30": 0.01715668315292576,
+        "month_sin": 0.007342233063443469,
+        "dow_sin": 0.05651094389123325,
+        "is_weekend": 0.00030295845652419034,
+        "is_rainy": 0.0,
+        "event_impact": 0.0
+    },
+    "features": [
+        "price_index",
+        "is_promo",
+        "discount_depth",
+        "lag_1",
+        "lag_3",
+        "lag_7",
+        "lag_14",
+        "lag_21",
+        "rolling_mean_7",
+        "rolling_mean_14",
+        "rolling_mean_30",
+        "rolling_std_7",
+        "rolling_std_30",
+        "month_sin",
+        "dow_sin",
+        "is_weekend",
+        "is_rainy",
+        "event_impact"
+    ],
+    "data_years": [
+        "2023",
+        "2024"
+    ]
+}
