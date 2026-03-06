@@ -30,6 +30,27 @@ class SimulationRequest(BaseModel):
     duration_days: int = 7
     test_discount: float
 
+class ScenarioSimulationRequest(BaseModel):
+    sku: SKUInfo
+    duration_days: int = 14
+    test_discount: float
+    facings_change: int = 0
+    location: str = "Western"
+
+class ScenarioCompareRequest(BaseModel):
+    sku: SKUInfo
+    current_discount: float
+    current_facings: int
+    proposed_discount: float
+    proposed_facings: int
+    duration_days: int = 14
+    location: str = "Western"
+
+class ScenarioTrendRequest(BaseModel):
+    sku: SKUInfo
+    days: int = 30
+    location: str = "Western"
+
 class SalesHistory(BaseModel):
     date: date
     units_sold: float

@@ -16,9 +16,9 @@ import WastagePrevention from './WastagePrevention';
 import ComplianceDashboard from './ComplianceDashboard';
 import SystemAnalysis from './SystemAnalysis';
 import ComplianceHistory from './ComplianceHistory';
-import PromotionForecasting from '../components/dashboard/PromotionForecasting';
-import ForecastPage from './promotional-forecasting/ForecastPage';
+import ForecastPage from '../pages/promotional-forecasting/ForecastPage';
 import RecommendationsPage from './promotional-forecasting/RecommendationsPage';
+import ScenarioLab from './promotional-forecasting/ScenarioLab';
 
 // Optimization Components
 import OptimizationHome from '../components/dashboard/Optimization/OptimizationHome';
@@ -85,18 +85,15 @@ const Dashboard = () => {
                 <Route path="/optimization/products" element={<Products />} />
                 <Route path="/optimization/constraints" element={<Constraints />} />
                 <Route path="/optimization/runs" element={<RunsAndEvaluation />} />
-
-                <Route path="/planograms/ai-promotion" element={<PromotionForecasting />} />
-
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/store" element={<StoreInfo />} />
-
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/settings/users" element={<UserManagement />} />
                 <Route path="/settings/store" element={<StoreSettings />} />
                 <Route path="/settings/profile" element={<ProfileSettings />} />
                 <Route path="/promotional-forecasting/forecast" element={<ForecastPage />} />
                 <Route path="/promotional-forecasting/suggested" element={<RecommendationsPage />} />
+                <Route path="/promotional-forecasting/scenario-lab" element={<ScenarioLab />} />
             </Routes>
         </DashboardLayout>
     );

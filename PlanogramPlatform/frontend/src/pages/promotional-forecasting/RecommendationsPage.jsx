@@ -84,6 +84,52 @@ const RecommendationsPage = () => {
         }
     };
 
+    const exportReport = () => {
+        // Fallback to savedSimulations if recommendations array is empty (e.g., initial page load)
+        const dataToExport = recommendations.length > 0 ? recommendations : savedSimulations;
+
+        if (!dataToExport || dataToExport.length === 0) {
+            alert("No recommendations to export.");
+            return;
+        }
+
+        const headers = ["ID", "SKU", "Product Name", "Current Price", "Recommended Discount", "Projected Profit Lift", "Status"];
+        const csvRows = [];
+        csvRows.push(headers.join(','));
+
+        dataToExport.forEach(rec => {
+            // Handle differences between fresh generic recommendations vs savedSimulations objects
+            const id = rec.id || rec._id;
+            const sku = rec.sku || rec.skuId;
+            const name = rec.name || rec.productName;
+            const price = rec.current_price || rec.originalPrice || 'N/A';
+            const discount = rec.recommended_discount || `${(rec.discount * 100).toFixed(0)}%`;
+            const lift = rec.projected_uplift || `Rs. ${rec.profitLift}`;
+            const status = rec.status || 'Saved';
+
+            const row = [
+                id,
+                `"${sku}"`,
+                `"${name?.replace(/"/g, '""') || ''}"`,
+                price,
+                `"${discount}"`,
+                `"${lift}"`,
+                `"${status}"`
+            ];
+            csvRows.push(row.join(','));
+        });
+
+        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `promotional-recommendations-${new Date().toISOString().slice(0, 10)}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
     return (
         <div className="space-y-6">
             <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -96,11 +142,20 @@ const RecommendationsPage = () => {
                         {loading ? <FaSpinner className="mr-2 animate-spin" /> : <FaFilter className="mr-2" />}
                         {loading ? 'Regenerating...' : 'Regenerate'}
                     </button>
-                    <button className="flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-indigo-700 transition-colors shadow-sm">
+                    <button onClick={exportReport} className="flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-indigo-700 transition-colors shadow-sm">
                         <FaDownload className="mr-2" /> Export Report
                     </button>
                 </div>
             </header>
+
+            {/* Overlay Loader */}
+            {loading && (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex flex-col items-center justify-center p-4 z-50 animate-fadeIn">
+                    <FaSpinner className="text-white text-5xl animate-spin mb-4" />
+                    <p className="text-white font-semibold text-xl tracking-wide">Generating AI Strategic Narrative...</p>
+                    <p className="text-slate-300 text-sm mt-2 max-w-md text-center">Analyzing live database products and crafting optimal promotional strategies.</p>
+                </div>
+            )}
 
             {error && (
                 <div className="bg-red-50 text-red-700 p-4 rounded-xl border border-red-100 flex items-start mb-6">
@@ -122,76 +177,7 @@ const RecommendationsPage = () => {
                 </div>
             )}
 
-            {/* AI Recommendations Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-                <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-                    <h2 className="font-bold text-slate-800">Macro-Level AI Recommendations</h2>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                        <thead className="bg-white border-b border-slate-200">
-                            <tr>
-                                <th className="px-6 py-4 font-semibold text-slate-700">Reference ID</th>
-                                <th className="px-6 py-4 font-semibold text-slate-700">Product</th>
-                                <th className="px-6 py-4 font-semibold text-slate-700">Current Price (LKR)</th>
-                                <th className="px-6 py-4 font-semibold text-slate-700">Optimization Strategy</th>
-                                <th className="px-6 py-4 font-semibold text-slate-700">Projected Impact</th>
-                                <th className="px-6 py-4 font-semibold text-slate-700">AI Confidence</th>
-                                <th className="px-6 py-4 font-semibold text-slate-700">Status</th>
-                                <th className="px-6 py-4 font-semibold text-slate-700">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {recommendations.map((item) => (
-                                <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                                    <td className="px-6 py-4 font-medium text-slate-900">{item.id}</td>
-                                    <td className="px-6 py-4">
-                                        <div className="font-medium text-slate-900">{item.name}</div>
-                                        <div className="text-xs text-slate-500">{item.sku}</div>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-600">Rs. {item.current_price.toFixed(2)}</td>
-                                    <td className="px-6 py-4">
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            {item.recommended_discount}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="flex items-center text-green-600 font-medium">
-                                            <FaArrowUp className="mr-1.5 w-3 h-3" />
-                                            {item.projected_uplift}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center">
-                                            <div className="w-16 h-2 bg-slate-100 rounded-full mr-3 overflow-hidden">
-                                                <div
-                                                    className="h-full bg-indigo-500 rounded-full"
-                                                    style={{ width: item.confidence }}
-                                                ></div>
-                                            </div>
-                                            <span className="text-xs text-slate-600">{item.confidence}</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {item.status === 'Ready' ? (
-                                            <div className="flex items-center text-green-700 bg-green-50 px-2 py-1 rounded-md w-fit text-xs font-medium">
-                                                <FaCheck className="mr-1.5" /> Approved
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center text-amber-700 bg-amber-50 px-2 py-1 rounded-md w-fit text-xs font-medium">
-                                                <FaFilter className="mr-1.5" /> Pending Review
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <button className="text-indigo-600 hover:text-indigo-900 font-medium text-xs">View Analysis</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+
 
             {/* Saved Simulations Table */}
             {savedSimulations.length > 0 && (
@@ -326,6 +312,16 @@ const RecommendationsPage = () => {
                     </div>
                 </div>
             )}
+
+            <style jsx>{`
+                .animate-fadeIn {
+                    animation: fadeIn 0.3s ease-out forwards;
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+            `}</style>
         </div>
     );
 };

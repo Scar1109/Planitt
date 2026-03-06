@@ -20,7 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from src.api.scenario_routes import scenario_router
+
 app.include_router(router, prefix="/api/v1")
+app.include_router(scenario_router, prefix="/api/v1")
 
 # Serve UI
 app.mount("/static", StaticFiles(directory="static"), name="static")
