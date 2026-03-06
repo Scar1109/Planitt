@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import InventorySnapshot from '../models/InventorySnapshot.js';
 
 // Get all products with filtering
 export const getProducts = async (req, res) => {
@@ -32,7 +33,30 @@ export const getProducts = async (req, res) => {
             query.brand = brand;
         }
 
-        const products = await Product.find(query).sort({ productName: 1 });
+        const products = await Product.find(query).sort({ productName: 1 }).lean();
+
+        // Append real stock levels from InventorySnapshot
+        const skuList = products.map(p => p.sku).filter(sku => sku);
+
+        // Find latest inventory snapshot date
+        const latestInventory = await InventorySnapshot.findOne().sort({ date: -1 }).select('date').lean();
+
+        if (latestInventory && skuList.length > 0) {
+            const snapshots = await InventorySnapshot.find({
+                date: latestInventory.date,
+                sku: { $in: skuList }
+            }).lean();
+
+            const stockMap = {};
+            snapshots.forEach(snap => {
+                stockMap[snap.sku] = snap.closingStock;
+            });
+
+            products.forEach(p => {
+                p.currentStock = stockMap[p.sku] || 0;
+            });
+        }
+
         res.json(products);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch products" });
