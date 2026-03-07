@@ -1,5 +1,5 @@
 import express from 'express';
-import { simulatePromotion, generatePlan } from '../controllers/promotionController.js';
+import { simulatePromotion, generatePlan, checkHealth, explainSimulation, findOptimalDiscount, saveSimulation, getSavedSimulations } from '../controllers/promotionController.js';
 // import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -12,6 +12,11 @@ const router = express.Router();
 // Let's check middleware folder content first? No, I'll skip auth for now to ensure connectivity first as requested "run and check".
 
 router.post('/simulate', simulatePromotion);
+router.post('/simulate/explain', explainSimulation);
+router.post('/simulate/optimal', findOptimalDiscount);
+router.post('/simulate/save', saveSimulation);
+router.get('/simulate/saved', getSavedSimulations);
 router.post('/plan', generatePlan);
+router.get('/forecasting/health', checkHealth);
 
 export default router;

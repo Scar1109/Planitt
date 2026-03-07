@@ -75,7 +75,10 @@ export const runOptimization = async (req, res) => {
         const userId = req.user._id;
 
         // Temp: If no planogramId, use a dummy one for now or create one
-        if (!planogramId) planogramId = "temp_plano_" + Date.now();
+        if (!planogramId) {
+            const timestamp = new Date().toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
+            planogramId = "Planogram_" + timestamp;
+        }
 
         const result = await planogramAgent.orchestrateOptimization(userId, planogramId, config);
         res.json(result);

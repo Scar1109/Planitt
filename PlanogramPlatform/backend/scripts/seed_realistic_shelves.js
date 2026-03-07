@@ -1,10 +1,10 @@
-
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import ShelfFixture from '../src/models/ShelfFixture.js';
 import ShelfLevel from '../src/models/ShelfLevel.js';
+import Product from '../src/models/Product.js';
 
 // Setup environment
 const __filename = fileURLToPath(import.meta.url);
@@ -16,147 +16,139 @@ const seedShelves = async () => {
         await mongoose.connect(process.env.MONGO_URI);
         console.log("MongoDB Connected");
 
-        // HARD RESET: Clear all fixtures and levels
+        // 1. Clear existing shelves
         await ShelfFixture.deleteMany({});
         await ShelfLevel.deleteMany({});
-        console.log("Cleared existing shelves.");
+        console.log("Cleared existing fixtures and levels.");
 
-        const storeId = "6956357610ec0ab348888893"; // Fallback Dev Store ID
+        // 2. Analyze Products
+        const categories = await Product.find().distinct('category');
+        console.log("Found Categories:", categories);
 
-        // --- Definitions ---
-        const fixtures = [
-            // --- COOLERS (Beverages) ---
+        const storeId = "6956357610ec0ab348888893"; // Dev Store ID
+
+        // 3. Define 13 Realistic Fixture Templates
+        // Strategy: Map categories to these slots. If a category is missing, the shelf remains generic.
+        // If multiple categories fit, they combine.
+
+        // Helper to find category fuzzy match
+        const findCat = (keyword) => categories.find(c => c && c.toLowerCase().includes(keyword.toLowerCase()));
+
+        const blueprints = [
+            // --- ENTRANCE ROI ---
             {
-                aisleBaySide: "Cooler A (Soft Drinks)",
-                fixtureType: "Cooler",
-                totalWidthCm: 120, totalHeightCm: 200, totalDepthCm: 60,
-                tags: ["cooler", "beverages", "cold_drinks", "soda"],
-                levels: 5
+                name: "Aisle 1 - Bay 1", type: "Cooler", w: 120, h: 200, d: 60, levels: 5,
+                tags: [findCat('Beverage') || "Beverages", "cold", "soda"]
             },
             {
-                aisleBaySide: "Cooler B (Juices & Energy)",
-                fixtureType: "Cooler",
-                totalWidthCm: 120, totalHeightCm: 200, totalDepthCm: 60,
-                tags: ["cooler", "beverages", "juice", "energy_drinks"],
-                levels: 5
+                name: "Aisle 1 - Bay 2", type: "Cooler", w: 120, h: 200, d: 60, levels: 5,
+                tags: [findCat('Beverage') || "Beverages", "juice", "energy"]
             },
-            // --- SNACKS (Chips, Nuts) ---
+
+            // --- AISLE 2 ---
             {
-                aisleBaySide: "Aisle 1 - Bay 1 (Chips)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 45,
-                tags: ["snacks", "chips"],
-                levels: 4
+                name: "Aisle 2 - Bay 1", type: "Standard", w: 100, h: 180, d: 45, levels: 5,
+                tags: [findCat('Snack') || "Snacks & Confectionery", "chips"]
             },
             {
-                aisleBaySide: "Aisle 1 - Bay 2 (Nuts & Seeds)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 45,
-                tags: ["snacks", "nuts", "seeds"],
-                levels: 4
+                name: "Aisle 2 - Bay 2", type: "Standard", w: 100, h: 180, d: 45, levels: 5,
+                tags: [findCat('Snack') || "Snacks & Confectionery", "chocolate", "sweet"]
             },
             {
-                aisleBaySide: "Aisle 1 - Bay 3 (Mixed Snacks)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 45,
-                tags: ["snacks", "mix"],
-                levels: 4
+                name: "Aisle 2 - Bay 3", type: "Standard", w: 100, h: 180, d: 45, levels: 5,
+                tags: [findCat('Bakery') || "Packaged Bakery", "biscuits"]
             },
-            // --- BISCUITS ---
+
+            // --- AISLE 3 ---
             {
-                aisleBaySide: "Aisle 2 - Bay 1 (Sweet Biscuits)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 40,
-                tags: ["biscuits", "sweet", "cookies"],
-                levels: 5
+                name: "Aisle 3 - Bay 1", type: "Standard", w: 120, h: 180, d: 60, levels: 4,
+                tags: [findCat('Rice') || "Rice & Grains", "bulk"]
             },
             {
-                aisleBaySide: "Aisle 2 - Bay 2 (Savory Biscuits)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 40,
-                tags: ["biscuits", "savory", "crackers"],
-                levels: 5
+                name: "Aisle 3 - Bay 2", type: "Standard", w: 120, h: 180, d: 50, levels: 5,
+                tags: [findCat('Dry') || "Dry Rations", "dhal", "pulses"]
             },
             {
-                aisleBaySide: "Aisle 2 - Bay 3 (Premium Cookies)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 40,
-                tags: ["biscuits", "premium"],
-                levels: 5
+                name: "Aisle 3 - Bay 3", type: "Standard", w: 100, h: 180, d: 40, levels: 6,
+                tags: [findCat('Dry') || "Dry Rations", "spices", "condiments"]
             },
-            // --- NOODLES & PASTA ---
+
+            // --- AISLE 4 ---
             {
-                aisleBaySide: "Aisle 3 - Bay 1 (Instant Noodles)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 40,
-                tags: ["noodles", "instant"],
-                levels: 4
+                name: "Aisle 4 - Bay 1", type: "Standard", w: 100, h: 180, d: 45, levels: 5,
+                tags: [findCat('Instant') || "Instant Foods", "noodles"]
             },
             {
-                aisleBaySide: "Aisle 3 - Bay 2 (Pasta)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 40,
-                tags: ["pasta", "italian"],
-                levels: 4
+                name: "Aisle 4 - Bay 2", type: "Standard", w: 100, h: 180, d: 40, levels: 5,
+                tags: [findCat('Tea') || "Tea & Coffee", "morning"]
+            },
+
+            // --- AISLE 5 ---
+            {
+                name: "Aisle 5 - Bay 1", type: "Standard", w: 120, h: 180, d: 50, levels: 4,
+                tags: [findCat('Household') || "Household & Cleaning", "detergent"]
             },
             {
-                aisleBaySide: "Aisle 3 - Bay 3 (Asian Noodles)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 40,
-                tags: ["noodles", "asian", "ramen"],
-                levels: 4
+                name: "Aisle 5 - Bay 2", type: "Standard", w: 100, h: 180, d: 40, levels: 5,
+                tags: [findCat('Personal') || "Personal Care", findCat('Baby') || "Baby Products"]
             },
-            // --- GENERAL / MISC (Fallback) ---
+
+            // --- END ---
             {
-                aisleBaySide: "Aisle 4 - Bay 1 (General)",
-                fixtureType: "Standard",
-                totalWidthCm: 100, totalHeightCm: 180, totalDepthCm: 45,
-                tags: ["general", "misc", "household"], // Open tags
-                levels: 5
+                name: "Aisle 6 - Bay 1", type: "Cooler", w: 120, h: 100, d: 80, levels: 1, // Chest freezer style or upright
+                tags: [findCat('Frozen') || "Frozen (Non-Meat)", "ice cream"]
             }
         ];
 
-        for (const f of fixtures) {
+        // 4. Create Fixtures in DB
+        for (const bp of blueprints) {
+            // Clean tags (remove nulls/undefined)
+            const validTags = bp.tags.filter(t => t);
+
             const newFixture = new ShelfFixture({
                 storeId,
-                aisleBaySide: f.aisleBaySide,
-                fixtureType: f.fixtureType,
-                totalWidthCm: f.totalWidthCm,
-                totalHeightCm: f.totalHeightCm,
-                totalDepthCm: f.totalDepthCm,
-                tags: f.tags,
+                aisleBaySide: bp.name,
+                fixtureType: bp.type,
+                totalWidthCm: bp.w,
+                totalHeightCm: bp.h,
+                totalDepthCm: bp.d,
+                tags: validTags,
                 isActive: true
             });
             await newFixture.save();
 
             // Create Levels
+            const levelHeight = Math.floor(bp.h / bp.levels);
             const levelsArr = [];
-            const levelHeight = Math.floor(f.totalHeightCm / f.levels);
 
-            for (let i = 0; i < f.levels; i++) {
-                // Inherit tags from fixture for now, plus maybe "top", "bottom"
-                const levelTags = [...f.tags];
-                if (i === f.levels - 1) levelTags.push("top_shelf");
-                if (i === 0) levelTags.push("bottom_shelf");
-                if (i === 2 || i === 3) levelTags.push("eye_level");
+            for (let i = 0; i < bp.levels; i++) {
+                const levelTags = [...validTags];
+                // Spatial tags
+                if (i === bp.levels - 1) levelTags.push("top");
+                if (i === 0) levelTags.push("bottom");
+
+                // Eye level assumption (approx 120-160cm range)
+                const hStart = i * levelHeight;
+                const hEnd = (i + 1) * levelHeight;
+                if (hEnd > 110 && hStart < 160) levelTags.push("eye_level");
 
                 levelsArr.push({
                     storeId,
                     fixtureId: newFixture._id,
                     levelIndex: i,
-                    heightFromFloorCm: i * levelHeight,
-                    usableWidthCm: f.totalWidthCm - 2, // Slight margin
-                    usableHeightCm: levelHeight - 2,
-                    usableDepthCm: f.totalDepthCm - 2,
+                    heightFromFloorCm: hStart,
+                    usableWidthCm: bp.w - 4, // Walls
+                    usableHeightCm: levelHeight - 2, // Shelf thickness
+                    usableDepthCm: bp.d - 2,
                     tags: levelTags
                 });
             }
             await ShelfLevel.insertMany(levelsArr);
-            console.log(`Created ${f.aisleBaySide} with ${f.levels} levels.`);
+            console.log(`Created ${bp.name}`);
         }
 
-        console.log("Seeding Complete!");
-        process.exit();
+        console.log("Seeding Complete: 13 Realistic Fixtures.");
+        process.exit(0);
 
     } catch (error) {
         console.error("Seeding Failed:", error);
