@@ -389,6 +389,62 @@ ${actionDetails}
         }
     },
 
+    // ============================================
+    // Wastage Prevention System
+    // ============================================
+
+    // Get aggregated wastage dashboard data (KPIs, charts, risk items)
+    async getWastageDashboard(storeId = 'STORE-001') {
+        try {
+            const response = await nodeClient.get(`/wastage/dashboard/${storeId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Wastage dashboard error:', error);
+            throw error;
+        }
+    },
+
+    // Get products expiring soon
+    async getExpiringProducts(storeId = 'STORE-001', days = 7) {
+        try {
+            const response = await nodeClient.get(`/wastage/expiring/${storeId}?days=${days}`);
+            return response.data;
+        } catch (error) {
+            console.error('Expiring products error:', error);
+            throw error;
+        }
+    },
+
+    // Apply a wastage prevention action (markdown, donate, bundle)
+    async applyWastageAction({ productId, storeId, actionType, discountPercent, targetQuantity }) {
+        try {
+            const response = await nodeClient.post('/wastage/action', {
+                productId,
+                storeId,
+                actionType,
+                discountPercent,
+                targetQuantity,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Wastage action error:', error);
+            throw error;
+        }
+    },
+
+    // Get AI-driven smart insight for order reduction
+    async getSmartInsight(storeId = 'STORE-001') {
+        try {
+            const response = await mlClient.post('/api/v1/wastage/smart-insight', {
+                store_id: storeId,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Smart insight error:', error);
+            throw error;
+        }
+    },
+
     // Auth endpoints are handled by AuthContext using services/api.js
 };
 

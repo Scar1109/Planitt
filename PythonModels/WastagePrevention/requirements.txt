@@ -1,8 +1,0 @@
-flask
-fastapi
-uvicorn
-motor
-pydantic
-scikit-learn
-pandas
-numpy

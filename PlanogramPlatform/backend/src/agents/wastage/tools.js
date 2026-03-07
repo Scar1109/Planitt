@@ -29,10 +29,10 @@ export async function getExpiringProducts({ storeId, days = 7 }) {
         // Enrich with product details
         const enrichedProducts = await Promise.all(
             expiringInventory.map(async (inv) => {
-                const product = await Product.findOne({ productId: inv.productId });
+                const product = await Product.findOne({ sku: inv.productId || inv.sku });
                 return {
-                    productId: inv.productId,
-                    productName: product?.name || 'Unknown',
+                    productId: inv.productId || inv.sku,
+                    productName: product?.productName || 'Unknown',
                     category: product?.category,
                     currentStock: inv.currentStock,
                     expiryDate: inv.expiryDate,
@@ -76,14 +76,30 @@ export async function getWasteRiskPrediction({ storeId, productId }) {
             };
         }
 
-        // Prepare inventory items for ML service
-        const inventoryItems = inventory.map(inv => ({
-            sku: inv.productId,
-            store_id: inv.storeId,
-            current_stock: inv.currentStock,
-            days_to_expiry: inv.daysUntilExpiry || 7,
-            avg_daily_sales: 10, // Default fallback
-            old_stock_share: 0,
+        // Prepare inventory items for ML service — compute real avg daily sales
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const inventoryItems = await Promise.all(inventory.map(async (inv) => {
+            // Compute real sales velocity from the last 30 days
+            const salesHistory = await InventorySnapshot.find({
+                sku: inv.productId || inv.sku,
+                storeId: inv.storeId || storeId,
+                date: { $gte: thirtyDaysAgo },
+                soldQty: { $gt: 0 },
+            });
+            const totalSold = salesHistory.reduce((sum, s) => sum + (s.soldQty || 0), 0);
+            const daysWithData = salesHistory.length || 1;
+            const avgDailySales = totalSold / daysWithData;
+
+            return {
+                sku: inv.productId || inv.sku,
+                store_id: inv.storeId || storeId,
+                current_stock: inv.currentStock || inv.closingStock || 0,
+                days_to_expiry: inv.daysUntilExpiry || inv.daysToExpiry || 7,
+                avg_daily_sales: Math.round(avgDailySales * 10) / 10,
+                old_stock_share: 0,
+            };
         }));
 
         const result = await pythonMLService.getWasteRisk(inventoryItems);
@@ -116,38 +132,38 @@ export async function recommendMarkdown({ productId, storeId, daysUntilExpiry })
     try {
         logger.info(`Calculating markdown for product ${productId}, ${daysUntilExpiry} days to expiry`);
 
-        let discountPercent = 0;
-        let action = 'no_action';
-        let reasoning = '';
+        // Get current stock
+        let currentStock = 10; // Fallback
+        const inventory = await InventorySnapshot.findOne({ storeId, productId: productId }).sort({ snapshotDate: -1 });
+        if (inventory) {
+            currentStock = inventory.currentStock;
+        }
 
-        if (daysUntilExpiry <= 1) {
-            discountPercent = 50;
-            action = 'emergency_markdown';
-            reasoning = 'Product expires in 1 day or less - aggressive discount needed';
-        } else if (daysUntilExpiry <= 3) {
-            discountPercent = 30;
-            action = 'high_markdown';
-            reasoning = 'Product expires in 2-3 days - significant discount recommended';
-        } else if (daysUntilExpiry <= 5) {
-            discountPercent = 20;
-            action = 'moderate_markdown';
-            reasoning = 'Product expires in 4-5 days - moderate discount recommended';
-        } else if (daysUntilExpiry <= 7) {
-            discountPercent = 10;
-            action = 'light_markdown';
-            reasoning = 'Product expires in 6-7 days - light discount to accelerate sales';
-        } else {
-            action = 'monitor';
-            reasoning = 'Product has sufficient shelf life - no discount needed yet';
+        const result = await pythonMLService.getDynamicMarkdown(productId, storeId, daysUntilExpiry, currentStock);
+
+        if (!result.success || !result.data) {
+            logger.warn(`Failed to get dynamic markdown from ML service, falling back to safe rule-based default for ${productId}`);
+            let fallbackDiscount = 0;
+            if (daysUntilExpiry <= 1) fallbackDiscount = 50;
+            else if (daysUntilExpiry <= 3) fallbackDiscount = 30;
+
+            return {
+                productId,
+                storeId,
+                daysUntilExpiry,
+                discountPercent: fallbackDiscount,
+                action: fallbackDiscount > 0 ? 'markdown' : 'monitor',
+                reasoning: 'ML Service unavailable, using fallback',
+            };
         }
 
         return {
-            productId,
-            storeId,
-            daysUntilExpiry,
-            discountPercent,
-            action,
-            reasoning,
+            productId: result.data.product_id || productId,
+            storeId: result.data.store_id || storeId,
+            daysUntilExpiry: result.data.days_until_expiry || daysUntilExpiry,
+            discountPercent: result.data.optimal_discount_percent,
+            action: result.data.recommended_action,
+            reasoning: result.data.reasoning,
         };
     } catch (error) {
         logger.error('Error recommending markdown:', error);
@@ -183,7 +199,7 @@ export async function suggestBundles({ storeId, productId }) {
         const categories = {};
 
         for (const inv of atRiskProducts) {
-            const product = await Product.findOne({ productId: inv.productId });
+            const product = await Product.findOne({ sku: inv.productId || inv.sku });
             if (!product) continue;
 
             const category = product.category || 'Other';
@@ -191,8 +207,8 @@ export async function suggestBundles({ storeId, productId }) {
                 categories[category] = [];
             }
             categories[category].push({
-                productId: inv.productId,
-                productName: product.name,
+                productId: inv.productId || inv.sku,
+                productName: product.productName,
                 currentStock: inv.currentStock,
                 daysUntilExpiry: inv.daysUntilExpiry,
             });
@@ -245,11 +261,11 @@ export async function estimateWasteImpact({ storeId, days = 7 }) {
         let estimatedValue = 0;
 
         for (const inv of atRiskInventory) {
-            const product = await Product.findOne({ productId: inv.productId });
+            const product = await Product.findOne({ sku: inv.productId || inv.sku });
             if (!product) continue;
 
             totalUnitsAtRisk += inv.currentStock;
-            estimatedValue += inv.currentStock * (product.unitPrice || 0);
+            estimatedValue += inv.currentStock * (product.baseUnitPriceLKR || 0);
         }
 
         return {
