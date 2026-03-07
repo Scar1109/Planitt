@@ -1,9 +1,6 @@
-
 import { ForecastChart } from "@/components/forecasting/forecast-chart"
 import { WeatherImpact } from "@/components/forecasting/weather-impact"
-import { SeasonalTrends } from "@/components/forecasting/seasonal-trends"
 import { ProductForecasts } from "@/components/forecasting/product-forecasts"
-
 import { ExternalFactors } from "@/components/forecasting/external-factors"
 import { AgentInventoryForecast } from "@/components/forecasting/agent-inventory-forecast"
 import { LowStockAlerts } from "@/components/forecasting/low-stock-alerts"
@@ -20,34 +17,28 @@ export default function Forecasting() {
                 </div>
             </div>
 
+            {/* Main Balanced Grid */}
+            <div className="grid gap-6 lg:grid-cols-3 items-start">
 
-
-            {/* AI Agent-Based Inventory Forecast + Low Stock Alerts Side by Side */}
-            <div className="grid gap-6 lg:grid-cols-3">
-                <div className="lg:col-span-2">
-                    <AgentInventoryForecast />
-                </div>
-                <div>
-                    <LowStockAlerts />
-                </div>
-            </div>
-
-            {/* Main Content Grid */}
-            <div className="grid gap-6 lg:grid-cols-3">
+                {/* Left Area: Wide Charts */}
                 <div className="lg:col-span-2 space-y-6">
+                    <AgentInventoryForecast />
                     <ForecastChart />
-                    <SeasonalTrends />
-                </div>
-                <div className="space-y-6">
                     <AdaptiveLearning />
+                </div>
+
+                {/* Right Area: List and Info Panels */}
+                <div className="space-y-6">
+                    <LowStockAlerts />
                     <WeatherImpact />
                     <ExternalFactors />
-
                 </div>
             </div>
 
-            {/* Product Forecasts Table */}
-            <ProductForecasts />
+            {/* Product Forecasts Table - Full width at bottom */}
+            <div>
+                <ProductForecasts />
+            </div>
         </div>
     )
 }
