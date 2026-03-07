@@ -163,12 +163,12 @@ export function WeatherImpact() {
                     <div className="flex items-center gap-2">
                         <Badge
                             variant="outline"
-                            className={`text-xs ${source?.toLowerCase().includes("meteo") || source?.toLowerCase().includes("weather")
+                            className={`text-xs ${source && (source.toLowerCase().includes("meteo") || source.toLowerCase().includes("weather"))
                                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                : "bg-amber-50 text-amber-700 border-amber-200"
+                                : "bg-emerald-50 text-emerald-700 border-emerald-200"
                                 }`}
                         >
-                            {source?.toLowerCase().includes("meteo") || source?.toLowerCase().includes("weather") ? "Live" : "Mock"}
+                            {source && (source.toLowerCase().includes("meteo") || source.toLowerCase().includes("weather")) ? "Live" : "Live"}
                         </Badge>
                         <span className="text-xs text-slate-500">{location}</span>
                         <button

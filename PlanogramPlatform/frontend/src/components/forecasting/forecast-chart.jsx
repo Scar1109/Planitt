@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { useLocation } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -20,8 +21,12 @@ import { TrendingUp, Download, Loader2, Eye, EyeOff, Sparkles, CalendarDays, Sea
 import { api } from "@/api/client"
 
 export function ForecastChart() {
+    const location = useLocation()
+    const urlParams = new URLSearchParams(location.search)
+    const initialSku = urlParams.get("sku")
+
     const [timeRange, setTimeRange] = useState("14d")
-    const [selectedProduct, setSelectedProduct] = useState("")
+    const [selectedProduct, setSelectedProduct] = useState(initialSku || "")
     const [showConfidence, setShowConfidence] = useState(true)
     const [forecastData, setForecastData] = useState([])
     const [holidays, setHolidays] = useState([])
@@ -155,7 +160,8 @@ export function ForecastChart() {
                         ...existing,
                         forecast: Math.round(point.forecast),
                         lower: Math.round(point.lower_bound),
-                        upper: Math.round(point.upper_bound)
+                        upper: Math.round(point.upper_bound),
+                        reason: point.reason
                     })
                 })
 
@@ -211,34 +217,53 @@ export function ForecastChart() {
 
         const data = payload[0]?.payload
         const isHoliday = data?.holiday
+        const actionReason = data?.reason
 
         return (
-            <div className="bg-popover border border-border rounded-lg shadow-lg p-3">
-                <p className="font-semibold text-foreground mb-2">{label}</p>
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg p-3 min-w-[200px]">
+                <p className="font-semibold text-slate-800 dark:text-slate-100 mb-2">{label}</p>
                 {isHoliday && (
-                    <div className="mb-2 pb-2 border-b border-border">
+                    <div className="mb-2 pb-2 border-b border-slate-100 dark:border-slate-800">
                         <div className="flex items-center gap-1.5 text-xs">
                             <Sparkles className="h-3 w-3 text-amber-500" />
                             <span className="font-medium text-amber-600 dark:text-amber-400">
                                 {data.holidayName}
                             </span>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                             Expected +{data.holidayImpact === 'high' ? '40' : data.holidayImpact === 'medium' ? '20' : '10'}% demand
                         </p>
                     </div>
                 )}
-                {payload.map((entry, index) => {
-                    if (entry.value === null) return null
-                    return (
-                        <div key={index} className="flex items-center justify-between gap-3 text-sm">
-                            <span className="text-muted-foreground">{entry.name}:</span>
-                            <span className="font-medium text-foreground">
-                                {Number(entry.value).toLocaleString()} units
-                            </span>
-                        </div>
-                    )
-                })}
+                {actionReason && (
+                    <div className="mb-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <p className="text-[10px] uppercase font-bold text-indigo-500 dark:text-indigo-400 tracking-wider mb-1">
+                            AI Driven Factor
+                        </p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-snug">
+                            {actionReason}
+                        </p>
+                    </div>
+                )}
+                <div className="space-y-1.5">
+                    {payload.map((entry, index) => {
+                        if (entry.value === null) return null
+                        return (
+                            <div key={index} className="flex items-center justify-between gap-4 text-sm">
+                                <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                                    <div
+                                        className="w-2 h-2 rounded-full"
+                                        style={{ backgroundColor: entry.color }}
+                                    />
+                                    {entry.name}:
+                                </span>
+                                <span className="font-medium text-slate-800 dark:text-slate-100">
+                                    {Number(entry.value).toLocaleString()} units
+                                </span>
+                            </div>
+                        )
+                    })}
+                </div>
             </div>
         )
     }

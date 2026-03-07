@@ -184,6 +184,22 @@ export function LowStockAlerts() {
                                                         }`}>
                                                         ~{alert.daysOfStock}d left
                                                     </span>
+                                                    {alert.stockoutRisk > 0 && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span className="font-semibold text-rose-500 bg-rose-50 px-1 rounded-sm border border-rose-100">
+                                                                {(alert.stockoutRisk * 100).toFixed(0)}% Risk
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                    {alert.demandTrend && alert.demandTrend !== 0 ? (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span className={`font-semibold ${alert.demandTrend > 0 ? "text-emerald-500" : "text-amber-500"}`}>
+                                                                {alert.demandTrend > 0 ? "↑" : "↓"} {(Math.abs(alert.demandTrend) * 100).toFixed(0)}% Trend
+                                                            </span>
+                                                        </>
+                                                    ) : null}
                                                 </div>
                                             </div>
                                         </div>

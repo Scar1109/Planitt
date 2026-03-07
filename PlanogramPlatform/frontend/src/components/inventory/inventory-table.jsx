@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -8,129 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Clock, TrendingUp, TrendingDown, Eye, Edit, Trash2, ShoppingCart } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-const products = [
-    {
-        id: "1",
-        sku: "DAI-001",
-        name: "Fresh Milk 1L",
-        category: "Dairy",
-        currentStock: 45,
-        reorderPoint: 30,
-        maxCapacity: 100,
-        shelfLife: 7,
-        daysUntilExpiry: 5,
-        unitCost: 320,
-        velocity: "fast",
-        status: "healthy",
-        trend: "up",
-    },
-    {
-        id: "2",
-        sku: "DAI-012",
-        name: "Greek Yogurt 500g",
-        category: "Dairy",
-        currentStock: 15,
-        reorderPoint: 25,
-        maxCapacity: 60,
-        shelfLife: 14,
-        daysUntilExpiry: 3,
-        unitCost: 150,
-        velocity: "medium",
-        status: "critical",
-        trend: "down",
-    },
-    {
-        id: "3",
-        sku: "BEV-034",
-        name: "Mineral Water 500ml",
-        category: "Beverages",
-        currentStock: 180,
-        reorderPoint: 50,
-        maxCapacity: 200,
-        shelfLife: null,
-        daysUntilExpiry: null,
-        unitCost: 45,
-        velocity: "fast",
-        status: "overstock",
-        trend: "up",
-    },
-    {
-        id: "4",
-        sku: "BAK-008",
-        name: "White Bread Loaf",
-        category: "Bakery",
-        currentStock: 22,
-        reorderPoint: 20,
-        maxCapacity: 50,
-        shelfLife: 3,
-        daysUntilExpiry: 2,
-        unitCost: 85,
-        velocity: "fast",
-        status: "low",
-        trend: "stable",
-    },
-    {
-        id: "5",
-        sku: "PRD-045",
-        name: "Banana Bunch",
-        category: "Produce",
-        currentStock: 65,
-        reorderPoint: 40,
-        maxCapacity: 100,
-        shelfLife: 5,
-        daysUntilExpiry: 4,
-        unitCost: 180,
-        velocity: "fast",
-        status: "healthy",
-        trend: "up",
-    },
-    {
-        id: "6",
-        sku: "FRZ-022",
-        name: "Ice Cream 1L",
-        category: "Frozen",
-        currentStock: 28,
-        reorderPoint: 15,
-        maxCapacity: 40,
-        shelfLife: 90,
-        daysUntilExpiry: 45,
-        unitCost: 450,
-        velocity: "medium",
-        status: "healthy",
-        trend: "stable",
-    },
-    {
-        id: "7",
-        sku: "DRY-089",
-        name: "Basmati Rice 5kg",
-        category: "Dry Goods",
-        currentStock: 35,
-        reorderPoint: 20,
-        maxCapacity: 60,
-        shelfLife: null,
-        daysUntilExpiry: null,
-        unitCost: 1200,
-        velocity: "slow",
-        status: "healthy",
-        trend: "stable",
-    },
-    {
-        id: "8",
-        sku: "BEV-056",
-        name: "Orange Juice 1L",
-        category: "Beverages",
-        currentStock: 12,
-        reorderPoint: 20,
-        maxCapacity: 50,
-        shelfLife: 30,
-        daysUntilExpiry: 8,
-        unitCost: 280,
-        velocity: "medium",
-        status: "low",
-        trend: "down",
-    },
-]
+import { useNavigate } from "react-router-dom"
+import api from "@/api/client"
 
 const statusConfig = {
     healthy: { label: "Healthy", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300" },
@@ -146,7 +25,67 @@ const velocityConfig = {
 }
 
 export function InventoryTable() {
+    const navigate = useNavigate()
     const [selectedRows, setSelectedRows] = useState([])
+    const [products, setProducts] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        async function fetchInventory() {
+            try {
+                // Fetching inventory from STORE-001 by default
+                const res = await api.getInventoryForStore("STORE-001");
+                if (res.success && res.data) {
+                    const mappedProducts = res.data.map((item, index) => {
+                        // Mocking some dynamic states based on real stock if not present
+                        const stock = item.closingStock || 0;
+                        const maxCap = item.maxShelfCapacityUnits || 100;
+                        const rop = item.reorderPoint || Math.max(10, Math.floor(maxCap * 0.2));
+                        let statusStr = "healthy";
+                        let trend = "stable";
+                        let vel = "medium";
+
+                        if (stock <= 5) {
+                            statusStr = "critical";
+                            trend = "down";
+                            vel = "fast";
+                        } else if (stock <= rop) {
+                            statusStr = "low";
+                            trend = "down";
+                        } else if (stock > maxCap * 0.8) {
+                            statusStr = "overstock";
+                            trend = "up";
+                        }
+
+                        if (item.soldQty > 10) vel = "fast";
+                        else if (item.soldQty < 2) vel = "slow";
+
+                        return {
+                            id: item._id || index.toString(),
+                            sku: item.sku || item.productId,
+                            name: item.productName || item.sku || "Unknown Product",
+                            category: item.category || "General",
+                            currentStock: stock,
+                            reorderPoint: rop,
+                            maxCapacity: maxCap > stock ? maxCap : stock + 20, // ensure UI logic makes sense
+                            shelfLife: item.typicalShelfLifeDays || null,
+                            daysUntilExpiry: item.oldestAgeDays ? Math.max(0, (item.typicalShelfLifeDays || 30) - item.oldestAgeDays) : null,
+                            unitCost: item.unitCostLKR || 0,
+                            velocity: vel,
+                            status: statusStr,
+                            trend: trend,
+                        };
+                    });
+                    setProducts(mappedProducts);
+                }
+            } catch (err) {
+                console.error("Failed to load inventory for table", err);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        fetchInventory();
+    }, []);
 
     const toggleRow = (id) => {
         setSelectedRows((prev) => (prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]))
@@ -185,7 +124,7 @@ export function InventoryTable() {
                         <TableHeader>
                             <TableRow className="hover:bg-transparent">
                                 <TableHead className="w-[50px]">
-                                    <Checkbox checked={selectedRows.length === products.length} onCheckedChange={toggleAll} />
+                                    <Checkbox checked={products.length > 0 && selectedRows.length === products.length} onCheckedChange={toggleAll} />
                                 </TableHead>
                                 <TableHead className="w-[100px]">SKU</TableHead>
                                 <TableHead>Product</TableHead>
@@ -197,7 +136,19 @@ export function InventoryTable() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {products.map((product) => {
+                            {isLoading ? (
+                                <TableRow>
+                                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                                        Loading inventory data...
+                                    </TableCell>
+                                </TableRow>
+                            ) : products.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                                        No inventory found.
+                                    </TableCell>
+                                </TableRow>
+                            ) : products.map((product) => {
                                 const stockPercentage = (product.currentStock / product.maxCapacity) * 100
                                 const isSelected = selectedRows.includes(product.id)
 
@@ -223,13 +174,13 @@ export function InventoryTable() {
                                                     <span className="text-foreground">{product.currentStock}</span>
                                                     <span className="text-muted-foreground text-xs">/ {product.maxCapacity}</span>
                                                 </div>
-                                                <Progress value={stockPercentage} className="h-1.5" />
+                                                <Progress value={Math.min(100, stockPercentage)} className="h-1.5" />
                                                 <p className="text-xs text-muted-foreground">ROP: {product.reorderPoint}</p>
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <span className={cn("text-sm font-medium", velocityConfig[product.velocity].color)}>
-                                                {velocityConfig[product.velocity].label}
+                                            <span className={cn("text-sm font-medium", velocityConfig[product.velocity]?.color)}>
+                                                {velocityConfig[product.velocity]?.label}
                                             </span>
                                         </TableCell>
                                         <TableCell>
@@ -255,7 +206,9 @@ export function InventoryTable() {
                                             )}
                                         </TableCell>
                                         <TableCell>
-                                            <Badge className={statusConfig[product.status].color}>{statusConfig[product.status].label}</Badge>
+                                            <Badge className={statusConfig[product.status]?.color || statusConfig.healthy.color}>
+                                                {statusConfig[product.status]?.label || "Healthy"}
+                                            </Badge>
                                         </TableCell>
                                         <TableCell>
                                             <DropdownMenu>
@@ -267,19 +220,11 @@ export function InventoryTable() {
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuItem>
                                                         <Eye className="h-4 w-4 mr-2" />
-                                                        View Details
+                                                        View Data
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem>
-                                                        <Edit className="h-4 w-4 mr-2" />
-                                                        Edit Product
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => navigate(`/forecasting?sku=${product.sku}`)}>
                                                         <ShoppingCart className="h-4 w-4 mr-2" />
-                                                        Create Order
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem className="text-destructive">
-                                                        <Trash2 className="h-4 w-4 mr-2" />
-                                                        Delete
+                                                        Forecast Reorder
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
@@ -294,3 +239,4 @@ export function InventoryTable() {
         </Card>
     )
 }
+

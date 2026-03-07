@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\sasin\Downloads\Research_Project_Planitt\Planitt_New\Planitt\PythonModels\InventoryForecasting\main.py", line 1029, in generate_forecast
+    # Use robust detection with name
+                       ^^^^^^^^^^^^^
+  File "C:\Users\sasin\Downloads\Research_Project_Planitt\Planitt_New\Planitt\PythonModels\InventoryForecasting\main.py", line 323, in get_product_category
+    name_from_info = info.get('productname', '').lower() if info else ''
+                                   ^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'

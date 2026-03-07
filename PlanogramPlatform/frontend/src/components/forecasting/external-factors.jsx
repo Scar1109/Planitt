@@ -293,9 +293,7 @@ export function ExternalFactors() {
                                     }`}
                             >
                                 <div className="flex items-start gap-2 mb-2">
-                                    {rec.priority === 'high' && <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />}
-                                    {rec.priority === 'medium' && <Lightbulb className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />}
-                                    {rec.priority === 'low' && <Lightbulb className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />}
+                                    <span className="text-sm shrink-0 mt-0.5">{rec.icon || (rec.priority === 'high' ? '⚠️' : rec.priority === 'medium' ? '💡' : '💡')}</span>
                                     <p className="text-sm font-medium text-slate-700">{rec.message}</p>
                                 </div>
                                 {rec.actionItems?.length > 0 && (

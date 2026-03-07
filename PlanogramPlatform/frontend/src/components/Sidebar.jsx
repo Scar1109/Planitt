@@ -66,7 +66,7 @@ const Sidebar = () => {
             icon: TbTrendingUp,
             subItems: [
                 { name: 'Forecasting', path: '/dashboard/forecasting' },
-                { name: 'Wastage Prevention', path: '/dashboard/inventory/wastage' }
+                { name: 'Wastage Prevention', path: '/dashboard/wastage-prevention' }
             ]
         },
         {

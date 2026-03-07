@@ -7,6 +7,7 @@ import { ModelPerformance } from "@/components/forecasting/model-performance"
 import { ExternalFactors } from "@/components/forecasting/external-factors"
 import { AgentInventoryForecast } from "@/components/forecasting/agent-inventory-forecast"
 import { LowStockAlerts } from "@/components/forecasting/low-stock-alerts"
+import { AdaptiveLearning } from "@/components/forecasting/adaptive-learning"
 
 export default function Forecasting() {
     return (
@@ -39,6 +40,7 @@ export default function Forecasting() {
                     <SeasonalTrends />
                 </div>
                 <div className="space-y-6">
+                    <AdaptiveLearning />
                     <WeatherImpact />
                     <ExternalFactors />
                     <ModelPerformance />

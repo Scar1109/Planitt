@@ -89,16 +89,10 @@ export async function getWasteRiskPrediction({ storeId, productId }) {
         const result = await pythonMLService.getWasteRisk(inventoryItems);
 
         if (!result.success) {
-            // Return mock data as fallback
             return {
-                predictions: inventory.slice(0, 5).map(inv => ({
-                    product_id: inv.productId,
-                    risk_score: Math.random() * 0.5,
-                    risk_level: 'low',
-                    recommended_action: 'monitor',
-                })),
-                source: 'fallback',
-                message: 'Using fallback predictions - Python service unavailable',
+                error: 'ML Service Unavailable',
+                message: 'Failed to retrieve waste risk prediction from ML engine.',
+                details: result.error || 'Unknown error'
             };
         }
 
