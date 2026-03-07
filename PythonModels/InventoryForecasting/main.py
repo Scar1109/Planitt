@@ -607,15 +607,15 @@ async def health_check():
 
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
+from dotenv import load_dotenv
 
-# ... (Previous imports remain, ensuring we don't duplicate)
-
-# ...
+# Load environment variables from .env file if it exists
+load_dotenv()
 
 # MongoDB Connection
 # Default to the shared Atlas Cluster if env var not set
-MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://admin_db_user:vhIPMzRtzhINvaRp@cluster0.8ovat0j.mongodb.net/")
-DB_NAME = "test"
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://admin_db_user:vhIPMzRtzhINvaRp@cluster0.8ovat0j.mongodb.net/test")
+DB_NAME = os.getenv("DB_NAME", "test")
 db_client = None
 db = None
 
@@ -725,8 +725,8 @@ async def startup_event():
         # Add connection timeout (5 seconds) to fail fast
         db_client = AsyncIOMotorClient(
             MONGO_URI,
-            serverSelectionTimeoutMS=5000,  # 5 second timeout
-            connectTimeoutMS=5000
+            serverSelectionTimeoutMS=15000,  # 15 second timeout
+            connectTimeoutMS=15000
         )
         # Actually test the connection
         await db_client.admin.command('ping')
@@ -1258,33 +1258,36 @@ async def generate_forecast(request: ForecastRequest):
         logger.info(f"⚡ Forecast completed in {elapsed:.2f}s for {request.horizon_days} days")
 
             
-        # 2. Fetch Historical Sales from MongoDB
+        # 2. Fetch Historical Sales from MongoDB (inventorysnapshots collection)
         history = []
         if db is not None:
             try:
-                # Fetch last 30 days of sales relative to the latest data point
-                last_sale = await db.sales.find_one(
+                # Find most recent snapshot to anchor the date range
+                last_snapshot = await db.inventorysnapshots.find_one(
                     {"sku": request.product_id},
                     sort=[("date", -1)]
                 )
                 
-                if last_sale:
-                    ref_date = last_sale['date']
+                if last_snapshot:
+                    ref_date = last_snapshot['date']
                     if isinstance(ref_date, str):
                         ref_date = datetime.fromisoformat(ref_date.replace('Z', '+00:00'))
                     start_date = datetime.combine(ref_date.date() - timedelta(days=30), datetime.min.time())
                 else:
                     start_date = datetime.combine(today - timedelta(days=30), datetime.min.time())
-                
-                cursor = db.sales.find({
+
+                cursor = db.inventorysnapshots.find({
                     "sku": request.product_id,
                     "date": {"$gte": start_date}
                 }).sort("date", 1)
-                
+
                 async for doc in cursor:
+                    raw_date = doc.get('date')
+                    date_str = raw_date.date().isoformat() if isinstance(raw_date, datetime) else str(raw_date)[:10]
+                    sold = int(doc.get('soldQty', doc.get('SoldQty', 0)) or 0)
                     history.append(HistoricalPoint(
-                        date=doc['date'].date().isoformat() if isinstance(doc['date'], datetime) else str(doc['date'])[:10],
-                        actual_sales=int(doc.get('unitsSold', doc.get('UnitsSold', 0)))
+                        date=date_str,
+                        actual_sales=sold
                     ))
             except Exception as e:
                 logger.error(f"Failed to fetch sales history: {e}")
@@ -1343,7 +1346,7 @@ async def generate_batch_forecast(request: BatchForecastRequest):
             
             # Fetch lag features for this specific product
             lag_data = await get_lag_features(product_id, request.store_id)
-            product_info = get_product_info(product_id)
+            product_info = await get_product_info_db(product_id)
             product_category = product_info.get('category', '').lower() or get_product_category(product_id)
             
             forecasts = []
@@ -1409,7 +1412,7 @@ async def predict_waste_risk(request: WasteRiskRequest):
         total_risk = 0
         
         for item in request.inventory:
-            info = get_product_info(item.sku)
+            info = await get_product_info_db(item.sku)
             
             # Prepare input features - keys must match training feature_cols (lowercase)
             data = {
@@ -1871,7 +1874,7 @@ async def calculate_replenishment(request: ReplenishmentRequest):
             supplier_reliability_factor = 1.0 # Perfect
             
             # Fetch actual item data from MongoDB fallback info
-            info = get_product_info(sku)
+            info = await get_product_info_db(sku)
             category = info.get('category', '').lower()
             supplier_id = info.get('supplier_id', '')
             

@@ -1,9 +1,9 @@
-import { ForecastAccuracyCard } from "@/components/forecasting/forecast-accuracy-card"
+
 import { ForecastChart } from "@/components/forecasting/forecast-chart"
 import { WeatherImpact } from "@/components/forecasting/weather-impact"
 import { SeasonalTrends } from "@/components/forecasting/seasonal-trends"
 import { ProductForecasts } from "@/components/forecasting/product-forecasts"
-import { ModelPerformance } from "@/components/forecasting/model-performance"
+
 import { ExternalFactors } from "@/components/forecasting/external-factors"
 import { AgentInventoryForecast } from "@/components/forecasting/agent-inventory-forecast"
 import { LowStockAlerts } from "@/components/forecasting/low-stock-alerts"
@@ -20,8 +20,7 @@ export default function Forecasting() {
                 </div>
             </div>
 
-            {/* Forecast Accuracy Metrics */}
-            <ForecastAccuracyCard />
+
 
             {/* AI Agent-Based Inventory Forecast + Low Stock Alerts Side by Side */}
             <div className="grid gap-6 lg:grid-cols-3">
@@ -43,7 +42,7 @@ export default function Forecasting() {
                     <AdaptiveLearning />
                     <WeatherImpact />
                     <ExternalFactors />
-                    <ModelPerformance />
+
                 </div>
             </div>
 
