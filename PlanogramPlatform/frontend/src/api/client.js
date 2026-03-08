@@ -207,6 +207,17 @@ export const api = {
         }
     },
 
+    // Trigger full background model retraining using latest data
+    async triggerModelRetraining() {
+        try {
+            const response = await mlClient.post('/api/v1/model/retrain');
+            return response.data;
+        } catch (error) {
+            console.error('Model retraining API error:', error);
+            throw error;
+        }
+    },
+
     // Get per-SKU learning history
     async getSKUFeedback(sku) {
         try {
