@@ -5,7 +5,7 @@ import Sale from '../models/Sale.js';
 import { validate, schemas } from '../middleware/validation.js';
 import logger from '../config/logger.js';
 import axios from 'axios';
-import { getInventorySummary } from '../controllers/inventory.controller.js';
+import { getInventorySummary, getDashboardKPIs } from '../controllers/inventory.controller.js';
 
 const router = express.Router();
 
@@ -15,6 +15,13 @@ const router = express.Router();
  * @access  Public
  */
 router.get('/summary', getInventorySummary);
+
+/**
+ * @route   GET /api/inventory/dashboard-kpis
+ * @desc    Get top-level dashboard statistics for the main home page
+ * @access  Public
+ */
+router.get('/dashboard-kpis', getDashboardKPIs);
 
 /**
  * @route   GET /api/inventory/low-stock-alerts

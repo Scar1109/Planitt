@@ -942,7 +942,7 @@ async def evaluate_forecast_outcomes():
             
             actual_demand = 0
             async for sale in actual_cursor:
-                actual_demand += sale.get('unitsSold', 0)
+                actual_demand += sale.get('UnitsSold', sale.get('unitsSold', 0))
             
             # Calculate error
             error_pct = ((predicted - actual_demand) / max(actual_demand, 1)) * 100

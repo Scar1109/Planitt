@@ -136,6 +136,17 @@ export const api = {
         }
     },
 
+    // Get top-level dashboard statistics for the main home page
+    async getDashboardKpis() {
+        try {
+            const response = await nodeClient.get('/inventory/dashboard-kpis');
+            return response.data;
+        } catch (error) {
+            console.error('Failed to fetch dashboard KPIs:', error);
+            throw error;
+        }
+    },
+
     // Health check
     async healthCheck() {
         const response = await mlClient.get('/health');
