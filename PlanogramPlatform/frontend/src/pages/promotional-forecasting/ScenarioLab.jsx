@@ -25,8 +25,17 @@ const PlanogramShelf = ({ facings, colorClass = "bg-[#17A2B8]" }) => (
 
 const FullPlanogramShelf = ({ items = [], products = [] }) => {
     // Generate a list of uniform boxes, colored by brand/category based on product logic
-    // We'll just generate simple colors from string hashes or fixed array
-    const colors = ["bg-[#17A2B8]", "bg-emerald-500", "bg-rose-500", "bg-amber-500", "bg-cyan-500", "bg-fuchsia-500", "bg-blue-600", "bg-orange-500"];
+    // We'll just generate simple pastel colors from string hashes or fixed array
+    const colors = [
+        "bg-[#E0F7FA] text-[#006064] border-[#B2EBF2]", // Light Cyan
+        "bg-[#F1F8E9] text-[#33691E] border-[#DCEDC8]", // Light Light Green
+        "bg-[#FCE4EC] text-[#880E4F] border-[#F8BBD0]", // Light Pink
+        "bg-[#FFF8E1] text-[#FF6F00] border-[#FFECB3]", // Light Amber
+        "bg-[#E8EAF6] text-[#1A237E] border-[#C5CAE9]", // Light Indigo
+        "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]", // Light Purple
+        "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]", // Light Blue
+        "bg-[#FFF3E0] text-[#E65100] border-[#FFE0B2]"  // Light Orange
+    ];
 
     // Flatten items into individual boxed rendered
     const shelfBoxes = [];
@@ -69,7 +78,7 @@ const FullPlanogramShelf = ({ items = [], products = [] }) => {
                     const name = prod?.productName || itemSku;
                     return (
                         <div key={index + '-' + itemSku} className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded border border-slate-100">
-                            <div className={`w-2 h-2 rounded-full ${colors[index % colors.length]}`}></div>
+                            <div className={`w-3 h-3 rounded-full border ${colors[index % colors.length]}`}></div>
                             <span className="truncate max-w-[120px]" title={name}>{name} (x{item.facings})</span>
                         </div>
                     );
@@ -77,19 +86,19 @@ const FullPlanogramShelf = ({ items = [], products = [] }) => {
             </div>
 
             <div className="bg-slate-300 h-3 w-full rounded-full relative mt-12 bg-opacity-70">
-                <div className="absolute bottom-2 left-0 flex items-end gap-[2px] px-3 overflow-hidden w-full h-10">
+                <div className="absolute bottom-2 left-0 flex items-end px-3 overflow-hidden w-full h-10 gap-[2px]">
                     {displayBoxes.map((box, i) => (
                         <div
                             key={i}
-                            className={`w-6 h-8 rounded-sm shadow-md border-r border-t border-black/20 ${box.color} flex-shrink-0 relative group`}
+                            className={`flex-1 h-8 rounded-sm shadow-sm border border-black/5 ${box.color} flex-shrink-1 relative group overflow-hidden`}
                             title={box.name}
                         >
-                            <div className="absolute font-bold text-white uppercase text-[8px] transform -rotate-90 origin-left top-1 left-2 opacity-50 whitespace-nowrap overflow-hidden line-clamp-1 w-6">
-                                {(box.sku ? String(box.sku) : 'UNK').substring(0, 4)}
+                            <div className="absolute font-semibold text-[8px] transform -rotate-90 origin-left top-1 left-2 opacity-70 whitespace-nowrap overflow-hidden line-clamp-1 w-full text-inherit">
+                                {(box.sku ? String(box.sku) : 'UNK').substring(0, 5)}
                             </div>
                         </div>
                     ))}
-                    {hiddenCount > 0 && <span className="text-xs font-bold text-slate-600 mb-1 ml-2 self-center">+{hiddenCount} more</span>}
+                    {hiddenCount > 0 && <span className="text-xs font-bold text-slate-600 mb-1 ml-2 self-center flex-shrink-0">+{hiddenCount}</span>}
                 </div>
             </div>
         </div>
