@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
     FaLeaf, FaTag, FaCheckCircle, FaSpinner, FaSearch,
     FaFilter, FaExclamationTriangle, FaFire, FaCheck,
-    FaChartLine, FaShieldAlt, FaBoxes,
+    FaChartLine, FaShieldAlt, FaBoxes, FaTimes,
     FaRobot, FaBolt, FaRecycle, FaArrowDown, FaArrowUp
 } from 'react-icons/fa';
 import { api } from '../api/client';
@@ -166,6 +166,141 @@ const SmartDiscountBadge = ({ item, smartDiscounts, onFetchDiscount }) => {
 
 
 /* ═══════════════════════════════════════════════════════════════════════
+   OPTIMAL SIMULATION MODAL
+   ═══════════════════════════════════════════════════════════════════════ */
+const OptimalSimulationModal = ({ item, onApply, onClose }) => {
+    const [step, setStep] = useState(0);
+    const [result, setResult] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        let mounted = true;
+        const runSim = async () => {
+            try {
+                setStep(1); // "Connecting to Promotion Forecasting Engine..."
+                await new Promise(r => setTimeout(r, 800));
+                if (!mounted) return;
+                setStep(2); // "Running Stochastic Uplift Optimization..."
+
+                const res = await api.getSmartDiscount({
+                    sku: item.sku,
+                    currentStock: item.closingStock,
+                    daysToExpiry: item.daysToExpiry,
+                    basePrice: item.basePrice,
+                    costPrice: item.costPrice,
+                });
+
+                await new Promise(r => setTimeout(r, 600)); // Animation spacing
+                if (!mounted) return;
+
+                if (res.success) {
+                    setStep(3); // Complete
+                    setResult({ ...res.data, source: res.source });
+                } else {
+                    setError("Failed to simulate. Using standard rules.");
+                }
+            } catch (err) {
+                if (mounted) setError(err.message || "Failed to analyze.");
+            }
+        };
+        runSim();
+        return () => { mounted = false; };
+    }, [item]);
+
+    return (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[999] animate-fadeIn">
+            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden animate-fade-in-up">
+                <div className="bg-slate-50 border-b border-slate-100 p-4 flex justify-between items-center">
+                    <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                        <FaRobot className="text-indigo-500" /> AI Pricing Analysis
+                    </h3>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
+                        <FaTimes />
+                    </button>
+                </div>
+
+                <div className="p-6">
+                    <div className="mb-6 flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold shrink-0">
+                            {item.sku.substring(0, 3).toUpperCase()}
+                        </div>
+                        <div>
+                            <p className="font-bold text-slate-900 leading-tight">{item.productName}</p>
+                            <p className="text-xs text-slate-500 mt-1">{item.sku} • {item.closingStock} units at risk</p>
+                        </div>
+                    </div>
+
+                    {!result && !error && (
+                        <div className="py-8 space-y-6">
+                            <div className="flex items-center gap-4">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-300'}`}>
+                                    {step > 1 ? <FaCheckCircle /> : <FaSpinner className="animate-spin" />}
+                                </div>
+                                <div className={`text-sm flex-1 ${step >= 1 ? 'text-slate-800 font-medium' : 'text-slate-400'}`}>
+                                    Connecting to Forecast Optimizer...
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-300'}`}>
+                                    {step > 2 ? <FaCheckCircle /> : step === 2 ? <FaSpinner className="animate-spin" /> : <div className="w-2 h-2 rounded-full bg-slate-200" />}
+                                </div>
+                                <div className={`text-sm flex-1 ${step >= 2 ? 'text-slate-800 font-medium' : 'text-slate-400'}`}>
+                                    Simulating Elasticity & Markdowns...
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 3 ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-300'}`}>
+                                    {step === 3 ? <FaCheckCircle /> : <div className="w-2 h-2 rounded-full bg-slate-200" />}
+                                </div>
+                                <div className={`text-sm flex-1 ${step >= 3 ? 'text-emerald-700 font-medium' : 'text-slate-400'}`}>
+                                    Finalizing Optimal Discount...
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {error && (
+                        <div className="py-6 text-center text-rose-500 text-sm">
+                            <FaExclamationTriangle className="mx-auto text-3xl mb-2" />
+                            <p>{error}</p>
+                        </div>
+                    )}
+
+                    {result && (
+                        <div className="animate-fadeIn">
+                            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 mb-5 text-center">
+                                <p className="text-emerald-800 font-medium text-[10px] uppercase tracking-wide mb-1">Optimal AI Output</p>
+                                <p className="text-4xl font-black text-emerald-600">{result.optimalDiscount}% OFF</p>
+                                <p className="text-emerald-700 text-xs mt-2 font-medium">Maximizes profit while preventing {result.wasteAvoidedPercent}% waste</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 mb-6">
+                                <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-center">
+                                    <p className="text-[10px] uppercase tracking-wide text-slate-500 mb-1">Expected Uplift</p>
+                                    <p className="font-bold text-slate-800">+{result.expectedUplift} units</p>
+                                </div>
+                                <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 text-center">
+                                    <p className="text-[10px] uppercase tracking-wide text-slate-500 mb-1">Estimated Sales</p>
+                                    <p className="font-bold text-indigo-600">{result.expectedUnitsSold} units</p>
+                                </div>
+                            </div>
+
+                            <button onClick={() => onApply(result)} className="w-full bg-indigo-600 text-white text-sm font-bold py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
+                                Apply Optimal Price
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+            <style jsx>{`
+                .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            `}</style>
+        </div>
+    );
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
    MAIN PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════════════ */
 const WastagePrevention = () => {
@@ -179,6 +314,7 @@ const WastagePrevention = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filterRisk, setFilterRisk] = useState('All');
     const [smartDiscounts, setSmartDiscounts] = useState({});
+    const [simulationModalItem, setSimulationModalItem] = useState(null);
     const [autoPromoting, setAutoPromoting] = useState(false);
     const [activeTab, setActiveTab] = useState('risk'); // risk | bundles
     const { user } = useAuth();
@@ -196,13 +332,6 @@ const WastagePrevention = () => {
             const dashRes = await api.getWastageDashboard(storeId);
             if (dashRes && dashRes.data) {
                 setDashboardData(dashRes.data);
-
-                // Auto-fetch AI recommendations from Promotion Forecasting for all items
-                const items = (dashRes.data.riskItems || []).filter(i => i.daysToExpiry > 0 && i.daysToExpiry <= 7);
-                for (const item of items) {
-                    fetchSmartDiscountSilent(item);
-                    await new Promise(r => setTimeout(r, 200)); // stagger requests
-                }
             } else {
                 setDashboardData({ riskItems: [], totalRiskItems: 0, kpis: {}, expiryTimeline: [], categoryBreakdown: [], historicalWastageTrend: [], bundleSuggestions: [] });
             }
@@ -214,48 +343,9 @@ const WastagePrevention = () => {
         }
     };
 
-    /* ── Silent fetch (doesn't clear on error, used on auto-load) ──── */
-    const fetchSmartDiscountSilent = async (item) => {
-        setSmartDiscounts(prev => ({ ...prev, [item.sku]: prev[item.sku] || 'loading' }));
-        try {
-            const res = await api.getSmartDiscount({
-                sku: item.sku,
-                currentStock: item.closingStock,
-                daysToExpiry: item.daysToExpiry,
-                basePrice: item.basePrice,
-                costPrice: item.costPrice,
-            });
-            if (res.success) {
-                setSmartDiscounts(prev => ({
-                    ...prev,
-                    [item.sku]: { ...res.data, source: res.source },
-                }));
-            }
-        } catch {
-            // silently ignore – user can retry manually
-        }
-    };
-
     /* ── Fetch AI Discount for a single item ─────────────────────────── */
     const fetchSmartDiscount = useCallback(async (item) => {
-        setSmartDiscounts(prev => ({ ...prev, [item.sku]: 'loading' }));
-        try {
-            const res = await api.getSmartDiscount({
-                sku: item.sku,
-                currentStock: item.closingStock,
-                daysToExpiry: item.daysToExpiry,
-                basePrice: item.basePrice,
-                costPrice: item.costPrice,
-            });
-            if (res.success) {
-                setSmartDiscounts(prev => ({
-                    ...prev,
-                    [item.sku]: { ...res.data, source: res.source },
-                }));
-            }
-        } catch {
-            setSmartDiscounts(prev => ({ ...prev, [item.sku]: null }));
-        }
+        setSimulationModalItem(item);
     }, []);
 
     /* ── Resolve (apply action to) a single item ─────────────────────── */
@@ -723,14 +813,7 @@ const WastagePrevention = () => {
                                 ))}
                             </div>
 
-                            <div className="mt-4 flex items-center justify-between bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-3 border border-emerald-100">
-                                <div>
 
-                                </div>
-                                <button className="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-colors active:scale-95 shadow-sm">
-                                    Create Bundle
-                                </button>
-                            </div>
                         </div>
                     )) : (
                         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
@@ -742,6 +825,19 @@ const WastagePrevention = () => {
                 </div>
             )}
 
+            {simulationModalItem && (
+                <OptimalSimulationModal
+                    item={simulationModalItem}
+                    onClose={() => setSimulationModalItem(null)}
+                    onApply={(res) => {
+                        setSmartDiscounts(prev => ({
+                            ...prev,
+                            [simulationModalItem.sku]: res
+                        }));
+                        setSimulationModalItem(null);
+                    }}
+                />
+            )}
 
         </div>
     );
