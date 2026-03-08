@@ -15,7 +15,7 @@ from pathlib import Path
 from datetime import datetime, timedelta, date
 from typing import List, Dict, Any, Optional, Tuple
 from functools import lru_cache
-
+import subprocess
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -942,7 +942,7 @@ async def evaluate_forecast_outcomes():
             
             actual_demand = 0
             async for sale in actual_cursor:
-                actual_demand += sale.get('unitsSold', 0)
+                actual_demand += sale.get('UnitsSold', sale.get('unitsSold', 0))
             
             # Calculate error
             error_pct = ((predicted - actual_demand) / max(actual_demand, 1)) * 100
@@ -2025,6 +2025,22 @@ async def trigger_evaluation(background_tasks: BackgroundTasks):
     """Manually trigger forecast outcome evaluation."""
     result = await evaluate_forecast_outcomes()
     return {"success": True, "result": result}
+
+
+@app.post("/api/v1/model/retrain")
+async def trigger_model_retraining(background_tasks: BackgroundTasks):
+    """Trigger the model retraining script to update models with latest data."""
+    def run_training():
+        try:
+            logger.info("🚀 Initiating background model retraining...")
+            script_path = str(BASE_DIR / "train_models.py")
+            subprocess.run(["python", script_path], check=True)
+            logger.info("✅ Background model retraining completed successfully.")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"❌ Background model training failed: {e}")
+            
+    background_tasks.add_task(run_training)
+    return {"success": True, "message": "Model retraining started in the background."}
 
 
 @app.get("/api/v1/feedback/analytics", response_model=FeedbackAnalyticsResponse)

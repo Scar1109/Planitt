@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Brain, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, RefreshCw, Loader2, BarChart3, Target, Zap, SendHorizontal, Sparkles } from "lucide-react"
+import { Brain, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, RefreshCw, Loader2, BarChart3, Target, Zap, Sparkles, Database } from "lucide-react"
 import { api } from "@/api/client"
 
 export function AdaptiveLearning() {
@@ -127,226 +127,102 @@ export function AdaptiveLearning() {
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-100">
                             <Brain className="h-4 w-4 text-violet-600" />
                         </div>
-                        Adaptive Learning
+                        Model Intelligence
                         <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 uppercase tracking-wide">
-                            Self-Correcting
+                            Active
                         </span>
                     </CardTitle>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={triggerEval}
-                            disabled={evaluating}
-                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors disabled:opacity-50"
-                        >
-                            <RefreshCw className={`h-3 w-3 ${evaluating ? 'animate-spin' : ''}`} />
-                            {evaluating ? 'Evaluating...' : 'Run Evaluation'}
-                        </button>
-                    </div>
                 </div>
             </CardHeader>
 
-            <CardContent className="pt-4 space-y-5">
-                {error && !data && (
-                    <div className="text-center py-6">
-                        <Brain className="h-10 w-10 text-slate-200 mx-auto mb-2" />
-                        <p className="text-sm text-slate-500">No learning data yet. Generate forecasts to start the feedback loop.</p>
+            <CardContent className="pt-4 space-y-4">
+                {/* Automated Training Override */}
+                <div className="pt-0">
+                    <div className="flex items-center justify-between mb-3 px-1">
+                        <p className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                            <Zap className="h-4 w-4 text-amber-500" />
+                            Autonomous Model Retraining
+                        </p>
+                        <div className="flex items-center gap-1.5">
+                            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
+                                Live
+                            </span>
+                        </div>
                     </div>
-                )}
 
-                {data && (
-                    <>
-                        {/* HEALTH METRICS ROW */}
-                        <div className="grid grid-cols-4 gap-3">
-                            <div className="rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-3 text-center border border-emerald-100">
-                                <div className="flex items-center justify-center gap-1 text-emerald-600 mb-1">
-                                    <Target className="h-3 w-3" />
-                                    <span className="text-[10px] uppercase tracking-wide font-medium">Accuracy</span>
-                                </div>
-                                <p className="text-xl font-bold text-emerald-700">{health.accuracy_rate || 0}%</p>
+                    <div className="bg-white border-2 border-slate-100 rounded-xl p-5 shadow-sm hover:border-violet-200 transition-colors">
+                        <div className="space-y-4 mb-5">
+                            <div className="flex items-center justify-between py-1 border-b border-slate-50">
+                                <span className="text-[11px] text-slate-600 font-medium">Data Ingestion</span>
+                                <span className="text-[10px] font-bold text-blue-600">POS-Realtime</span>
                             </div>
-                            <div className="rounded-lg bg-gradient-to-br from-blue-50 to-blue-100/50 p-3 text-center border border-blue-100">
-                                <div className="flex items-center justify-center gap-1 text-blue-600 mb-1">
-                                    <BarChart3 className="h-3 w-3" />
-                                    <span className="text-[10px] uppercase tracking-wide font-medium">Evaluated</span>
-                                </div>
-                                <p className="text-xl font-bold text-blue-700">{health.total_outcomes_evaluated || 0}</p>
+                            <div className="flex items-center justify-between py-1 border-b border-slate-50">
+                                <span className="text-[11px] text-slate-600 font-medium">Anomaly Detection</span>
+                                <span className="text-[10px] font-bold text-violet-600">Active</span>
                             </div>
-                            <div className="rounded-lg bg-gradient-to-br from-violet-50 to-violet-100/50 p-3 text-center border border-violet-100">
-                                <div className="flex items-center justify-center gap-1 text-violet-600 mb-1">
-                                    <Zap className="h-3 w-3" />
-                                    <span className="text-[10px] uppercase tracking-wide font-medium">Avg Bias</span>
-                                </div>
-                                <p className="text-xl font-bold text-violet-700">{health.avg_bias_correction || '1.0'}x</p>
-                            </div>
-                            <div className="rounded-lg bg-gradient-to-br from-amber-50 to-amber-100/50 p-3 text-center border border-amber-100">
-                                <div className="flex items-center justify-center gap-1 text-amber-600 mb-1">
-                                    <TrendingUp className="h-3 w-3" />
-                                    <span className="text-[10px] uppercase tracking-wide font-medium">Trend</span>
-                                </div>
-                                <p className={`text-xl font-bold ${String(health.improvement_trend || '').includes('+') ? 'text-emerald-700' : String(health.improvement_trend || '').includes('-') ? 'text-red-700' : 'text-slate-700'}`}>
-                                    {health.improvement_trend || '0%'}
-                                </p>
+                            <div className="flex items-center justify-between py-1">
+                                <span className="text-[11px] text-slate-600 font-medium">Model Calibration</span>
+                                <span className="text-[10px] font-bold text-amber-600">Self-Optimizing</span>
                             </div>
                         </div>
 
-                        {/* OUTCOME DISTRIBUTION BAR */}
-                        {totalOutcomes > 0 && (
-                            <div>
-                                <p className="text-xs font-medium text-slate-500 mb-2">Outcome Distribution</p>
-                                <div className="flex rounded-full overflow-hidden h-3 bg-slate-100">
-                                    {['accurate', 'overstock', 'stockout', 'waste_risk'].map(type => {
-                                        const count = distribution[type] || 0
-                                        const pct = (count / totalOutcomes) * 100
-                                        if (pct === 0) return null
-                                        return (
-                                            <div
-                                                key={type}
-                                                className={`${getOutcomeColor(type)} transition-all`}
-                                                style={{ width: `${pct}%` }}
-                                                title={`${type}: ${count} (${pct.toFixed(1)}%)`}
-                                            />
-                                        )
-                                    })}
-                                </div>
-                                <div className="flex justify-between mt-2 text-[10px] text-slate-500">
-                                    {['accurate', 'overstock', 'stockout', 'waste_risk'].map(type => (
-                                        <div key={type} className="flex items-center gap-1">
-                                            {getOutcomeIcon(type)}
-                                            <span className="capitalize">{type.replace('_', ' ')}</span>
-                                            <span className="font-medium text-slate-700">{distribution[type] || 0}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* TOP LEARNERS */}
-                        {topLearners.length > 0 && (
-                            <div>
-                                <p className="text-xs font-medium text-slate-500 mb-2">🏆 Top Learners</p>
-                                <div className="space-y-1.5">
-                                    {topLearners.slice(0, 3).map((item, idx) => (
-                                        <div key={idx} className="flex items-center justify-between rounded-lg border border-emerald-100 bg-emerald-50/30 px-3 py-2">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xs font-mono font-medium text-slate-700">{item.sku}</span>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-xs text-emerald-700 font-medium">{item.accuracy_now}% accurate</span>
-                                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 font-medium">
-                                                    {item.correction}x
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* WORST PERFORMERS */}
-                        {worstPerformers.length > 0 && (
-                            <div>
-                                <p className="text-xs font-medium text-slate-500 mb-2">⚠️ Needs Attention</p>
-                                <div className="space-y-1.5">
-                                    {worstPerformers.slice(0, 3).map((item, idx) => (
-                                        <div key={idx} className="flex items-center justify-between rounded-lg border border-red-100 bg-red-50/30 px-3 py-2">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xs font-mono font-medium text-slate-700">{item.sku}</span>
-                                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-medium">
-                                                    {item.error_pattern?.replace('chronic_', '').replace('forecast', '')}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-xs text-red-700 font-medium">{item.accuracy_now}% accurate</span>
-                                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-medium">
-                                                    {item.correction}x
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* CATEGORY BIASES */}
-                        {Object.keys(categoryBiases).length > 0 && (
-                            <div>
-                                <p className="text-xs font-medium text-slate-500 mb-2">Category Bias Map</p>
-                                <div className="flex flex-wrap gap-1.5">
-                                    {Object.entries(categoryBiases).map(([cat, bias]) => {
-                                        const isHigh = bias > 1.05
-                                        const isLow = bias < 0.95
-                                        return (
-                                            <span
-                                                key={cat}
-                                                className={`text-[10px] px-2 py-1 rounded-full font-medium border ${isHigh
-                                                    ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                                    : isLow
-                                                        ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                                        : 'bg-slate-50 text-slate-600 border-slate-200'
-                                                    }`}
-                                            >
-                                                {cat} {bias}x
-                                            </span>
-                                        )
-                                    })}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* EMPTY STATE */}
-                        {totalOutcomes === 0 && (
-                            <div className="text-center py-6">
-                                <Brain className="h-10 w-10 text-violet-200 mx-auto mb-2" />
-                                <p className="text-sm font-medium text-slate-600">Learning Loop Initialized</p>
-                                <p className="text-xs text-slate-400 mt-1">
-                                    Forecasts are being logged. Run evaluation in a few days to start seeing outcomes.
-                                </p>
-                            </div>
-                        )}
-                    </>
-                )}
-
-                {/* LLM Manual Feedback Override */}
-                <div className="pt-4 border-t border-slate-100">
-                    <p className="text-sm font-medium text-slate-700 flex items-center gap-1.5 mb-2">
-                        <Sparkles className="h-4 w-4 text-violet-500" />
-                        Train the AI
-                    </p>
-                    <form onSubmit={handleFeedbackSubmit} className="relative">
-                        <textarea
-                            value={feedbackText}
-                            onChange={(e) => setFeedbackText(e.target.value)}
-                            placeholder='e.g., "Forecast shows last friday white sugar sale increase 20% but I calculated it manually and it was around 8%"'
-                            className="w-full text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-lg p-3 pr-12 resize-none focus:outline-none focus:ring-1 focus:ring-violet-500 min-h-[80px]"
-                            disabled={submittingFeedback}
-                        />
                         <button
-                            type="submit"
-                            disabled={!feedbackText.trim() || submittingFeedback}
-                            className="absolute bottom-3 right-3 p-1.5 bg-violet-600 text-white rounded-md hover:bg-violet-700 disabled:opacity-50 disabled:hover:bg-violet-600 transition-colors"
+                            onClick={async () => {
+                                setSubmittingFeedback(true)
+                                setFeedbackSuccess(null)
+                                try {
+                                    const res = await api.triggerModelRetraining()
+                                    if (res.success) {
+                                        setFeedbackSuccess({ type: 'success', text: "Deep Training loop initiated. This may take 3-5 minutes." })
+                                        setTimeout(fetchAnalytics, 1500)
+                                    } else {
+                                        setFeedbackSuccess({ type: 'error', text: "Model retraining failed to start." })
+                                    }
+                                } catch (err) {
+                                    setFeedbackSuccess({ type: 'error', text: "Failed to connect to ML Training Service." })
+                                } finally {
+                                    setSubmittingFeedback(false)
+                                    setTimeout(() => setFeedbackSuccess(null), 8000)
+                                }
+                            }}
+                            disabled={submittingFeedback}
+                            className="w-full relative group overflow-hidden py-3.5 bg-violet-600 text-white rounded-xl text-sm font-bold transition-all hover:bg-violet-700 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50"
                         >
-                            {submittingFeedback ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                                <SendHorizontal className="h-4 w-4" />
-                            )}
+                            <div className="absolute inset-0 w-1/2 h-full bg-white/10 -skew-x-12 -translate-x-full group-hover:translate-x-[250%] transition-transform duration-1000" />
+                            <div className="flex justify-center items-center gap-2">
+                                {submittingFeedback ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>Training Neural Weights...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Sparkles className="h-4 w-4" />
+                                        <span>Sync & Enhanced Retraining</span>
+                                    </>
+                                )}
+                            </div>
                         </button>
-                    </form>
+                    </div>
+
                     {feedbackSuccess && (
-                        <div className={`mt-2 p-2.5 rounded-md text-xs border flex items-start gap-2 ${feedbackSuccess.type === 'success'
-                                ? 'bg-emerald-50 border-emerald-100 text-emerald-700'
-                                : 'bg-red-50 border-red-100 text-red-700'
+                        <div className={`mt-4 p-4 rounded-xl text-xs border flex items-start gap-3 shadow-sm animate-in fade-in slide-in-from-top-2 ${feedbackSuccess.type === 'success'
+                            ? 'bg-emerald-50 border-emerald-100 text-emerald-800'
+                            : 'bg-red-50 border-red-100 text-red-800'
                             }`}>
                             {feedbackSuccess.type === 'success' ? (
-                                <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" />
+                                <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
                             ) : (
-                                <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+                                <AlertTriangle className="h-5 w-5 shrink-0 text-red-600" />
                             )}
-                            <p>{feedbackSuccess.text}</p>
+                            <div>
+                                <p className="font-bold mb-0.5">Retraining Status</p>
+                                <p className="opacity-90">{feedbackSuccess.text}</p>
+                            </div>
                         </div>
                     )}
                 </div>
-
                 {/* Footer */}
                 <div className="pt-3 border-t border-slate-100">
                     <p className="text-[10px] text-slate-400 text-center">
@@ -354,6 +230,6 @@ export function AdaptiveLearning() {
                     </p>
                 </div>
             </CardContent>
-        </Card>
+        </Card >
     )
 }

@@ -11,6 +11,10 @@ const PromotionSchema = new mongoose.Schema({
     reason: { type: String, enum: ['expiry', 'overstock', 'seasonal', 'promotional'] },
     targetQuantity: Number,
     isActive: { type: Boolean, default: true },
+    aiRecommended: { type: Boolean, default: false },
+    expectedUplift: Number,
+    expectedRevenueSaved: Number,
+    promotionSource: { type: String, enum: ['manual', 'ai-wastage', 'ai-promo'], default: 'manual' },
     createdAt: { type: Date, default: Date.now },
 });
 

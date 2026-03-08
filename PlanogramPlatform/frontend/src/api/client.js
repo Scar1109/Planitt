@@ -136,6 +136,17 @@ export const api = {
         }
     },
 
+    // Get top-level dashboard statistics for the main home page
+    async getDashboardKpis() {
+        try {
+            const response = await nodeClient.get('/inventory/dashboard-kpis');
+            return response.data;
+        } catch (error) {
+            console.error('Failed to fetch dashboard KPIs:', error);
+            throw error;
+        }
+    },
+
     // Health check
     async healthCheck() {
         const response = await mlClient.get('/health');
@@ -203,6 +214,17 @@ export const api = {
             return response.data;
         } catch (error) {
             console.error('Feedback evaluation error:', error);
+            throw error;
+        }
+    },
+
+    // Trigger full background model retraining using latest data
+    async triggerModelRetraining() {
+        try {
+            const response = await mlClient.post('/api/v1/model/retrain');
+            return response.data;
+        } catch (error) {
+            console.error('Model retraining API error:', error);
             throw error;
         }
     },
@@ -441,6 +463,37 @@ ${actionDetails}
             return response.data;
         } catch (error) {
             console.error('Smart insight error:', error);
+            throw error;
+        }
+    },
+
+    // Get AI-powered optimal discount for a near-expiry product
+    async getSmartDiscount({ sku, currentStock, daysToExpiry, basePrice, costPrice }) {
+        try {
+            const response = await nodeClient.post('/wastage/smart-discount', {
+                sku,
+                currentStock,
+                daysToExpiry,
+                basePrice,
+                costPrice,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Smart discount error:', error);
+            throw error;
+        }
+    },
+
+    // Batch create AI-recommended promotions for near-expiry items
+    async autoPromoteRiskItems(items, storeId = 'STORE-001') {
+        try {
+            const response = await nodeClient.post('/wastage/auto-promote', {
+                items,
+                storeId,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Auto-promote error:', error);
             throw error;
         }
     },
