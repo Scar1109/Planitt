@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getComplianceRuns, deleteComplianceRun, rerunComplianceCheck } from '../services/api';
+import api from '../services/api';
 import Modal from '../components/Modal';
 import { FaHistory, FaTrash, FaRedo } from 'react-icons/fa';
 
@@ -13,7 +13,7 @@ const ComplianceHistory = () => {
     useEffect(() => {
         const fetchRuns = async () => {
             try {
-                const res = await getComplianceRuns();
+                const res = await api.get('/compliance/runs');
                 setRuns(res.data);
             } catch (err) {
                 console.error("Failed to load compliance runs", err);
@@ -33,7 +33,7 @@ const ComplianceHistory = () => {
         if (!runToDelete) return;
         try {
             setActionLoading(runToDelete);
-            await deleteComplianceRun(runToDelete);
+            await api.delete(`/compliance/runs/${runToDelete}`);
             setRuns(runs.filter(r => r._id !== runToDelete));
             setIsDeleteModalOpen(false);
         } catch (error) {
@@ -48,9 +48,9 @@ const ComplianceHistory = () => {
     const handleRerun = async (id) => {
         try {
             setActionLoading(id);
-            const res = await rerunComplianceCheck(id);
+            const res = await api.post(`/compliance/runs/${id}/rerun`);
             alert("Rerun successful! Score: " + res.data.result.compliance_score);
-            const runsRes = await getComplianceRuns();
+            const runsRes = await api.get('/compliance/runs');
             setRuns(runsRes.data);
         } catch (error) {
             alert("Failed to rerun compliance check");

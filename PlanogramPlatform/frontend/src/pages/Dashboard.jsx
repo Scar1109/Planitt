@@ -16,6 +16,7 @@ import WastagePrevention from './WastagePrevention';
 import ComplianceDashboard from './ComplianceDashboard';
 import SystemAnalysis from './SystemAnalysis';
 import ComplianceHistory from './ComplianceHistory';
+import ShelfCompliance from './ShelfCompliance';
 import ForecastPage from '../pages/promotional-forecasting/ForecastPage';
 import RecommendationsPage from './promotional-forecasting/RecommendationsPage';
 import ScenarioLab from './promotional-forecasting/ScenarioLab';
@@ -103,6 +104,7 @@ const Dashboard = () => {
                 <Route path="/compliance" element={<ComplianceDashboard />} />
                 <Route path="/compliance/analysis" element={<SystemAnalysis />} />
                 <Route path="/compliance/history" element={<ComplianceHistory />} />
+                <Route path="/compliance/shelf-scan" element={<ShelfCompliance />} />
             </Routes>
         </DashboardLayout>
     );

@@ -77,7 +77,7 @@ def analyze_compliance(request: PlanogramRequest):
             for d in deviations:
                 if 'impact_prediction' in d and 'revenue_opportunity' in d['impact_prediction']:
                     val = d['impact_prediction']['revenue_opportunity']
-                    if isinstance(val, (int, float)):
+                    if isinstance(val, (int, float)) and val > 0:
                         total_opportunity += val
         
         # 3. Score (Simple Heuristic for now)
