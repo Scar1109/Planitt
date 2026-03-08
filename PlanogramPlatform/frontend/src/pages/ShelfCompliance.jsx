@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api, { analyzeShelfScan } from '../services/api';
+import api from '../services/api';
 import { FaUpload, FaChevronRight, FaExclamationCircle, FaLightbulb, FaRobot, FaMoneyBillWave, FaBoxOpen } from 'react-icons/fa';
 
 const ShelfCompliance = () => {
@@ -73,7 +73,9 @@ const ShelfCompliance = () => {
         formData.append('image', image);
 
         try {
-            const res = await analyzeShelfScan(formData);
+            const res = await api.post('/compliance/shelf-scan', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             setReport(res.data);
             setStatus('success');
         } catch (err) {
