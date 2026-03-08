@@ -1,246 +1,449 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
-    FaTrashAlt, FaExclamationTriangle, FaLeaf, FaChartPie, FaCalendarAlt,
-    FaArrowRight, FaTag, FaCheckCircle
+    FaLeaf, FaTag, FaCheckCircle, FaSpinner, FaSearch,
+    FaFilter, FaExclamationTriangle, FaFire, FaCheck
 } from 'react-icons/fa';
-import {
-    PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend
-} from 'recharts';
+import { api } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 
 /**
- * Wastage Prevention Module
- * Enhanced with analytics, visual insights, and interactive AI recommendations.
+ * Wastage Prevention System
+ * Enhanced with:
+ *  1. KPI Summary Cards
+ *  2. Search & Category Filter
+ *  3. Urgency Countdown Bar per row
+ *  4. Bulk Apply for critical items
+ *  5. Animated slide-out on resolve
  */
-const WastagePrevention = () => {
-    // Mock Data: High Risk Items
-    const [riskItems, setRiskItems] = useState([
-        { id: 1, sku: 'LK-DAI-004', name: 'Fresh Milk 1L', category: 'Dairy', expiry: 'Tomorrow', quantity: 15, value: 4500, risk: 'Critical', action: 'Discount 50%' },
-        { id: 2, sku: 'LK-BAK-002', name: 'Sandwich Bread', category: 'Bakery', expiry: '2 Days', quantity: 8, value: 1200, risk: 'High', action: 'Bundle Offer' },
-        { id: 3, sku: 'LK-VEG-008', name: 'Tomatoes 500g', category: 'Produce', expiry: '3 Days', quantity: 20, value: 3000, risk: 'Medium', action: 'Discount 20%' },
-        { id: 4, sku: 'LK-FRU-012', name: 'Papaya', category: 'Produce', expiry: '2 Days', quantity: 5, value: 1500, risk: 'High', action: 'Cut & Pack' },
-    ]);
 
-    // Mock Data: Charts
-    const categoryData = [
-        { name: 'Produce', value: 4500 },
-        { name: 'Dairy', value: 4500 },
-        { name: 'Bakery', value: 1200 },
-        { name: 'Seafood', value: 2100 },
-    ];
-
-    const expiryTrendData = [
-        { day: 'Today', value: 1500 },
-        { day: 'Tomorrow', value: 4500 },
-        { day: 'Day 3', value: 3200 },
-        { day: 'Day 4', value: 1800 },
-        { day: 'Day 5', value: 900 },
-    ];
-
-    const COLORS = ['#10B981', '#F59E0B', '#EF4444', '#3B82F6'];
-
-    const handleAction = (id) => {
-        setRiskItems(prev => prev.filter(item => item.id !== id));
-        // In real app, this would trigger API call
+// ─── Urgency Bar Component ──────────────────────────────────────────────────
+const UrgencyBar = ({ risk }) => {
+    const config = {
+        Critical: { pct: 92, color: 'bg-red-500', label: 'Critical', pulse: true },
+        High: { pct: 68, color: 'bg-orange-500', label: 'High', pulse: false },
+        Medium: { pct: 42, color: 'bg-yellow-400', label: 'Medium', pulse: false },
+        Low: { pct: 18, color: 'bg-emerald-400', label: 'Low', pulse: false },
     };
+    const c = config[risk] || config.Low;
+
+    return (
+        <div className="mt-1.5 w-full">
+            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div
+                    className={`h-full rounded-full transition-all duration-700 ${c.color} ${c.pulse ? 'animate-pulse' : ''}`}
+                    style={{ width: `${c.pct}%` }}
+                />
+            </div>
+        </div>
+    );
+};
+
+
+
+// ─── Main Page ───────────────────────────────────────────────────────────────
+const WastagePrevention = () => {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [dashboardData, setDashboardData] = useState(null);
+    const [applyingAction, setApplyingAction] = useState(null);  // single item
+    const [resolvingItems, setResolvingItems] = useState(new Set()); // animating out
+    const [selectedItems, setSelectedItems] = useState(new Set()); // bulk select
+    const [bulkApplying, setBulkApplying] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterCategory, setFilterCategory] = useState('All');
+    const [filterRisk, setFilterRisk] = useState('All');
+    const { user } = useAuth();
+
+    const storeId = typeof user?.store === 'string'
+        ? user.store
+        : (user?.store?._id || user?.store?.name || 'default');
+
+    useEffect(() => { fetchDashboard(); }, []);
+
+    const fetchDashboard = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const dashRes = await api.getWastageDashboard(storeId);
+            if (dashRes && dashRes.data) {
+                setDashboardData(dashRes.data);
+            } else {
+                setDashboardData({ riskItems: [], totalRiskItems: 0 });
+            }
+        } catch (err) {
+            console.error('Dashboard fetch error:', err);
+            setError('Failed to load data. Please check that the backend is running.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // ── Animated resolve then remove ──────────────────────────────────────────
+    const resolveItem = async (item) => {
+        // Step 1: animate out
+        setResolvingItems(prev => new Set([...prev, item.id]));
+
+        // Step 2: short delay for animation
+        await new Promise(r => setTimeout(r, 600));
+
+        // Step 3: call API
+        try {
+            const discountMatch = item.action.match(/(\d+)%/);
+            const discountPercent = discountMatch ? parseInt(discountMatch[1]) : 0;
+            const actionType = item.action.toLowerCase().includes('donate') ? 'donate' : 'markdown';
+
+            await api.applyWastageAction({
+                productId: item.sku,
+                storeId,
+                actionType,
+                discountPercent,
+                targetQuantity: item.closingStock,
+            });
+        } catch (err) {
+            console.error('Action error:', err);
+        }
+
+        // Step 4: remove from list
+        setDashboardData(prev => ({
+            ...prev,
+            riskItems: prev.riskItems.filter(ri => ri.id !== item.id),
+            totalRiskItems: prev.totalRiskItems - 1,
+        }));
+        setResolvingItems(prev => { const s = new Set(prev); s.delete(item.id); return s; });
+        setSelectedItems(prev => { const s = new Set(prev); s.delete(item.id); return s; });
+    };
+
+    const handleAction = async (item) => {
+        if (applyingAction) return;
+        setApplyingAction(item.id);
+        await resolveItem(item);
+        setApplyingAction(null);
+    };
+
+    // ── Bulk apply ────────────────────────────────────────────────────────────
+    const handleBulkApply = async () => {
+        if (bulkApplying || selectedItems.size === 0) return;
+        setBulkApplying(true);
+        const allItems = dashboardData?.riskItems || [];
+        const toProcess = allItems.filter(it => selectedItems.has(it.id));
+        for (const item of toProcess) {
+            await resolveItem(item);
+            await new Promise(r => setTimeout(r, 100)); // stagger
+        }
+        setSelectedItems(new Set());
+        setBulkApplying(false);
+    };
+
+    const selectAllCritical = () => {
+        const criticalIds = (dashboardData?.riskItems || [])
+            .filter(it => it.risk === 'Critical' || it.risk === 'High')
+            .map(it => it.id);
+        setSelectedItems(new Set(criticalIds));
+    };
+
+    const toggleSelect = (id) => {
+        setSelectedItems(prev => {
+            const s = new Set(prev);
+            s.has(id) ? s.delete(id) : s.add(id);
+            return s;
+        });
+    };
+
+    // ── Derived data ──────────────────────────────────────────────────────────
+    const riskItems = dashboardData?.riskItems || [];
+
+    const categories = useMemo(() => {
+        const cats = [...new Set(riskItems.map(it => it.category).filter(Boolean))];
+        return ['All', ...cats.sort()];
+    }, [riskItems]);
+
+    const filteredItems = useMemo(() => {
+        return riskItems.filter(item => {
+            const q = searchQuery.toLowerCase();
+            const matchesSearch = !q ||
+                item.productName?.toLowerCase().includes(q) ||
+                item.sku?.toLowerCase().includes(q) ||
+                item.category?.toLowerCase().includes(q);
+            const matchesCat = filterCategory === 'All' || item.category === filterCategory;
+            const matchesRisk = filterRisk === 'All' || item.risk === filterRisk;
+            return matchesSearch && matchesCat && matchesRisk;
+        });
+    }, [riskItems, searchQuery, filterCategory, filterRisk]);
+
+
+
+    // ── Loading skeleton ──────────────────────────────────────────────────────
+    if (loading) {
+        return (
+            <div className="space-y-6 pb-10 animate-pulse">
+                <div className="h-10 w-72 bg-slate-200 rounded-lg" />
+                <div className="bg-white p-6 rounded-xl border border-slate-200 h-64" />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 pb-10">
-            {/* Header */}
+
+            {/* ── Header ─────────────────────────────────────────────────── */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
                         <FaLeaf className="text-emerald-600" />
                         Wastage Prevention
                     </h1>
-                    <p className="text-slate-500 mt-1">AI-driven insights to minimize inventory loss.</p>
+                    <p className="text-slate-500 mt-1">Monitor and act on near-expiry items before they become waste</p>
                 </div>
-                <div className="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-lg border border-emerald-100 text-emerald-700 text-sm font-medium">
-                    <FaCheckCircle />
-                    <span>System Active · 98% Accuracy</span>
-                </div>
-            </div>
-
-            {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
-                    <div className="relative z-10">
-                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Monthly Wastage</p>
-                        <h3 className="text-3xl font-bold text-slate-900 mt-1">12.5 kg</h3>
-                        <p className="text-xs text-emerald-600 flex items-center gap-1 mt-2">
-                            <span className="font-bold">↓ 15%</span> vs last month
-                        </p>
-                    </div>
-                    <FaTrashAlt className="absolute right-4 top-4 text-slate-100 group-hover:text-red-50 transition-colors transform group-hover:scale-110 duration-300" size={60} />
-                </div>
-
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
-                    <div className="relative z-10">
-                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Value at Risk</p>
-                        <h3 className="text-3xl font-bold text-slate-900 mt-1">LKR 10,200</h3>
-                        <p className="text-xs text-orange-600 flex items-center gap-1 mt-2 font-medium">
-                            Requires immediate action
-                        </p>
-                    </div>
-                    <FaExclamationTriangle className="absolute right-4 top-4 text-slate-100 group-hover:text-orange-50 transition-colors transform group-hover:scale-110 duration-300" size={60} />
-                </div>
-
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow active-card border-l-4 border-l-emerald-500">
-                    <div className="relative z-10">
-                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Saved by AI</p>
-                        <h3 className="text-3xl font-bold text-emerald-700 mt-1">LKR 28,100</h3>
-                        <p className="text-xs text-slate-500 mt-2">
-                            Total value recovered this month
-                        </p>
-                    </div>
-                    <FaLeaf className="absolute right-4 top-4 text-slate-100 group-hover:text-emerald-50 transition-colors transform group-hover:scale-110 duration-300" size={60} />
+                <div className="flex items-center gap-3">
+                    {error && (
+                        <span className="text-xs text-red-500 bg-red-50 px-3 py-1 rounded-lg border border-red-100">{error}</span>
+                    )}
+                    <button
+                        onClick={fetchDashboard}
+                        className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm"
+                    >
+                        <FaCheckCircle className="text-emerald-500" />
+                        Refresh
+                    </button>
                 </div>
             </div>
 
-            {/* Analytics Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Expiry Timeline Chart */}
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                            <FaCalendarAlt className="text-indigo-500" />
-                            Expiry Timeline (Value)
-                        </h3>
-                    </div>
-                    <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={expiryTrendData}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 12 }} dy={10} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 12 }} />
-                                <Tooltip cursor={{ fill: '#F1F5F9' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                <Bar dataKey="value" fill="#6366F1" radius={[4, 4, 0, 0]} barSize={40} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
 
-                {/* Risk Composition Chart */}
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                            <FaChartPie className="text-orange-500" />
-                            Risk by Category
-                        </h3>
-                    </div>
-                    <div className="h-64 flex items-center justify-center">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={categoryData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {categoryData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                <Legend verticalAlign="middle" align="right" layout="vertical" iconType="circle" />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-            </div>
 
-            {/* AI Actionable Section */}
+            {/* ── Risk Table ─────────────────────────────────────────────── */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h2 className="text-lg font-bold text-slate-900">Priority Actions Required</h2>
-                        <p className="text-sm text-slate-500">AI suggests immediate intervention for these items.</p>
+
+                {/* Table Header */}
+                <div className="p-5 border-b border-slate-100">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h2 className="text-lg font-bold text-slate-900">Priority Actions Required</h2>
+                            <p className="text-sm text-slate-500">Suggested interventions for near-expiry items</p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold flex-shrink-0 ${riskItems.length > 0 ? 'bg-red-100 text-red-700 animate-pulse' : 'bg-emerald-100 text-emerald-700'}`}>
+                            {riskItems.length > 0 ? `${dashboardData?.totalRiskItems || riskItems.length} Items at Risk` : '✓ All Clear'}
+                        </span>
                     </div>
-                    <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold animate-pulse">
-                        {riskItems.length} Critical Items
-                    </span>
+
+                    {/* ── Search & Filter Bar ─────────────────────────────── */}
+                    <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                        {/* Search */}
+                        <div className="relative flex-1">
+                            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+                            <input
+                                type="text"
+                                placeholder="Search by name, SKU or category..."
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                className="w-full pl-8 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                            />
+                        </div>
+                        {/* Category filter */}
+                        <div className="relative">
+                            <FaFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+                            <select
+                                value={filterCategory}
+                                onChange={e => setFilterCategory(e.target.value)}
+                                className="pl-8 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none cursor-pointer"
+                            >
+                                {categories.map(c => <option key={c}>{c}</option>)}
+                            </select>
+                        </div>
+                        {/* Risk filter */}
+                        <div className="relative">
+                            <FaExclamationTriangle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+                            <select
+                                value={filterRisk}
+                                onChange={e => setFilterRisk(e.target.value)}
+                                className="pl-8 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none cursor-pointer"
+                            >
+                                {['All', 'Critical', 'High', 'Medium', 'Low'].map(r => <option key={r}>{r}</option>)}
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* ── Bulk Actions Bar ────────────────────────────────── */}
+                    <div className="mt-3 flex items-center gap-3 flex-wrap">
+                        <button
+                            onClick={selectAllCritical}
+                            className="text-xs px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 font-medium hover:bg-orange-100 transition-colors"
+                        >
+                            🔥 Select All Critical & High
+                        </button>
+                        {selectedItems.size > 0 && (
+                            <button
+                                onClick={handleBulkApply}
+                                disabled={bulkApplying}
+                                className="text-xs px-4 py-1.5 rounded-lg bg-slate-900 text-white font-bold hover:bg-slate-700 transition-colors flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                {bulkApplying
+                                    ? <><FaSpinner className="animate-spin" /> Applying...</>
+                                    : <><FaCheck /> Apply Selected ({selectedItems.size})</>
+                                }
+                            </button>
+                        )}
+                        {selectedItems.size > 0 && (
+                            <button
+                                onClick={() => setSelectedItems(new Set())}
+                                className="text-xs px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 transition-colors"
+                            >
+                                Clear
+                            </button>
+                        )}
+                        <span className="text-xs text-slate-400 ml-auto">
+                            {filteredItems.length} of {riskItems.length} items shown
+                        </span>
+                    </div>
                 </div>
 
+                {/* Table */}
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 text-slate-600 font-semibold uppercase tracking-wider text-xs">
+                        <thead className="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider text-xs">
                             <tr>
-                                <th className="px-6 py-4">Product Details</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4">Value At Risk</th>
-                                <th className="px-6 py-4">AI Recommendation</th>
-                                <th className="px-6 py-4 text-right">Action</th>
+                                <th className="px-4 py-3 w-10">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded border-slate-300 accent-indigo-600 cursor-pointer"
+                                        checked={selectedItems.size > 0 && filteredItems.every(it => selectedItems.has(it.id))}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setSelectedItems(new Set(filteredItems.map(it => it.id)));
+                                            } else {
+                                                setSelectedItems(new Set());
+                                            }
+                                        }}
+                                    />
+                                </th>
+                                <th className="px-4 py-3">Product Details</th>
+                                <th className="px-4 py-3">Urgency</th>
+                                <th className="px-4 py-3">Value At Risk</th>
+                                <th className="px-4 py-3">Recommendation</th>
+                                <th className="px-4 py-3 text-right">Action</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {riskItems.length > 0 ? riskItems.map((item) => (
-                                <tr key={item.id} className="hover:bg-slate-50 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <div className="font-bold text-slate-900">{item.name}</div>
-                                        <div className="text-slate-500 text-xs mt-1">{item.sku} · {item.category}</div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <span className={`w-2 h-2 rounded-full ${item.risk === 'Critical' ? 'bg-red-500' :
-                                                    item.risk === 'High' ? 'bg-orange-500' : 'bg-yellow-500'
-                                                }`}></span>
-                                            <span className="font-medium text-slate-700">{item.expiry}</span>
-                                        </div>
-                                        <div className="text-xs text-slate-400 mt-1">{item.quantity} units</div>
-                                    </td>
-                                    <td className="px-6 py-4 font-medium text-slate-900">
-                                        LKR {item.value.toLocaleString()}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 font-medium text-xs border border-indigo-100">
-                                            <FaTag size={10} />
-                                            {item.action}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button
-                                            onClick={() => handleAction(item.id)}
-                                            className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-all shadow-sm active:transform active:scale-95"
-                                        >
-                                            Apply
-                                        </button>
-                                    </td>
-                                </tr>
-                            )) : (
+                        <tbody>
+                            {filteredItems.length > 0 ? filteredItems.map((item) => {
+                                const isResolving = resolvingItems.has(item.id);
+                                const isSelected = selectedItems.has(item.id);
+
+                                return (
+                                    <tr
+                                        key={item.id}
+                                        style={{
+                                            transition: 'opacity 0.5s ease, transform 0.5s ease, max-height 0.5s ease',
+                                            opacity: isResolving ? 0 : 1,
+                                            transform: isResolving ? 'translateX(40px)' : 'translateX(0)',
+                                            pointerEvents: isResolving ? 'none' : 'auto',
+                                            backgroundColor: isSelected ? '#f0f4ff' : undefined,
+                                        }}
+                                        className={`border-b border-slate-100 hover:bg-slate-50 transition-colors group ${isResolving ? 'bg-emerald-50' : ''}`}
+                                    >
+                                        {/* Checkbox */}
+                                        <td className="px-4 py-4">
+                                            <input
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() => toggleSelect(item.id)}
+                                                className="rounded border-slate-300 accent-indigo-600 cursor-pointer"
+                                            />
+                                        </td>
+
+                                        {/* Product details */}
+                                        <td className="px-4 py-4 max-w-[200px]">
+                                            <div className="font-semibold text-slate-900 truncate">{item.productName}</div>
+                                            <div className="text-slate-400 text-xs mt-0.5">{item.sku} · {item.category}</div>
+                                            <div className="text-xs text-slate-400 mt-0.5">{item.closingStock} units in stock</div>
+                                        </td>
+
+                                        {/* Urgency countdown */}
+                                        <td className="px-4 py-4 min-w-[150px]">
+                                            <div className="flex items-center gap-1.5 mb-1">
+                                                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${item.risk === 'Critical' ? 'bg-red-500 animate-pulse' :
+                                                    item.risk === 'High' ? 'bg-orange-500' :
+                                                        item.risk === 'Medium' ? 'bg-yellow-400' : 'bg-emerald-400'
+                                                    }`} />
+                                                <span className={`text-xs font-semibold ${item.risk === 'Critical' ? 'text-red-600' :
+                                                    item.risk === 'High' ? 'text-orange-600' :
+                                                        item.risk === 'Medium' ? 'text-yellow-600' : 'text-emerald-600'
+                                                    }`}>{item.risk}</span>
+                                            </div>
+                                            <div className="text-xs text-slate-500 mb-1.5">{item.expiryLabel}</div>
+                                            <UrgencyBar risk={item.risk} />
+                                        </td>
+
+                                        {/* Value at risk */}
+                                        <td className="px-4 py-4">
+                                            <span className="font-bold text-slate-900">
+                                                LKR {item.value?.toLocaleString() || '0'}
+                                            </span>
+                                        </td>
+
+                                        {/* Recommendation */}
+                                        <td className="px-4 py-4">
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 font-medium text-xs border border-indigo-100">
+                                                <FaTag size={9} />
+                                                {item.action}
+                                            </span>
+                                        </td>
+
+                                        {/* Action */}
+                                        <td className="px-4 py-4 text-right">
+                                            {isResolving ? (
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold">
+                                                    <FaCheck size={10} /> Done
+                                                </span>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleAction(item)}
+                                                    disabled={applyingAction === item.id || bulkApplying}
+                                                    className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    {applyingAction === item.id
+                                                        ? <span className="flex items-center gap-1"><FaSpinner className="animate-spin" /> Applying...</span>
+                                                        : 'Apply'
+                                                    }
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            }) : (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-12 text-center text-slate-500">
-                                        <FaCheckCircle className="mx-auto text-emerald-400 mb-2" size={32} />
-                                        <p>No critical risks detected. Good job!</p>
+                                    <td colSpan="6" className="px-6 py-16 text-center text-slate-400">
+                                        {riskItems.length === 0 ? (
+                                            <>
+                                                <FaCheckCircle className="mx-auto text-emerald-400 mb-3" size={36} />
+                                                <p className="font-semibold text-slate-600">No critical risks detected!</p>
+                                                <p className="text-sm mt-1">Great job keeping stock under control.</p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <FaSearch className="mx-auto text-slate-300 mb-3" size={32} />
+                                                <p className="font-semibold text-slate-500">No items match your filters.</p>
+                                                <p className="text-sm mt-1">Try adjusting your search or filter criteria.</p>
+                                            </>
+                                        )}
                                     </td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            {/* AI Suggestion Banner */}
-            <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg relative overflow-hidden">
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div>
-                        <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
-                            <FaLeaf /> Smart Reduction Strategy
-                        </h3>
-                        <p className="text-indigo-100 text-sm max-w-xl">
-                            Based on sales velocity, <strong>Fresh Milk</strong> categories consistently have 15% wastage on Tuesdays.
-                            AI recommends reducing Tuesday orders by <strong>10 units</strong> to save ~LKR 12,000 monthly.
-                        </p>
+                {/* Footer */}
+                {riskItems.length > 0 && (
+                    <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                        <span>
+                            <span className="font-medium text-slate-600">{filteredItems.length}</span> items shown
+                            {filterCategory !== 'All' || filterRisk !== 'All' || searchQuery ? ` (filtered from ${riskItems.length})` : ''}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+                            Live monitoring active
+                        </span>
                     </div>
-                    <button className="whitespace-nowrap px-5 py-2.5 bg-white text-indigo-600 font-bold rounded-lg shadow-md hover:bg-indigo-50 transition-colors flex items-center gap-2">
-                        Adjust Orders <FaArrowRight size={12} />
-                    </button>
-                </div>
-                {/* Decorative circles */}
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
-                <div className="absolute bottom-0 left-20 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+                )}
             </div>
         </div>
     );

@@ -16,6 +16,10 @@ const config = {
         model: process.env.OPENAI_MODEL,
         maxTokens: parseInt(process.env.OPENAI_MAX_TOKENS) || 1000,
         temperature: parseFloat(process.env.OPENAI_TEMPERATURE) || 0.7
+    },
+    pythonML: {
+        baseUrl: process.env.PYTHON_ML_URL || 'http://localhost:8003',
+        timeout: parseInt(process.env.PYTHON_ML_TIMEOUT) || 30000
     }
 };
 

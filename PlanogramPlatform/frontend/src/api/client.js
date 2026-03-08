@@ -103,6 +103,39 @@ export const api = {
         }
     },
 
+    // Get JIT replenishment queue
+    async getReplenishment(storeId = 'STORE-001', limit = 20) {
+        try {
+            const response = await nodeClient.get(`/inventory/replenishment/${storeId}?limit=${limit}`);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to get replenishment queue:', error);
+            throw error;
+        }
+    },
+
+    // Get inventory statistics summary
+    async getInventorySummary() {
+        try {
+            const response = await nodeClient.get(`/inventory/summary`);
+            return response.data;
+        } catch (error) {
+            console.error('Inventory summary error:', error);
+            throw error;
+        }
+    },
+
+    // Get all inventory for a store
+    async getInventoryForStore(storeId = 'STORE-001') {
+        try {
+            const response = await nodeClient.get(`/inventory/${storeId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Inventory list error:', error);
+            throw error;
+        }
+    },
+
     // Health check
     async healthCheck() {
         const response = await mlClient.get('/health');
@@ -144,6 +177,56 @@ export const api = {
             return response.data;
         } catch (error) {
             console.error('External factors analysis error:', error);
+            throw error;
+        }
+    },
+
+    // ============================================
+    // Adaptive Learning Feedback Controller
+    // ============================================
+
+    // Get adaptive learning health metrics and analytics
+    async getFeedbackAnalytics() {
+        try {
+            const response = await mlClient.get('/api/v1/feedback/analytics');
+            return response.data;
+        } catch (error) {
+            console.error('Feedback analytics error:', error);
+            throw error;
+        }
+    },
+
+    // Trigger manual evaluation of forecast outcomes
+    async triggerFeedbackEvaluation() {
+        try {
+            const response = await mlClient.post('/api/v1/feedback/evaluate');
+            return response.data;
+        } catch (error) {
+            console.error('Feedback evaluation error:', error);
+            throw error;
+        }
+    },
+
+    // Get per-SKU learning history
+    async getSKUFeedback(sku) {
+        try {
+            const response = await mlClient.get(`/api/v1/feedback/sku/${sku}`);
+            return response.data;
+        } catch (error) {
+            console.error('SKU feedback error:', error);
+            throw error;
+        }
+    },
+
+    // Submit natural language manual feedback override
+    async submitManualFeedback(feedbackText) {
+        try {
+            const response = await mlClient.post('/api/v1/feedback/manual-override', {
+                feedback_text: feedbackText
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Manual feedback error:', error);
             throw error;
         }
     },
@@ -244,7 +327,6 @@ export const api = {
                 orderSuggestion = `No immediate reorder needed. Check again in ${Math.min(horizonDays, 5)} days.`;
             }
 
-            // Build day-by-day summary (human readable with weekday names)
             const dayByDaySummary = forecasts.slice(0, 5).map(f => {
                 const date = new Date(f.date);
                 const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
@@ -253,6 +335,8 @@ export const api = {
                 const label = units > avgDailyDemand * 1.2 ? '📈' : units < avgDailyDemand * 0.8 ? '📉' : '';
                 return `${dayName} (${dateStr}): ${units} units ${label}`;
             }).join(' → ');
+
+            const reasons = forecastResponse.data.analysis_reasons || [];
 
             // Build agent-style response with human-readable message
             const message = `**${actionTitle}**
@@ -273,6 +357,7 @@ ${actionDetails}
                     quantity: roundedTotal,
                     confidence: metrics.mape ? Math.max(0.5, 1 - metrics.mape / 100) : 0.85,
                     forecasts: forecasts,
+                    analysis_reasons: reasons,
                     insights: {
                         avgDaily: roundedAvg,
                         peakDay: peakDayFormatted,
@@ -301,6 +386,62 @@ ${actionDetails}
                     error: true,
                 },
             };
+        }
+    },
+
+    // ============================================
+    // Wastage Prevention System
+    // ============================================
+
+    // Get aggregated wastage dashboard data (KPIs, charts, risk items)
+    async getWastageDashboard(storeId = 'STORE-001') {
+        try {
+            const response = await nodeClient.get(`/wastage/dashboard/${storeId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Wastage dashboard error:', error);
+            throw error;
+        }
+    },
+
+    // Get products expiring soon
+    async getExpiringProducts(storeId = 'STORE-001', days = 7) {
+        try {
+            const response = await nodeClient.get(`/wastage/expiring/${storeId}?days=${days}`);
+            return response.data;
+        } catch (error) {
+            console.error('Expiring products error:', error);
+            throw error;
+        }
+    },
+
+    // Apply a wastage prevention action (markdown, donate, bundle)
+    async applyWastageAction({ productId, storeId, actionType, discountPercent, targetQuantity }) {
+        try {
+            const response = await nodeClient.post('/wastage/action', {
+                productId,
+                storeId,
+                actionType,
+                discountPercent,
+                targetQuantity,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Wastage action error:', error);
+            throw error;
+        }
+    },
+
+    // Get AI-driven smart insight for order reduction
+    async getSmartInsight(storeId = 'STORE-001') {
+        try {
+            const response = await mlClient.post('/api/v1/wastage/smart-insight', {
+                store_id: storeId,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Smart insight error:', error);
+            throw error;
         }
     },
 

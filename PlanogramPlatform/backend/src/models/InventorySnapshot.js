@@ -19,7 +19,19 @@ const InventorySchema = new mongoose.Schema({
     estimatedOldStockQty: Number,
     oldestAgeDays: Number,
     oldStockShare: Number,
-    ageRiskRatio: Number
+    ageRiskRatio: Number,
+
+    // ML Analytics fields
+    avgDailySales7d: Number,
+    avgDailySales30d: Number,
+    salesStdDev: Number,
+    demandTrend: Number,
+    daysOfStockRemaining: Number,
+    stockoutRisk: Number,
+    reorderUrgency: String,
+    expiryRiskScore: Number,
+    daysToExpiry: Number,
+    nearExpiryFlag: Boolean
 });
 
 InventorySchema.index({ date: 1, sku: 1 });

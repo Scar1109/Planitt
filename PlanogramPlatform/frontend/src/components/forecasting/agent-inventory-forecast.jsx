@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { useLocation } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -18,9 +19,13 @@ import { Bot, TrendingUp, AlertTriangle, CheckCircle, Loader2, Sparkles, Search,
 import { api } from "@/api/client"
 
 export function AgentInventoryForecast() {
+    const location = useLocation()
+    const urlParams = new URLSearchParams(location.search)
+    const initialSku = urlParams.get("sku")
+
     const [productsList, setProductsList] = useState([])
     const [totalProducts, setTotalProducts] = useState(0)
-    const [selectedProduct, setSelectedProduct] = useState(null)
+    const [selectedProduct, setSelectedProduct] = useState(initialSku)
     const [horizon, setHorizon] = useState(7)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -417,6 +422,38 @@ export function AgentInventoryForecast() {
                                                         <span className="font-semibold">{Math.abs(forecastData.data.insights.trendPercent)}% vs avg</span>
                                                     </div>
                                                 )}
+                                            </div>
+                                        )}
+
+                                        {/* Dynamic Behavioral & Causal Insights */}
+                                        {forecastData.data?.analysis_reasons && forecastData.data.analysis_reasons.length > 0 && (
+                                            <div className="pt-3 border-t border-slate-200/50 space-y-2">
+                                                <h4 className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                                                    <Search className="h-3.5 w-3.5 text-indigo-500" />
+                                                    Key Influencing Factors
+                                                </h4>
+                                                <div className="grid gap-2 sm:grid-cols-2">
+                                                    {forecastData.data.analysis_reasons.map((reason, idx) => {
+                                                        // Extract emoji if present at the start of the string
+                                                        const emojiMatch = reason.match(/^([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/);
+                                                        const emoji = emojiMatch ? emojiMatch[0] : '📌';
+                                                        const text = emojiMatch ? reason.replace(emojiMatch[0], '').trim() : reason;
+
+                                                        // Determine color based on context keywords
+                                                        let colorClass = "bg-slate-50 border-slate-200 text-slate-700";
+                                                        if (text.toLowerCase().includes('weather') || text.toLowerCase().includes('rain') || text.toLowerCase().includes('hot')) colorClass = "bg-sky-50 border-sky-200 text-sky-800";
+                                                        if (text.toLowerCase().includes('payday') || text.toLowerCase().includes('salary')) colorClass = "bg-emerald-50 border-emerald-200 text-emerald-800";
+                                                        if (text.toLowerCase().includes('holiday') || text.toLowerCase().includes('surge') || text.toLowerCase().includes('event')) colorClass = "bg-violet-50 border-violet-200 text-violet-800";
+                                                        if (text.toLowerCase().includes('dip') || text.toLowerCase().includes('lower')) colorClass = "bg-rose-50 border-rose-200 text-rose-800";
+
+                                                        return (
+                                                            <div key={idx} className={`flex items-start gap-2 p-2 rounded-md border text-xs leading-relaxed ${colorClass}`}>
+                                                                <span className="flex-shrink-0 text-sm">{emoji}</span>
+                                                                <span>{text}</span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
                                         )}
 

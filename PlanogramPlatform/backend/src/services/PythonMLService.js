@@ -104,6 +104,39 @@ class PythonMLService {
     }
 
     /**
+     * Get dynamic markdown optimization from Python ML service
+     * @param {string} productId - Product ID
+     * @param {string} storeId - Store ID
+     * @param {number} daysUntilExpiry - Days remaining
+     * @param {number} currentStock - Current stock level
+     * @returns {Promise<Object>} Dynamic markdown recommendation
+     */
+    async getDynamicMarkdown(productId, storeId, daysUntilExpiry, currentStock) {
+        try {
+            const response = await this.client.post('/api/v1/wastage/dynamic-markdown', {
+                product_id: productId,
+                store_id: storeId,
+                days_until_expiry: daysUntilExpiry,
+                current_stock: currentStock,
+            });
+
+            return {
+                success: true,
+                data: response.data,
+            };
+        } catch (error) {
+            logger.error(`Failed to get dynamic markdown for ${productId}:`, error.message);
+
+            // Return fallback response
+            return {
+                success: false,
+                error: error.message,
+                data: null,
+            };
+        }
+    }
+
+    /**
      * Get historical sales data from Python backend
      * @param {string} productId - Product ID
      * @param {string} storeId - Store ID
