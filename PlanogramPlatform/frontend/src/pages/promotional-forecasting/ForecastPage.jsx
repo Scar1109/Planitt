@@ -189,7 +189,7 @@ const ForecastPage = () => {
         <div className="space-y-6">
             <header className="mb-8">
                 <h1 className="text-2xl font-bold text-slate-900 flex items-center">
-                    <FaRobot className="mr-3 text-indigo-600" />
+                    <FaRobot className="mr-3 text-[#1B4F72]" />
                     Promotional Uplift Forecast
                 </h1>
                 <p className="text-slate-500 mt-2">
@@ -206,7 +206,7 @@ const ForecastPage = () => {
                             <div>
                                 <label className="block text-xs font-medium text-slate-500 mb-1">Select Product to Simulate</label>
                                 <select
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm mb-4"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] text-sm mb-4"
                                     onChange={(e) => {
                                         const selected = products.find(p => p._id === e.target.value);
                                         if (selected) handleProductSelection(selected);
@@ -220,37 +220,37 @@ const ForecastPage = () => {
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="col-span-2">
                                     <label className="block text-xs font-medium text-slate-500 mb-1">SKU ID</label>
-                                    <input type="text" name="sku_id" value={formData.sku_id} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-slate-50" readOnly />
+                                    <input type="text" name="sku_id" value={formData.sku_id} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] text-sm bg-slate-50" readOnly />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
-                                    <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                    <input type="text" name="category" value={formData.category} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] text-sm" />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Brand</label>
-                                    <input type="text" name="brand" value={formData.brand} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                    <input type="text" name="brand" value={formData.brand} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] text-sm" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Base Price (LKR)</label>
-                                    <input type="number" step="1" name="base_price" value={formData.base_price} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                    <input type="number" step="1" name="base_price" value={formData.base_price} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] text-sm" />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Cost Price (LKR)</label>
-                                    <input type="number" step="1" name="cost_price" value={formData.cost_price} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                    <input type="number" step="1" name="cost_price" value={formData.cost_price} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] text-sm" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Stock Level</label>
-                                    <input type="number" name="stock_level" value={formData.stock_level} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                    <input type="number" name="stock_level" value={formData.stock_level} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] text-sm" />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Forecast Duration (Days)</label>
-                                    <input type="number" name="forecast_duration" min="1" max="90" value={formData.forecast_duration} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                                    <input type="number" name="forecast_duration" min="1" max="90" value={formData.forecast_duration} onChange={handleChange} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] text-sm" />
                                 </div>
                             </div>
 
@@ -264,7 +264,7 @@ const ForecastPage = () => {
                                     step="0.01"
                                     value={formData.test_discount}
                                     onChange={handleChange}
-                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#1B4F72]"
                                 />
                                 <div className="flex justify-between text-xs text-slate-400 mt-1">
                                     <span>5%</span>
@@ -276,7 +276,7 @@ const ForecastPage = () => {
                                 <button
                                     type="submit"
                                     disabled={loading || isFindingOptimal}
-                                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-all shadow-md shadow-indigo-200 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+                                    className="flex-1 bg-[#1B4F72] hover:bg-[#164060] text-white font-medium py-2.5 rounded-lg transition-all shadow-md shadow-[#17A2B8]/30 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
                                 >
                                     {loading ? <FaSpinner className="animate-spin mr-2" /> : <FaMagic className="mr-2" />}
                                     Predict
@@ -320,7 +320,7 @@ const ForecastPage = () => {
 
                     {result && (
                         <div className="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden animate-fade-in-up">
-                            <div className="bg-indigo-600 p-6 text-white">
+                            <div className="bg-[#1B4F72] p-6 text-white">
                                 <div className="flex justify-between items-start">
                                     <div>
                                         <h2 className="text-2xl font-bold flex items-center">
@@ -350,9 +350,9 @@ const ForecastPage = () => {
                                         <div className="text-sm text-green-600 mb-1">Predicted Uplift</div>
                                         <div className="text-2xl font-bold text-green-700">+{result.uplift?.toFixed(1)} <span className="text-sm font-normal text-green-500">units</span></div>
                                     </div>
-                                    <div className="text-center p-4 bg-indigo-50 rounded-lg border border-indigo-100">
-                                        <div className="text-sm text-indigo-600 mb-1">Revenue Lift</div>
-                                        <div className="text-2xl font-bold text-indigo-700">{result.revenue_lift >= 0 ? '+' : ''} Rs. {result.revenue_lift?.toLocaleString()}</div>
+                                    <div className="text-center p-4 bg-[#17A2B8]/5 rounded-lg border border-[#17A2B8]/10">
+                                        <div className="text-sm text-[#1B4F72] mb-1">Revenue Lift</div>
+                                        <div className="text-2xl font-bold text-[#164060]">{result.revenue_lift >= 0 ? '+' : ''} Rs. {result.revenue_lift?.toLocaleString()}</div>
                                     </div>
                                 </div>
 
@@ -363,15 +363,15 @@ const ForecastPage = () => {
                                         disabled={isSaving || isExplaining || saveSuccess}
                                         className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors ${saveSuccess ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'}`}
                                     >
-                                        {isSaving ? <FaSpinner className="animate-spin mr-2" /> : saveSuccess ? <FaCheckCircle className="mr-2" /> : <FaSave className="mr-2 text-indigo-600" />}
+                                        {isSaving ? <FaSpinner className="animate-spin mr-2" /> : saveSuccess ? <FaCheckCircle className="mr-2" /> : <FaSave className="mr-2 text-[#1B4F72]" />}
                                         {saveSuccess ? 'Saved to Suggested' : 'Save to Suggested'}
                                     </button>
                                 </div>
 
                                 {/* AI Explanation */}
-                                <div className="bg-gradient-to-r from-indigo-50 to-white border border-indigo-100 rounded-xl p-5 shadow-sm">
+                                <div className="bg-gradient-to-r from-[#17A2B8]/5 to-white border border-[#17A2B8]/10 rounded-xl p-5 shadow-sm">
                                     <h3 className="text-sm font-bold text-slate-800 flex items-center mb-2">
-                                        <FaBullhorn className="text-indigo-500 mr-2" />
+                                        <FaBullhorn className="text-[#17A2B8] mr-2" />
                                         AI Strategic Explanation
                                     </h3>
                                     {isExplaining ? (
@@ -413,7 +413,7 @@ const ForecastPage = () => {
                                                             <div className="text-xs text-slate-400 font-normal">Profit Lift</div>
                                                         </div>
                                                         <div className="text-right hidden sm:block">
-                                                            <div className="font-bold text-indigo-600">Rs. {opt.simulation.revenue_lift?.toLocaleString()}</div>
+                                                            <div className="font-bold text-[#1B4F72]">Rs. {opt.simulation.revenue_lift?.toLocaleString()}</div>
                                                             <div className="text-xs text-slate-400 font-normal">Rev. Lift</div>
                                                         </div>
                                                     </div>

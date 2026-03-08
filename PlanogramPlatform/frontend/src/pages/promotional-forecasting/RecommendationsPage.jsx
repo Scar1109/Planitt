@@ -142,7 +142,7 @@ const RecommendationsPage = () => {
                         {loading ? <FaSpinner className="mr-2 animate-spin" /> : <FaFilter className="mr-2" />}
                         {loading ? 'Regenerating...' : 'Regenerate'}
                     </button>
-                    <button onClick={exportReport} className="flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-indigo-700 transition-colors shadow-sm">
+                    <button onClick={exportReport} className="flex items-center px-4 py-2 bg-[#1B4F72] border border-transparent rounded-lg text-sm font-medium text-white hover:bg-[#164060] transition-colors shadow-sm">
                         <FaDownload className="mr-2" /> Export Report
                     </button>
                 </div>
@@ -168,8 +168,8 @@ const RecommendationsPage = () => {
             )}
 
             {narrative && (
-                <div className="bg-gradient-to-r from-indigo-50 flex to-white rounded-xl shadow-sm border border-indigo-100 p-6 mb-6">
-                    <FaBullhorn className="text-2xl text-indigo-500 mr-4 mt-1 flex-shrink-0" />
+                <div className="bg-gradient-to-r from-[#17A2B8]/5 flex to-white rounded-xl shadow-sm border border-[#17A2B8]/10 p-6 mb-6">
+                    <FaBullhorn className="text-2xl text-[#17A2B8] mr-4 mt-1 flex-shrink-0" />
                     <div>
                         <h2 className="text-lg font-bold text-slate-800 mb-2">Strategic Narrative</h2>
                         <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{narrative}</p>
@@ -208,7 +208,7 @@ const RecommendationsPage = () => {
                                             <div className="text-xs text-slate-500">{sim.skuId}</div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-[#17A2B8]/5 text-[#164060] border border-[#17A2B8]/10">
                                                 {(sim.discount * 100).toFixed(0)}% OFF ({sim.durationDays} Days)
                                             </span>
                                         </td>
@@ -220,7 +220,7 @@ const RecommendationsPage = () => {
                                         <td className="px-6 py-4 text-right">
                                             <button
                                                 onClick={() => setSelectedSim(sim)}
-                                                className="inline-flex items-center justify-center text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 p-2 rounded-lg transition-colors"
+                                                className="inline-flex items-center justify-center text-[#1B4F72] hover:text-[#0F3249] bg-[#17A2B8]/5 hover:bg-[#17A2B8]/10 p-2 rounded-lg transition-colors"
                                             >
                                                 <FaEye className="w-4 h-4" />
                                             </button>
@@ -239,7 +239,7 @@ const RecommendationsPage = () => {
                     <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-fade-in-up border border-slate-200">
                         <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                             <h2 className="text-lg font-bold text-slate-800 flex items-center">
-                                <FaChartLine className="mr-2 text-indigo-500" />
+                                <FaChartLine className="mr-2 text-[#17A2B8]" />
                                 Saved Simulation Details
                             </h2>
                             <button onClick={() => setSelectedSim(null)} className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-200 transition-colors">
@@ -255,7 +255,7 @@ const RecommendationsPage = () => {
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xs text-slate-500 mb-1 font-medium uppercase tracking-wider">Discount Config</p>
-                                    <p className="font-bold text-indigo-600 text-2xl">{(selectedSim.discount * 100).toFixed(0)}% OFF</p>
+                                    <p className="font-bold text-[#1B4F72] text-2xl">{(selectedSim.discount * 100).toFixed(0)}% OFF</p>
                                     <p className="text-xs text-slate-500 mt-1">Duration: {selectedSim.durationDays} Days</p>
                                 </div>
                             </div>
@@ -267,7 +267,7 @@ const RecommendationsPage = () => {
                                 </div>
                                 <div>
                                     <p className="text-xs text-slate-500 mb-1">Promo Price</p>
-                                    <p className="font-semibold text-indigo-600">Rs. {(selectedSim.basePrice * (1 - selectedSim.discount)).toLocaleString()}</p>
+                                    <p className="font-semibold text-[#1B4F72]">Rs. {(selectedSim.basePrice * (1 - selectedSim.discount)).toLocaleString()}</p>
                                 </div>
                                 <div>
                                     <p className="text-xs text-slate-500 mb-1">Unit Cost</p>
@@ -295,7 +295,7 @@ const RecommendationsPage = () => {
                             {selectedSim.aiExplanation && (
                                 <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
                                     <h3 className="text-xs font-bold text-slate-800 uppercase tracking-widest mb-3 flex items-center">
-                                        <FaRobot className="mr-2 text-indigo-500 text-base" /> AI Strategic Review
+                                        <FaRobot className="mr-2 text-[#17A2B8] text-base" /> AI Strategic Review
                                     </h3>
                                     <p className="text-sm text-slate-600 leading-relaxed">{selectedSim.aiExplanation}</p>
                                 </div>
@@ -304,7 +304,7 @@ const RecommendationsPage = () => {
                         <div className="border-t border-slate-100 p-4 bg-slate-50 flex justify-end">
                             <button
                                 onClick={() => setSelectedSim(null)}
-                                className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors shadow-sm"
+                                className="px-6 py-2 bg-[#1B4F72] hover:bg-[#164060] text-white font-medium rounded-lg transition-colors shadow-sm"
                             >
                                 Close
                             </button>
