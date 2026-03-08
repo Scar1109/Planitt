@@ -4,7 +4,7 @@ import { FaCheckCircle, FaExclamationTriangle, FaChartLine, FaRobot, FaSearch, F
 import ShelfCompliance from './ShelfCompliance';
 
 const ComplianceDashboard = () => {
-    const [activeTab, setActiveTab] = useState('global'); // 'global' or 'shelf'
+    const [activeTab, setActiveTab] = useState('shelf'); // 'global' or 'shelf'
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [report, setReport] = useState(null);
     const [agentInsight, setAgentInsight] = useState('');
@@ -96,16 +96,16 @@ const ComplianceDashboard = () => {
             {/* Tab Navigation */}
             <div className="flex gap-4 mb-6 border-b border-gray-200">
                 <button 
-                    onClick={() => setActiveTab('global')}
-                    className={`pb-3 px-2 font-bold transition-all flex items-center gap-2 ${activeTab === 'global' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
-                >
-                    <FaSearch size={14} /> Global Compliance Map
-                </button>
-                <button 
                     onClick={() => setActiveTab('shelf')}
                     className={`pb-3 px-2 font-bold transition-all flex items-center gap-2 ${activeTab === 'shelf' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
                 >
                     <FaCamera size={14} /> Shelf-Level Visual Audit
+                </button>
+                <button 
+                    onClick={() => setActiveTab('global')}
+                    className={`pb-3 px-2 font-bold transition-all flex items-center gap-2 ${activeTab === 'global' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                    <FaSearch size={14} /> Global Compliance Map
                 </button>
             </div>
 
@@ -186,13 +186,19 @@ const ComplianceDashboard = () => {
                                     </div>
                                     <span className="text-4xl font-black text-gray-800">{report.deviations.length}</span>
                                 </div>
-                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-yellow-500">
+                                <div className={`bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 ${report.total_revenue_opportunity < 0 ? 'border-red-500' : 'border-yellow-500'}`}>
                                     <div className="flex items-center space-x-3 mb-2">
-                                        <FaChartLine className="text-yellow-500 text-xl" />
-                                        <h4 className="text-gray-500 font-bold uppercase text-xs tracking-wider">Revenue Opportunity</h4>
+                                        <FaChartLine className={`${report.total_revenue_opportunity < 0 ? 'text-red-500' : 'text-yellow-500'} text-xl`} />
+                                        <h4 className="text-gray-500 font-bold uppercase text-xs tracking-wider">
+                                            {report.total_revenue_opportunity < 0 ? 'Revenue Loss' : 'Revenue Opportunity'}
+                                        </h4>
                                     </div>
-                                    <span className="text-4xl font-black text-gray-800">{report.total_revenue_opportunity} {report.currency}</span>
-                                    <p className="text-[10px] text-gray-400 mt-1 uppercase font-bold">Predicted Monthly Uplift</p>
+                                    <span className={`text-4xl font-black ${report.total_revenue_opportunity < 0 ? 'text-red-600' : 'text-gray-800'}`}>
+                                        {report.total_revenue_opportunity < 0 
+                                            ? `${report.total_revenue_opportunity} ${report.currency}`
+                                            : `${report.total_revenue_opportunity > 0 ? '+' : ''}${report.total_revenue_opportunity} ${report.currency}`}
+                                    </span>
+                                    <p className="text-[10px] text-gray-400 mt-1 uppercase font-bold">Predicted Monthly Impact</p>
                                 </div>
                             </div>
 
