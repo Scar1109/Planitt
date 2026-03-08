@@ -149,22 +149,14 @@ class SimulatedAnnealingOptimizer:
                 current_x += item['total_width']
         return placements
 
-    def _perturb(self, state, levels, products_map):
+    def _try_single_move(self, new_state, levels, products_map):
         """
-        Generate a neighbor solution by applying one random move.
-        Returns a NEW state (deep copy).
-
-        Neighborhood operators:
-          1. add_facing    — +1 facing if below max and space available
-          2. remove_facing — -1 facing if above min
-          3. move_level    — relocate product to different shelf (if fits)
-          4. swap          — swap two products between different shelves
+        Attempt a single neighborhood move on the given state (in-place).
+        Returns True if the move actually changed the state, False otherwise.
         """
-        new_state = copy.deepcopy(state)
-
         non_empty = [lid for lid, s in new_state.items() if s['items']]
         if not non_empty:
-            return new_state
+            return False
 
         source_lid = random.choice(non_empty)
         source_shelf = new_state[source_lid]
@@ -175,17 +167,18 @@ class SimulatedAnnealingOptimizer:
         move_type = random.choice(['add_facing', 'remove_facing', 'move_level', 'swap'])
 
         if move_type == 'add_facing':
-            if item['facings'] < item['max_facings']:
-                if source_shelf['remaining_width'] >= item['width_one']:
-                    item['facings'] += 1
-                    item['total_width'] += item['width_one']
-                    source_shelf['remaining_width'] -= item['width_one']
+            if item['facings'] < item['max_facings'] and source_shelf['remaining_width'] >= item['width_one']:
+                item['facings'] += 1
+                item['total_width'] += item['width_one']
+                source_shelf['remaining_width'] -= item['width_one']
+                return True
 
         elif move_type == 'remove_facing':
             if item['facings'] > item['min_facings']:
                 item['facings'] -= 1
                 item['total_width'] -= item['width_one']
                 source_shelf['remaining_width'] += item['width_one']
+                return True
 
         elif move_type == 'move_level':
             all_lids = list(new_state.keys())
@@ -195,23 +188,20 @@ class SimulatedAnnealingOptimizer:
                 target_shelf = new_state[target_lid]
                 target_obj = target_shelf['obj']
 
-                # Category coherence check
                 item_category = products_map.get(item['sku'], {}).get('category', '')
-                if not self._category_matches_shelf(item_category, target_obj):
-                    pass  # Skip — category mismatch
-                elif (target_obj['usableHeightCm'] >= item['height']
+                if (self._category_matches_shelf(item_category, target_obj)
+                        and target_obj['usableHeightCm'] >= item['height']
                         and target_obj['usableDepthCm'] >= item['depth']
                         and target_shelf['remaining_width'] >= item['total_width']):
-                    # Check product doesn't already exist on target shelf
                     existing_skus = {it['sku'] for it in target_shelf['items']}
                     if item['sku'] not in existing_skus:
                         source_shelf['items'].pop(item_idx)
                         source_shelf['remaining_width'] += item['total_width']
                         target_shelf['items'].append(item)
                         target_shelf['remaining_width'] -= item['total_width']
+                        return True
 
         elif move_type == 'swap':
-            # Swap two products between different shelves
             other_non_empty = [lid for lid in non_empty if lid != source_lid]
             if other_non_empty:
                 target_lid = random.choice(other_non_empty)
@@ -224,7 +214,6 @@ class SimulatedAnnealingOptimizer:
                     source_obj = source_shelf['obj']
                     target_obj = target_shelf['obj']
 
-                    # Check if items fit on swapped shelves
                     source_new_width = source_shelf['remaining_width'] + item['total_width'] - target_item['total_width']
                     target_new_width = target_shelf['remaining_width'] + target_item['total_width'] - item['total_width']
 
@@ -233,7 +222,6 @@ class SimulatedAnnealingOptimizer:
                             and source_obj['usableDepthCm'] >= target_item['depth']
                             and target_obj['usableHeightCm'] >= item['height']
                             and target_obj['usableDepthCm'] >= item['depth']):
-                        # Category coherence: each item must match its new shelf
                         item_cat = products_map.get(item['sku'], {}).get('category', '')
                         target_item_cat = products_map.get(target_item['sku'], {}).get('category', '')
                         if (self._category_matches_shelf(item_cat, target_obj)
@@ -242,8 +230,27 @@ class SimulatedAnnealingOptimizer:
                             target_shelf['items'][target_idx] = item
                             source_shelf['remaining_width'] = source_new_width
                             target_shelf['remaining_width'] = target_new_width
+                            return True
 
-        return new_state
+        return False
+
+    def _perturb(self, state, levels, products_map):
+        """
+        Generate a neighbor solution by applying one random move.
+        Returns (NEW state, success_flag).
+
+        Retries up to MAX_RETRIES times if the chosen move fails
+        (e.g. due to space/category/size constraints).
+        """
+        MAX_RETRIES = 10
+
+        for attempt in range(MAX_RETRIES):
+            new_state = copy.deepcopy(state)
+            if self._try_single_move(new_state, levels, products_map):
+                return new_state, True
+
+        # All retries exhausted — return unchanged copy
+        return copy.deepcopy(state), False
 
     def optimize(self, initial_placements, products, levels, config, constraint_checker=None):
         """
@@ -308,23 +315,55 @@ class SimulatedAnnealingOptimizer:
 
         # --- Hyperparameters ---
         hyperparams = config.get('hyperparams', {})
-        temp = hyperparams.get('initialTemperature', 1000)
-        cooling_rate = hyperparams.get('coolingRate', 0.98)
-        iterations = hyperparams.get('iterations', 500)
+        cooling_rate = hyperparams.get('coolingRate', 0.995)
+        iterations = hyperparams.get('iterations', 3000)
+
+        # Auto-scale temperature: ~5% of initial score magnitude
+        # This ensures deltas are meaningful relative to the temperature
+        if hyperparams.get('initialTemperature'):
+            temp = hyperparams['initialTemperature']
+        else:
+            temp = max(abs(current_score) * 0.05, 1.0)
 
         # Adaptive reheat parameters
-        REHEAT_THRESHOLD = 50    # iterations without improvement before reheat
-        REHEAT_FACTOR = 1.5      # multiply temperature on reheat
+        REHEAT_THRESHOLD = 80    # iterations without improvement before reheat
+        REHEAT_FACTOR = 2.0      # multiply temperature on reheat
         stagnation_counter = 0
 
         # Convergence tracking
         convergence_history = []
+        # Perturbation success tracking
+        total_attempts = 0
+        successful_perturbations = 0
+        accepted_moves = 0
+        improvement_moves = 0
 
-        logger.info(f"Starting SA: Temp={temp}, Iterations={iterations}, InitialScore={current_score:.2f}")
+        logger.info(f"Starting SA: Temp={temp:.4f}, Iterations={iterations}, "
+                    f"CoolingRate={cooling_rate}, InitialScore={current_score:.2f}")
 
         for i in range(iterations):
-            # 1. Perturb
-            neighbor_state = self._perturb(current_state, levels, products_map)
+            # 1. Perturb (with retry)
+            neighbor_state, perturb_success = self._perturb(current_state, levels, products_map)
+            total_attempts += 1
+
+            if not perturb_success:
+                stagnation_counter += 1
+                # Still track convergence even when perturbation fails
+                if i % 20 == 0:
+                    convergence_history.append({
+                        'iteration': i,
+                        'score': round(best_score, 2),
+                        'temperature': round(temp, 6),
+                        'current_score': round(current_score, 2)
+                    })
+                temp *= cooling_rate
+                if stagnation_counter >= REHEAT_THRESHOLD:
+                    temp = max(abs(best_score) * 0.05, 1.0) * REHEAT_FACTOR
+                    stagnation_counter = 0
+                    logger.info(f"SA Reheat at iteration {i}: New Temp={temp:.4f} (stagnation)")
+                continue
+
+            successful_perturbations += 1
 
             # 2. Evaluate
             neighbor_score = self._score_state(neighbor_state, products_map, constraint_checker)
@@ -336,12 +375,13 @@ class SimulatedAnnealingOptimizer:
                 accept = True
             else:
                 try:
-                    prob = math.exp(delta / temp)
+                    prob = math.exp(delta / max(temp, 1e-10))
                 except (OverflowError, ZeroDivisionError):
                     prob = 0
                 accept = random.random() < prob
 
             if accept:
+                accepted_moves += 1
                 current_state = neighbor_state
                 current_score = neighbor_score
 
@@ -349,17 +389,18 @@ class SimulatedAnnealingOptimizer:
                     best_score = current_score
                     best_state = copy.deepcopy(current_state)
                     stagnation_counter = 0
+                    improvement_moves += 1
                 else:
                     stagnation_counter += 1
             else:
                 stagnation_counter += 1
 
-            # Track convergence (every 10 iterations for efficiency)
-            if i % 10 == 0:
+            # Track convergence (every 20 iterations for efficiency)
+            if i % 20 == 0:
                 convergence_history.append({
                     'iteration': i,
                     'score': round(best_score, 2),
-                    'temperature': round(temp, 2),
+                    'temperature': round(temp, 6),
                     'current_score': round(current_score, 2)
                 })
 
@@ -368,22 +409,27 @@ class SimulatedAnnealingOptimizer:
 
             # 5. Adaptive reheat
             if stagnation_counter >= REHEAT_THRESHOLD:
-                temp *= REHEAT_FACTOR
+                temp = max(abs(best_score) * 0.05, 1.0) * REHEAT_FACTOR
                 stagnation_counter = 0
-                logger.info(f"SA Reheat at iteration {i}: New Temp={temp:.2f}")
+                logger.info(f"SA Reheat at iteration {i}: New Temp={temp:.4f}")
 
-            if temp < 0.1:
+            if temp < 1e-10:
                 break
 
         # Final convergence point
         convergence_history.append({
             'iteration': iterations,
             'score': round(best_score, 2),
-            'temperature': round(temp, 2),
+            'temperature': round(temp, 6),
             'current_score': round(current_score, 2)
         })
 
-        logger.info(f"SA Finished: BestScore={best_score:.2f}, Iterations={len(convergence_history)*10}")
+        success_rate = (successful_perturbations / max(total_attempts, 1)) * 100
+        accept_rate = (accepted_moves / max(successful_perturbations, 1)) * 100
+        logger.info(f"SA Finished: BestScore={best_score:.2f}, "
+                    f"Perturbation Success Rate={success_rate:.1f}% ({successful_perturbations}/{total_attempts}), "
+                    f"Acceptance Rate={accept_rate:.1f}%, "
+                    f"Improvements={improvement_moves}")
 
         # Convert state to placements
         final_placements = self._state_to_placements(best_state, levels_map)
