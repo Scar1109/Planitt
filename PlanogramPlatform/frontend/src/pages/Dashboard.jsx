@@ -35,7 +35,7 @@ const DashboardLayout = ({ children }) => {
                 <Header />
                 <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-4 lg:p-6 relative">
                     {/* Background blob for style */}
-                    <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-50/50 to-transparent -z-10 pointer-events-none"></div>
+                    <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#17A2B8]/10 to-transparent -z-10 pointer-events-none"></div>
                     {children}
                 </main>
             </div>

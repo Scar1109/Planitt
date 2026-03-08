@@ -148,8 +148,8 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
                                                         e.stopPropagation();
                                                         setSelectedPlacement(item);
                                                     }}
-                                                    className={`absolute border border-black/10 hover:border-indigo-500 hover:z-[60] cursor-pointer transition-all shadow-sm group/item
-                                                        ${isSelected ? 'ring-2 ring-indigo-500 z-40' : 'z-10'}`}
+                                                    className={`absolute border border-black/10 hover:border-[#17A2B8] hover:z-[60] cursor-pointer transition-all shadow-sm group/item
+                                                        ${isSelected ? 'ring-2 ring-[#17A2B8] z-40' : 'z-10'}`}
                                                     style={{
                                                         left: x,
                                                         width: w,
@@ -182,9 +182,9 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
             {/* Sidebar Details Panel */}
             {selectedPlacement && (
                 <div className="absolute right-6 top-24 w-80 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden animate-in slide-in-from-right duration-200 z-50">
-                    <div className="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-start">
-                        <h3 className="font-bold text-indigo-900">Product Details</h3>
-                        <button onClick={() => setSelectedPlacement(null)} className="text-indigo-400 hover:text-indigo-700"><FaTimesCircle /></button>
+                    <div className="bg-[#17A2B8]/10 p-4 border-b border-[#17A2B8]/20 flex justify-between items-start">
+                        <h3 className="font-bold text-[#1B4F72]">Product Details</h3>
+                        <button onClick={() => setSelectedPlacement(null)} className="text-[#17A2B8] hover:text-[#138f9e]"><FaTimesCircle /></button>
                     </div>
                     <div className="p-4 space-y-4">
                         <div className="flex gap-4">
@@ -221,9 +221,9 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
                                 <p className="text-[10px] text-slate-400 uppercase">Units High</p>
                                 <p className="font-medium">{selectedPlacement.unitsHigh}</p>
                             </div>
-                            <div className="bg-indigo-50 p-2 rounded col-span-2">
-                                <p className="text-[10px] text-indigo-400 uppercase font-bold">Total Stock Capacity</p>
-                                <p className="font-bold text-indigo-700">{selectedPlacement.facings * selectedPlacement.unitsDeep * selectedPlacement.unitsHigh} Units</p>
+                            <div className="bg-[#17A2B8]/10 p-2 rounded col-span-2">
+                                <p className="text-[10px] text-[#1B4F72] uppercase font-bold">Total Stock Capacity</p>
+                                <p className="font-bold text-[#1B4F72]">{selectedPlacement.facings * selectedPlacement.unitsDeep * selectedPlacement.unitsHigh} Units</p>
                             </div>
 
                         </div>

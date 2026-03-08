@@ -9,7 +9,7 @@ const OptimizationContext = ({ stats }) => {
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-full flex flex-col">
             <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <span className="w-1 h-6 bg-indigo-500 rounded-full"></span>
+                <span className="w-1 h-6 bg-[#1B4F72] rounded-full"></span>
                 Context & Scope
             </h2>
 

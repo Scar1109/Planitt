@@ -131,11 +131,11 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                                 return (
                                     <div
                                         key={idx}
-                                        className="absolute w-full flex items-center justify-center group cursor-pointer transition-all hover:bg-indigo-50"
+                                        className="absolute w-full flex items-center justify-center group cursor-pointer transition-all hover:bg-[#17A2B8]/10"
                                         style={{
                                             bottom: `${bottomPx}px`,
                                             height: '6px', // Thickness of the shelf material
-                                            backgroundColor: isEyeLevel ? '#4f46e5' : '#cbd5e1'
+                                            backgroundColor: isEyeLevel ? '#17A2B8' : '#cbd5e1'
                                         }}
                                         title={`Level ${idx}: ${level.heightFromFloorCm}cm`}
                                     >
@@ -161,7 +161,7 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                         {/* Section 1: Basic Info */}
                         <section className="mb-8">
                             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs">1</span>
+                                <span className="w-6 h-6 rounded-full bg-[#17A2B8]/10 text-[#1B4F72] flex items-center justify-center text-xs">1</span>
                                 General Details
                             </h3>
                             <div className="grid grid-cols-2 gap-6">
@@ -171,7 +171,7 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                                         name="aisleBaySide"
                                         value={formData.aisleBaySide}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#17A2B8]/20 focus:border-[#17A2B8] outline-none transition-all"
                                         placeholder="e.g. Aisle 1 - Bay 2"
                                     />
                                 </div>
@@ -181,7 +181,7 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                                         name="fixtureType"
                                         value={formData.fixtureType}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#17A2B8]/20 focus:border-[#17A2B8] outline-none transition-all"
                                     >
                                         <option value="gondola">Gondola</option>
                                         <option value="wall">Wall Rack</option>
@@ -213,9 +213,9 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                                     <div className="flex flex-wrap gap-2 p-2 border border-slate-200 rounded-lg min-h-[42px]">
                                         {formData.tags.length === 0 && <span className="text-slate-400 text-sm">No tags selected</span>}
                                         {formData.tags.map(tag => (
-                                            <span key={tag} className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-md text-sm flex items-center gap-1">
+                                            <span key={tag} className="bg-[#17A2B8]/10 text-[#1B4F72] px-2 py-1 rounded-md text-sm flex items-center gap-1">
                                                 {tag}
-                                                <button onClick={() => removeTag(tag)} className="hover:text-indigo-900"><FaTimes size={10} /></button>
+                                                <button onClick={() => removeTag(tag)} className="hover:text-[#164060]"><FaTimes size={10} /></button>
                                             </span>
                                         ))}
                                     </div>
@@ -241,10 +241,10 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                         <section>
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                                    <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs">2</span>
+                                    <span className="w-6 h-6 rounded-full bg-[#17A2B8]/10 text-[#1B4F72] flex items-center justify-center text-xs">2</span>
                                     Levels Setup
                                 </h3>
-                                <button onClick={addLevel} className="text-sm text-indigo-600 font-medium hover:text-indigo-800 flex items-center gap-1">
+                                <button onClick={addLevel} className="text-sm text-[#17A2B8] font-medium hover:text-[#138f9e] flex items-center gap-1">
                                     <FaPlus size={12} /> Add Level
                                 </button>
                             </div>
@@ -270,7 +270,7 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                                                             type="number"
                                                             value={level.heightFromFloorCm}
                                                             onChange={(e) => updateLevel(idx, 'heightFromFloorCm', e.target.value)}
-                                                            className="w-16 px-2 py-1 border border-slate-200 rounded text-center focus:border-indigo-500 outline-none"
+                                                            className="w-16 px-2 py-1 border border-slate-200 rounded text-center focus:border-[#17A2B8] outline-none"
                                                         />
                                                         <span className="text-slate-400 text-xs">cm</span>
                                                     </div>
@@ -281,7 +281,7 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                                                             type="number"
                                                             value={level.usableHeightCm}
                                                             onChange={(e) => updateLevel(idx, 'usableHeightCm', e.target.value)}
-                                                            className="w-16 px-2 py-1 border border-slate-200 rounded text-center focus:border-indigo-500 outline-none"
+                                                            className="w-16 px-2 py-1 border border-slate-200 rounded text-center focus:border-[#17A2B8] outline-none"
                                                         />
                                                         <span className="text-slate-400 text-xs">cm</span>
                                                     </div>
@@ -292,7 +292,7 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                                                             type="number"
                                                             value={level.usableDepthCm}
                                                             onChange={(e) => updateLevel(idx, 'usableDepthCm', e.target.value)}
-                                                            className="w-16 px-2 py-1 border border-slate-200 rounded text-center focus:border-indigo-500 outline-none"
+                                                            className="w-16 px-2 py-1 border border-slate-200 rounded text-center focus:border-[#17A2B8] outline-none"
                                                         />
                                                         <span className="text-slate-400 text-xs">cm</span>
                                                     </div>
@@ -317,7 +317,7 @@ const ShelfModal = ({ isOpen, onClose, shelf, onSave }) => {
                     <button onClick={onClose} className="px-6 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-colors">
                         Cancel
                     </button>
-                    <button onClick={handleSubmit} className="px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 font-medium shadow-md shadow-indigo-200 transition-all">
+                    <button onClick={handleSubmit} className="px-6 py-2 rounded-lg bg-[#1B4F72] text-white hover:bg-[#164060] font-medium shadow-md shadow-[#1B4F72]/20 transition-all">
                         Save Changes
                     </button>
                 </div>

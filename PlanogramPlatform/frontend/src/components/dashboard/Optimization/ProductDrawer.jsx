@@ -82,7 +82,7 @@ const ProductDrawer = ({ isOpen, onClose, product, onSave, onDeactivate }) => {
                         <div className="flex items-center gap-3 mb-1">
                             <h2 className="text-2xl font-bold text-slate-800">{formData.productName || "New Product"}</h2>
                             <div className="flex gap-2">
-                                <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded uppercase tracking-wider">
+                                <span className="px-2 py-1 bg-[#17A2B8]/10 text-[#1B4F72] text-xs font-bold rounded uppercase tracking-wider">
                                     {formData.category || "Uncategorized"}
                                 </span>
                                 {formData.brand && (
@@ -113,21 +113,21 @@ const ProductDrawer = ({ isOpen, onClose, product, onSave, onDeactivate }) => {
                                 <div>
                                     <label className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1 block">Width (products)</label>
                                     <div className="flex items-center gap-2">
-                                        <input type="number" name="widthCm" value={formData.widthCm} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg text-lg font-mono focus:ring-2 focus:ring-indigo-500/20 outline-none" />
+                                        <input type="number" name="widthCm" value={formData.widthCm} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg text-lg font-mono focus:ring-2 focus:ring-[#17A2B8]/20 outline-none" />
                                         <span className="text-slate-400 text-sm">cm</span>
                                     </div>
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1 block">Height</label>
                                     <div className="flex items-center gap-2">
-                                        <input type="number" name="heightCm" value={formData.heightCm} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg text-lg font-mono focus:ring-2 focus:ring-indigo-500/20 outline-none" />
+                                        <input type="number" name="heightCm" value={formData.heightCm} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg text-lg font-mono focus:ring-2 focus:ring-[#17A2B8]/20 outline-none" />
                                         <span className="text-slate-400 text-sm">cm</span>
                                     </div>
                                 </div>
                                 <div>
                                     <label className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1 block">Depth</label>
                                     <div className="flex items-center gap-2">
-                                        <input type="number" name="depthCm" value={formData.depthCm} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg text-lg font-mono focus:ring-2 focus:ring-indigo-500/20 outline-none" />
+                                        <input type="number" name="depthCm" value={formData.depthCm} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg text-lg font-mono focus:ring-2 focus:ring-[#17A2B8]/20 outline-none" />
                                         <span className="text-slate-400 text-sm">cm</span>
                                     </div>
                                 </div>
@@ -207,13 +207,13 @@ const ProductDrawer = ({ isOpen, onClose, product, onSave, onDeactivate }) => {
                                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b pb-2">
                                     ML Analytics
                                 </h3>
-                                <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl flex items-center justify-between">
+                                <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl flex items-center justify-between">
                                     <div>
-                                        <p className="text-[10px] text-purple-600 font-bold uppercase tracking-wider">Rank</p>
-                                        <p className="text-3xl font-bold text-purple-900">#{formData.priorityScore || "--"}</p>
+                                        <p className="text-[10px] text-[#1B4F72] font-bold uppercase tracking-wider">Rank</p>
+                                        <p className="text-3xl font-bold text-[#1B4F72]">#{formData.priorityScore || "--"}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[10px] text-purple-600 font-bold uppercase tracking-wider mb-1">Trend</p>
+                                        <p className="text-[10px] text-[#1B4F72] font-bold uppercase tracking-wider mb-1">Trend</p>
                                         <div className="flex items-center gap-1 justify-end">
                                             {formData.priorityTrend === 'rising' && <span className="text-green-600 font-bold text-sm bg-green-100 px-2 py-1 rounded">RISING</span>}
                                             {formData.priorityTrend === 'falling' && <span className="text-red-500 font-bold text-sm bg-red-100 px-2 py-1 rounded">FALLING</span>}
@@ -246,14 +246,14 @@ const ProductDrawer = ({ isOpen, onClose, product, onSave, onDeactivate }) => {
                                     </div>
                                 </div>
                                 <div
-                                    className="bg-indigo-500 shadow-xl shadow-indigo-500/30 rounded-lg relative transition-all duration-300"
+                                    className="bg-[#1B4F72] shadow-xl shadow-[#1B4F72]/30 rounded-lg relative transition-all duration-300"
                                     style={{
                                         width: `${Math.min(prodWidthPx, 300)}px`,
                                         height: `${Math.min(prodHeightPx, 300)}px`
                                     }}
                                 >
                                     {/* Depth Indicator (Side View Mock) */}
-                                    <div className="absolute -right-4 top-1/2 -translate-y-1/2 h-full w-4 bg-indigo-700 rounded-r-lg opacity-50 skew-y-6 origin-left scale-y-90"></div>
+                                    <div className="absolute -right-4 top-1/2 -translate-y-1/2 h-full w-4 bg-[#164060] rounded-r-lg opacity-50 skew-y-6 origin-left scale-y-90"></div>
                                 </div>
                             </div>
                         </div>
@@ -272,7 +272,7 @@ const ProductDrawer = ({ isOpen, onClose, product, onSave, onDeactivate }) => {
                                 </div>
                                 <div className="flex justify-between items-center border-t pt-2 mt-1">
                                     <span className="text-sm text-slate-600">Volume</span>
-                                    <span className="font-mono font-bold text-indigo-600 text-sm">{((formData.widthCm * formData.heightCm * formData.depthCm) / 1000).toFixed(2)} L</span>
+                                    <span className="font-mono font-bold text-[#17A2B8] text-sm">{((formData.widthCm * formData.heightCm * formData.depthCm) / 1000).toFixed(2)} L</span>
                                 </div>
                             </div>
                         </div>
@@ -297,7 +297,7 @@ const ProductDrawer = ({ isOpen, onClose, product, onSave, onDeactivate }) => {
                         </button>
                         <button
                             onClick={() => onSave(formData)}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-2 rounded-lg shadow-lg shadow-indigo-200 flex items-center gap-2 text-sm font-bold transition-all transform hover:scale-[1.02]"
+                            className="bg-[#1B4F72] hover:bg-[#164060] text-white px-8 py-2 rounded-lg shadow-lg shadow-[#1B4F72]/20 flex items-center gap-2 text-sm font-bold transition-all transform hover:scale-[1.02]"
                         >
                             <FaSave /> Save Product
                         </button>
