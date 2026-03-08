@@ -4,7 +4,7 @@ import axios from 'axios';
 const ML_API_BASE = 'http://localhost:8003';
 
 // Node.js Backend (Auth, Users, Stores) - port 3000
-const NODE_API_BASE = 'http://localhost:3000/api';
+const NODE_API_BASE = 'http://localhost:3001/api';
 
 // ML Service axios instance
 const mlClient = axios.create({
