@@ -8,5 +8,4 @@ coverage
 .idea
 .vscode
 *.log
-dist-electron
-release
+*.pkl

@@ -1,6 +1,6 @@
 import { ForecastChart } from "@/components/forecasting/forecast-chart"
 import { WeatherImpact } from "@/components/forecasting/weather-impact"
-import { ProductForecasts } from "@/components/forecasting/product-forecasts"
+
 import { ExternalFactors } from "@/components/forecasting/external-factors"
 import { AgentInventoryForecast } from "@/components/forecasting/agent-inventory-forecast"
 import { LowStockAlerts } from "@/components/forecasting/low-stock-alerts"
@@ -35,10 +35,7 @@ export default function Forecasting() {
                 </div>
             </div>
 
-            {/* Product Forecasts Table - Full width at bottom */}
-            <div>
-                <ProductForecasts />
-            </div>
+
         </div>
     )
 }
