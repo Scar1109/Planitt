@@ -467,6 +467,37 @@ ${actionDetails}
         }
     },
 
+    // Get AI-powered optimal discount for a near-expiry product
+    async getSmartDiscount({ sku, currentStock, daysToExpiry, basePrice, costPrice }) {
+        try {
+            const response = await nodeClient.post('/wastage/smart-discount', {
+                sku,
+                currentStock,
+                daysToExpiry,
+                basePrice,
+                costPrice,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Smart discount error:', error);
+            throw error;
+        }
+    },
+
+    // Batch create AI-recommended promotions for near-expiry items
+    async autoPromoteRiskItems(items, storeId = 'STORE-001') {
+        try {
+            const response = await nodeClient.post('/wastage/auto-promote', {
+                items,
+                storeId,
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Auto-promote error:', error);
+            throw error;
+        }
+    },
+
     // Auth endpoints are handled by AuthContext using services/api.js
 };
 
