@@ -131,7 +131,7 @@ const SmartDiscountBadge = ({ item, smartDiscounts, onFetchDiscount }) => {
         return (
             <button
                 onClick={() => onFetchDiscount(item)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 font-medium text-xs border border-indigo-100 hover:shadow-md hover:scale-105 transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#17A2B8]/10 to-[#17A2B8]/10 text-[#1B4F72] font-medium text-xs border border-[#17A2B8]/20 hover:shadow-md hover:scale-105 transition-all cursor-pointer"
             >
                 <FaRobot size={10} />
                 Get Smart Price
@@ -435,7 +435,7 @@ const WastagePrevention = () => {
                 {/* Expiry Timeline */}
                 <div className="lg:col-span-1 bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
                     <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <FaChartLine className="text-indigo-500" size={12} />
+                        <FaChartLine className="text-[#17A2B8]" size={12} />
                         Expiry Timeline
                     </h3>
                     {expiryTimeline.length > 0 ? (
@@ -448,7 +448,7 @@ const WastagePrevention = () => {
                 {/* Category Breakdown */}
                 <div className="lg:col-span-1 bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
                     <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <FaBoxes className="text-amber-500" size={12} />
+                        <FaBoxes className="text-[#17A2B8]" size={12} />
                         Risk by Category
                     </h3>
                     {categoryBreakdown.length > 0 ? (
@@ -492,7 +492,7 @@ const WastagePrevention = () => {
                         <tab.icon size={12} />
                         {tab.label}
                         {tab.count !== null && tab.count > 0 && (
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeTab === tab.key ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-200 text-slate-500'}`}>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeTab === tab.key ? 'bg-[#17A2B8]/10 text-[#1B4F72]' : 'bg-slate-200 text-slate-500'}`}>
                                 {tab.count}
                             </span>
                         )}
@@ -523,7 +523,7 @@ const WastagePrevention = () => {
                                     placeholder="Search by name, SKU or category..."
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
-                                    className="w-full pl-8 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition-all"
+                                    className="w-full pl-8 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] transition-all"
                                 />
                             </div>
 
@@ -532,7 +532,7 @@ const WastagePrevention = () => {
                                 <select
                                     value={filterRisk}
                                     onChange={e => setFilterRisk(e.target.value)}
-                                    className="pl-8 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 appearance-none cursor-pointer"
+                                    className="pl-8 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#17A2B8] appearance-none cursor-pointer"
                                 >
                                     {['All', 'Critical', 'High', 'Medium', 'Low'].map(r => <option key={r}>{r}</option>)}
                                 </select>
@@ -581,7 +581,7 @@ const WastagePrevention = () => {
                                     <th className="px-4 py-3 w-10">
                                         <input
                                             type="checkbox"
-                                            className="rounded border-slate-300 accent-indigo-600 cursor-pointer"
+                                            className="rounded border-slate-300 accent-[#1B4F72] cursor-pointer"
                                             checked={selectedItems.size > 0 && filteredItems.every(it => selectedItems.has(it.id))}
                                             onChange={(e) => {
                                                 if (e.target.checked) {
@@ -619,7 +619,7 @@ const WastagePrevention = () => {
                                                     type="checkbox"
                                                     checked={isSelected}
                                                     onChange={() => toggleSelect(item.id)}
-                                                    className="rounded border-slate-300 accent-indigo-600 cursor-pointer"
+                                                    className="rounded border-slate-300 accent-[#1B4F72] cursor-pointer"
                                                 />
                                             </td>
                                             <td className="px-4 py-4 max-w-[200px]">
@@ -699,7 +699,7 @@ const WastagePrevention = () => {
                             <div className="flex items-start justify-between">
                                 <div>
                                     <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                                        <FaBoxes className="text-indigo-500" />
+                                        <FaBoxes className="text-[#17A2B8]" />
                                         Smart Bundle Suggestion
                                     </h3>
                                     <p className="text-xs text-slate-400 mt-1">Pair these near-expiry items for better sell-through</p>

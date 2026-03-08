@@ -132,7 +132,7 @@ export function AgentInventoryForecast() {
             case 'monitor':
                 return {
                     variant: "outline",
-                    className: "bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 border-amber-200 shadow-sm",
+                    className: "bg-gradient-to-r from-[#17A2B8]/10 to-[#1B4F72]/10 text-[#1B4F72] border-[#17A2B8]/20 shadow-sm",
                     icon: AlertTriangle,
                     label: "⚡ WATCH"
                 }
@@ -153,7 +153,7 @@ export function AgentInventoryForecast() {
             default:
                 return {
                     variant: "outline",
-                    className: "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-200 shadow-sm",
+                    className: "bg-gradient-to-r from-blue-50 to-[#17A2B8]/10 text-blue-700 border-blue-200 shadow-sm",
                     icon: Bot,
                     label: "ℹ️ INFO"
                 }
@@ -173,8 +173,8 @@ export function AgentInventoryForecast() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="space-y-1">
                         <CardTitle className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
-                                <Bot className="h-4 w-4 text-indigo-600" />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#17A2B8]/10">
+                                <Bot className="h-4 w-4 text-[#1B4F72]" />
                             </div>
                             <span className="text-slate-800">AI Agent Inventory Forecast</span>
                             {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-400" />}
@@ -189,14 +189,14 @@ export function AgentInventoryForecast() {
                             <button
                                 type="button"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 min-w-[280px] max-w-[320px] h-10 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
+                                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-[#17A2B8] focus:ring-offset-2 min-w-[280px] max-w-[320px] h-10 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
                             >
                                 <span className="truncate text-left flex-1 font-medium text-slate-700">
                                     {selectedProductData
                                         ? `${selectedProductData.productName || selectedProductData.sku}${selectedProductData.unitSize ? ` (${selectedProductData.unitSize})` : ''}`
                                         : "Select Product..."}
                                 </span>
-                                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-indigo-600' : ''}`} />
+                                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-[#1B4F72]' : ''}`} />
                             </button>
 
                             {isDropdownOpen && (
@@ -210,7 +210,7 @@ export function AgentInventoryForecast() {
                                                 placeholder="Search by SKU, name, or category..."
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="pl-9 pr-9 h-10 text-sm rounded-lg border-slate-200 bg-white focus:ring-indigo-500 transition-colors"
+                                                className="pl-9 pr-9 h-10 text-sm rounded-lg border-slate-200 bg-white focus:ring-[#17A2B8] transition-colors"
                                                 autoFocus
                                             />
                                             {searchQuery && (
@@ -237,19 +237,19 @@ export function AgentInventoryForecast() {
                                                             setSearchQuery("")
                                                         }}
                                                         className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group ${selectedProduct === p.sku
-                                                            ? 'bg-indigo-50 border border-indigo-100'
+                                                            ? 'bg-[#17A2B8]/10 border border-[#17A2B8]/20'
                                                             : 'hover:bg-slate-50 border border-transparent'
                                                             }`}
                                                     >
                                                         <div className="flex items-start gap-3">
                                                             <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${selectedProduct === p.sku
-                                                                ? 'bg-indigo-600 text-white'
-                                                                : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600'
+                                                                ? 'bg-[#1B4F72] text-white'
+                                                                : 'bg-slate-100 text-slate-500 group-hover:bg-[#17A2B8]/10 group-hover:text-[#1B4F72]'
                                                                 } transition-colors`}>
                                                                 {(p.productName || p.sku).charAt(0).toUpperCase()}
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <p className={`font-medium truncate ${selectedProduct === p.sku ? 'text-indigo-700' : 'text-slate-700'}`}>
+                                                                <p className={`font-medium truncate ${selectedProduct === p.sku ? 'text-[#1B4F72]' : 'text-slate-700'}`}>
                                                                     {p.productName || p.sku}
                                                                 </p>
                                                                 <div className="flex items-center gap-2 mt-0.5">
@@ -269,7 +269,7 @@ export function AgentInventoryForecast() {
                                                                 </div>
                                                             </div>
                                                             {selectedProduct === p.sku && (
-                                                                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center">
+                                                                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[#1B4F72] flex items-center justify-center">
                                                                     <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                                                     </svg>
@@ -337,8 +337,8 @@ export function AgentInventoryForecast() {
                     <div className="h-[320px] flex items-center justify-center">
                         <div className="flex flex-col items-center gap-3">
                             <div className="relative">
-                                <div className="h-12 w-12 rounded-full border-2 border-indigo-100" />
-                                <Loader2 className="h-12 w-12 absolute inset-0 animate-spin text-indigo-600" />
+                                <div className="h-12 w-12 rounded-full border-2 border-[#17A2B8]/20" />
+                                <Loader2 className="h-12 w-12 absolute inset-0 animate-spin text-[#1B4F72]" />
                             </div>
                             <p className="text-sm text-slate-500">
                                 Agent processing forecast...
@@ -354,14 +354,14 @@ export function AgentInventoryForecast() {
                             <div className={`mb-6 p-4 rounded-xl border ${forecastData.data?.insights?.urgency === 'high'
                                 ? 'bg-red-50 border-red-200'
                                 : forecastData.data?.insights?.urgency === 'medium'
-                                    ? 'bg-amber-50 border-amber-200'
+                                    ? 'bg-[#17A2B8]/10 border-[#17A2B8]/20'
                                     : 'bg-emerald-50 border-emerald-200'
                                 }`}>
                                 <div className="flex items-start gap-3">
                                     <Sparkles className={`h-5 w-5 mt-0.5 flex-shrink-0 ${forecastData.data?.insights?.urgency === 'high'
                                         ? 'text-red-600'
                                         : forecastData.data?.insights?.urgency === 'medium'
-                                            ? 'text-amber-600'
+                                            ? 'text-[#17A2B8]'
                                             : 'text-emerald-600'
                                         }`} />
                                     <div className="flex-1 space-y-3">
@@ -429,7 +429,7 @@ export function AgentInventoryForecast() {
                                         {forecastData.data?.analysis_reasons && forecastData.data.analysis_reasons.length > 0 && (
                                             <div className="pt-3 border-t border-slate-200/50 space-y-2">
                                                 <h4 className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
-                                                    <Search className="h-3.5 w-3.5 text-indigo-500" />
+                                                    <Search className="h-3.5 w-3.5 text-[#17A2B8]" />
                                                     Key Influencing Factors
                                                 </h4>
                                                 <div className="grid gap-2 sm:grid-cols-2">
@@ -475,8 +475,8 @@ export function AgentInventoryForecast() {
                                     <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                                         <defs>
                                             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.8} />
-                                                <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.3} />
+                                                <stop offset="5%" stopColor="#17A2B8" stopOpacity={0.8} />
+                                                <stop offset="95%" stopColor="#17A2B8" stopOpacity={0.3} />
                                             </linearGradient>
                                         </defs>
                                         <CartesianGrid
@@ -516,9 +516,9 @@ export function AgentInventoryForecast() {
                                         <Line
                                             type="monotone"
                                             dataKey="units"
-                                            stroke="#4f46e5"
+                                            stroke="#17A2B8"
                                             strokeWidth={2}
-                                            dot={{ fill: "#4f46e5", r: 4 }}
+                                            dot={{ fill: "#17A2B8", r: 4 }}
                                             activeDot={{ r: 6 }}
                                         />
                                     </ComposedChart>
@@ -531,7 +531,7 @@ export function AgentInventoryForecast() {
                             <div className="mt-4 pt-4 border-t border-slate-100">
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm text-slate-500">Recommended Quantity:</span>
-                                    <span className="font-semibold text-lg text-indigo-600">
+                                    <span className="font-semibold text-lg text-[#1B4F72]">
                                         {forecastData.data.quantity} units
                                     </span>
                                 </div>

@@ -251,18 +251,18 @@ const RunsAndEvaluation = () => {
 
                                             {/* Constraint Violations */}
                                             {run.constraintViolations?.length > 0 && (
-                                                <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
-                                                    <p className="text-xs font-bold text-amber-700 flex items-center gap-1 mb-2">
+                                                <div className="bg-[#17A2B8]/10 rounded-lg p-3 border border-[#17A2B8]/20">
+                                                    <p className="text-xs font-bold text-[#1B4F72] flex items-center gap-1 mb-2">
                                                         <FaExclamationTriangle /> {run.constraintViolations.length} Constraint Violation{run.constraintViolations.length > 1 ? 's' : ''}
                                                     </p>
                                                     <div className="space-y-1">
                                                         {run.constraintViolations.slice(0, 5).map((v, i) => (
-                                                            <p key={i} className="text-xs text-amber-600">
-                                                                <span className="font-mono bg-amber-100 px-1 rounded">{v.ruleType}</span> {v.message}
+                                                            <p key={i} className="text-xs text-[#17A2B8]">
+                                                                <span className="font-mono bg-[#17A2B8]/10 px-1 rounded">{v.ruleType}</span> {v.message}
                                                             </p>
                                                         ))}
                                                         {run.constraintViolations.length > 5 && (
-                                                            <p className="text-xs text-amber-500">...and {run.constraintViolations.length - 5} more</p>
+                                                            <p className="text-xs text-[#17A2B8]">...and {run.constraintViolations.length - 5} more</p>
                                                         )}
                                                     </div>
                                                 </div>

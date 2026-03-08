@@ -73,8 +73,8 @@ export function ForecastAccuracyCard() {
                         change: hasData ? (confidence >= 60 ? "Real-time" : "Calibrating") : "No Model",
                         trend: hasData && confidence >= 50 ? "up" : "neutral",
                         icon: Brain,
-                        color: hasData && confidence >= 50 ? "text-indigo-600" : "text-slate-400",
-                        bgColor: hasData && confidence >= 50 ? "bg-indigo-50" : "bg-slate-100",
+                        color: hasData && confidence >= 50 ? "text-[#1B4F72]" : "text-slate-400",
+                        bgColor: hasData && confidence >= 50 ? "bg-[#17A2B8]/10" : "bg-slate-100",
                     },
                     {
                         label: "Prediction Horizon",
@@ -82,8 +82,8 @@ export function ForecastAccuracyCard() {
                         change: "Optimal",
                         trend: "neutral",
                         icon: BarChart3,
-                        color: "text-amber-600",
-                        bgColor: "bg-amber-50",
+                        color: "text-[#17A2B8]",
+                        bgColor: "bg-[#17A2B8]/10",
                     },
                 ]
 
@@ -131,7 +131,7 @@ export function ForecastAccuracyCard() {
             {metrics.map((metric) => (
                 <div
                     key={metric.label}
-                    className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:border-indigo-100 transition-colors duration-200"
+                    className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:border-[#17A2B8]/20 transition-colors duration-200"
                 >
                     <div className="flex justify-between items-start mb-4">
                         <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${metric.bgColor.replace('bg-', 'bg-').replace('/10', '/10')}`}>

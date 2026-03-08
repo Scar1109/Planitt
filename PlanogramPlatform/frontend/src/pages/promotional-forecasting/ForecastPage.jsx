@@ -285,7 +285,7 @@ const ForecastPage = () => {
                                     type="button"
                                     onClick={handleFindOptimal}
                                     disabled={loading || isFindingOptimal}
-                                    className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-medium py-2.5 rounded-lg transition-all shadow-md shadow-amber-200 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+                                    className="flex-1 bg-[#17A2B8] hover:bg-[#17A2B8]/10 text-white font-medium py-2.5 rounded-lg transition-all shadow-md shadow-[#17A2B8]/20 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
                                 >
                                     {isFindingOptimal ? <FaSpinner className="animate-spin mr-2" /> : <FaSearchDollar className="mr-2" />}
                                     Find Optimal
@@ -426,11 +426,11 @@ const ForecastPage = () => {
                                 {result.risks && result.risks.length > 0 && (
                                     <div className="mt-6">
                                         <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3 flex items-center">
-                                            <FaExclamationTriangle className="text-amber-500 mr-2" />
+                                            <FaExclamationTriangle className="text-[#17A2B8] mr-2" />
                                             Risk Assessment
                                         </h3>
                                         <div className="space-y-2">
-                                            <div className="bg-amber-50 text-amber-800 p-3 rounded-md text-sm border-l-4 border-amber-400">
+                                            <div className="bg-[#17A2B8]/10 text-[#1B4F72] p-3 rounded-md text-sm border-l-4 border-[#17A2B8]/20">
                                                 {JSON.stringify(result.risks)}
                                             </div>
                                         </div>

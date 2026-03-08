@@ -80,9 +80,9 @@ export function AdaptiveLearning() {
     const getOutcomeColor = (type) => {
         switch (type) {
             case 'accurate': return 'bg-emerald-500'
-            case 'overstock': return 'bg-amber-500'
+            case 'overstock': return 'bg-[#17A2B8]'
             case 'stockout': return 'bg-red-500'
-            case 'waste_risk': return 'bg-purple-500'
+            case 'waste_risk': return 'bg-[#1B4F72]'
             default: return 'bg-slate-400'
         }
     }
@@ -90,9 +90,9 @@ export function AdaptiveLearning() {
     const getOutcomeIcon = (type) => {
         switch (type) {
             case 'accurate': return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-            case 'overstock': return <TrendingUp className="h-3.5 w-3.5 text-amber-600" />
+            case 'overstock': return <TrendingUp className="h-3.5 w-3.5 text-[#17A2B8]" />
             case 'stockout': return <AlertTriangle className="h-3.5 w-3.5 text-red-600" />
-            case 'waste_risk': return <TrendingDown className="h-3.5 w-3.5 text-purple-600" />
+            case 'waste_risk': return <TrendingDown className="h-3.5 w-3.5 text-[#1B4F72]" />
             default: return null
         }
     }
@@ -121,7 +121,7 @@ export function AdaptiveLearning() {
 
     return (
         <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden">
-            <CardHeader className="pb-3 border-b border-slate-100 bg-gradient-to-r from-violet-50/50 to-indigo-50/50">
+            <CardHeader className="pb-3 border-b border-slate-100 bg-gradient-to-r from-violet-50/50 to-[#17A2B8]/10">
                 <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2.5 text-slate-800">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-100">
@@ -140,7 +140,7 @@ export function AdaptiveLearning() {
                 <div className="pt-0">
                     <div className="flex items-center justify-between mb-3 px-1">
                         <p className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                            <Zap className="h-4 w-4 text-amber-500" />
+                            <Zap className="h-4 w-4 text-[#17A2B8]" />
                             Autonomous Model Retraining
                         </p>
                         <div className="flex items-center gap-1.5">
@@ -163,7 +163,7 @@ export function AdaptiveLearning() {
                             </div>
                             <div className="flex items-center justify-between py-1">
                                 <span className="text-[11px] text-slate-600 font-medium">Model Calibration</span>
-                                <span className="text-[10px] font-bold text-amber-600">Self-Optimizing</span>
+                                <span className="text-[10px] font-bold text-[#17A2B8]">Self-Optimizing</span>
                             </div>
                         </div>
 

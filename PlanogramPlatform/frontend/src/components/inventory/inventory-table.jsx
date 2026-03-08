@@ -13,14 +13,14 @@ import api from "@/api/client"
 
 const statusConfig = {
     healthy: { label: "Healthy", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300" },
-    low: { label: "Low", color: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300" },
+    low: { label: "Low", color: "bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]" },
     critical: { label: "Critical", color: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300" },
     overstock: { label: "Overstock", color: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300" },
 }
 
 const velocityConfig = {
     fast: { label: "Fast", color: "text-emerald-600" },
-    medium: { label: "Medium", color: "text-amber-600" },
+    medium: { label: "Medium", color: "text-[#17A2B8]" },
     slow: { label: "Slow", color: "text-muted-foreground" },
 }
 

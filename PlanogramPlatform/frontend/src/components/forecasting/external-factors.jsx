@@ -9,7 +9,7 @@ import {
 import { api } from "@/api/client"
 
 const typeConfig = {
-    poya: { icon: PartyPopper, color: "bg-purple-50 text-purple-600", label: "Poya Day" },
+    poya: { icon: PartyPopper, color: "bg-slate-50 text-[#1B4F72]", label: "Poya Day" },
     holiday: { icon: PartyPopper, color: "bg-red-50 text-red-600", label: "Holiday" },
     public: { icon: Calendar, color: "bg-blue-50 text-blue-600", label: "Public Holiday" },
     weekend: { icon: Calendar, color: "bg-emerald-50 text-emerald-600", label: "Weekend" },
@@ -122,7 +122,7 @@ export function ExternalFactors() {
         return (
             <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden h-[500px]">
                 <CardContent className="flex items-center justify-center h-full">
-                    <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                    <Loader2 className="h-6 w-6 animate-spin text-[#1B4F72]" />
                     <span className="ml-2 text-slate-500 text-sm">Analyzing external factors...</span>
                 </CardContent>
             </Card>
@@ -133,7 +133,7 @@ export function ExternalFactors() {
         return (
             <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden h-[500px]">
                 <CardContent className="flex flex-col items-center justify-center h-full">
-                    <AlertTriangle className="h-12 w-12 text-amber-400 mb-3" />
+                    <AlertTriangle className="h-12 w-12 text-[#1B4F72] mb-3" />
                     <p className="text-slate-600 font-medium">Unable to load analysis</p>
                     <p className="text-sm text-slate-400 mt-1">{error}</p>
                 </CardContent>
@@ -148,8 +148,8 @@ export function ExternalFactors() {
             <CardHeader className="pb-3 border-b border-slate-100 bg-white">
                 <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2.5 text-slate-800">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
-                            <TrendingUp className="h-4 w-4 text-indigo-600" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#17A2B8]/10">
+                            <TrendingUp className="h-4 w-4 text-[#1B4F72]" />
                         </div>
                         External Factors Analysis
                     </CardTitle>
@@ -166,21 +166,21 @@ export function ExternalFactors() {
                     <TabsList className="grid w-full grid-cols-3 mb-4 bg-slate-100 p-1 rounded-lg">
                         <TabsTrigger
                             value="future"
-                            className="data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm rounded-md text-sm"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#1B4F72] data-[state=active]:shadow-sm rounded-md text-sm"
                         >
                             <Rocket className="h-3.5 w-3.5 mr-1.5" />
                             Future
                         </TabsTrigger>
                         <TabsTrigger
                             value="past"
-                            className="data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm rounded-md text-sm"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#1B4F72] data-[state=active]:shadow-sm rounded-md text-sm"
                         >
                             <History className="h-3.5 w-3.5 mr-1.5" />
                             Past Impact
                         </TabsTrigger>
                         <TabsTrigger
                             value="recommendations"
-                            className="data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm rounded-md text-sm"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#1B4F72] data-[state=active]:shadow-sm rounded-md text-sm"
                         >
                             <Lightbulb className="h-3.5 w-3.5 mr-1.5" />
                             Actions
@@ -205,7 +205,7 @@ export function ExternalFactors() {
                                         className={`rounded-lg border p-3 transition-colors ${event.urgency === 'high'
                                             ? 'border-red-200 bg-red-50/30'
                                             : event.urgency === 'medium'
-                                                ? 'border-amber-200 bg-amber-50/30'
+                                                ? 'border-[#17A2B8]/20 bg-[#17A2B8]/10'
                                                 : 'border-slate-100 hover:bg-slate-50/50'
                                             }`}
                                     >
@@ -225,7 +225,7 @@ export function ExternalFactors() {
                                                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${event.daysUntil <= 3
                                                             ? "bg-red-50 text-red-700 border-red-200"
                                                             : event.daysUntil <= 7
-                                                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                                                ? "bg-[#17A2B8]/10 text-[#1B4F72] border-[#17A2B8]/20"
                                                                 : "bg-slate-50 text-slate-500 border-slate-200"
                                                             }`}>
                                                             {event.daysUntil === 0 ? "Today" : event.daysUntil === 1 ? "Tomorrow" : `${event.daysUntil} days`}
@@ -300,9 +300,9 @@ export function ExternalFactors() {
                                         className="flex items-center justify-between p-2 rounded-lg border border-slate-100 bg-white"
                                     >
                                         <div className="flex items-center gap-2">
-                                            {pattern.icon === 'sun' && <Sun className="h-4 w-4 text-amber-500" />}
+                                            {pattern.icon === 'sun' && <Sun className="h-4 w-4 text-[#17A2B8]" />}
                                             {pattern.icon === 'cloud-rain' && <CloudRain className="h-4 w-4 text-blue-500" />}
-                                            {pattern.icon === 'calendar' && <Calendar className="h-4 w-4 text-indigo-500" />}
+                                            {pattern.icon === 'calendar' && <Calendar className="h-4 w-4 text-[#17A2B8]" />}
                                             <div>
                                                 <p className="text-sm font-medium text-slate-700">{pattern.factor}</p>
                                                 <p className="text-[10px] text-slate-400">{pattern.description}</p>
@@ -363,7 +363,7 @@ export function ExternalFactors() {
                                 className={`rounded-lg border p-3 ${rec.priority === 'high'
                                     ? 'border-red-200 bg-red-50/50'
                                     : rec.priority === 'medium'
-                                        ? 'border-amber-200 bg-amber-50/50'
+                                        ? 'border-[#17A2B8]/20 bg-[#17A2B8]/10'
                                         : 'border-slate-100 bg-slate-50/30'
                                     }`}
                             >
@@ -396,7 +396,7 @@ export function ExternalFactors() {
                                         <p className="text-[10px] text-slate-500">Avg Stock</p>
                                     </div>
                                     <div className="text-center p-2 rounded-lg bg-slate-50 border border-slate-100">
-                                        <p className="text-lg font-bold text-amber-600">{inventorySummary.wastePercentage}%</p>
+                                        <p className="text-lg font-bold text-[#17A2B8]">{inventorySummary.wastePercentage}%</p>
                                         <p className="text-[10px] text-slate-500">Waste</p>
                                     </div>
                                     <div className="text-center p-2 rounded-lg bg-slate-50 border border-slate-100">

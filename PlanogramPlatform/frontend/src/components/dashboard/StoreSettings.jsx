@@ -151,14 +151,14 @@ const StoreSettings = () => {
     }
 
     if (fetching) {
-        return <div className="p-12 text-center"><FaSpinner className="animate-spin h-8 w-8 text-indigo-500 mx-auto" /></div>;
+        return <div className="p-12 text-center"><FaSpinner className="animate-spin h-8 w-8 text-[#17A2B8] mx-auto" /></div>;
     }
 
     return (
         <div className="max-w-4xl mx-auto p-6">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                    <FaStore className="text-indigo-600" /> Store Settings
+                    <FaStore className="text-[#1B4F72]" /> Store Settings
                 </h1>
                 <p className="text-slate-500 mt-1">Manage your store's public profile and location details.</p>
             </div>
@@ -181,7 +181,7 @@ const StoreSettings = () => {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#17A2B8]/10 focus:border-[#17A2B8] outline-none transition-all"
                                     placeholder="Planitt Flagship Store"
                                 />
                                 <FaStore className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -196,7 +196,7 @@ const StoreSettings = () => {
                                     name="address"
                                     value={formData.address}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#17A2B8]/10 focus:border-[#17A2B8] outline-none transition-all"
                                     placeholder="123 Retail Ave, Commerce City"
                                 />
                                 <FaBuilding className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -211,7 +211,7 @@ const StoreSettings = () => {
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#17A2B8]/10 focus:border-[#17A2B8] outline-none transition-all"
                                     placeholder="+1 (555) 000-0000"
                                 />
                                 <FaPhone className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -220,7 +220,7 @@ const StoreSettings = () => {
 
                         <div className="col-span-2 border-t border-slate-100 pt-6 mt-2">
                             <h4 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                                <FaMapMarkerAlt className="text-indigo-500" /> Location Details
+                                <FaMapMarkerAlt className="text-[#17A2B8]" /> Location Details
                             </h4>
 
                             {/* Inlined Location Search */}
@@ -232,11 +232,11 @@ const StoreSettings = () => {
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder="Search for city or address..."
-                                        className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                        className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] outline-none transition-all"
                                     />
                                     <FaSearch className="absolute left-3.5 top-3 text-slate-400" />
                                     {searching && (
-                                        <FaSpinner className="absolute right-3.5 top-3 text-indigo-500 animate-spin" />
+                                        <FaSpinner className="absolute right-3.5 top-3 text-[#17A2B8] animate-spin" />
                                     )}
                                 </div>
 
@@ -246,7 +246,7 @@ const StoreSettings = () => {
                                             <div
                                                 key={place.place_id}
                                                 onClick={() => handleLocationSelect(place)}
-                                                className="px-4 py-2 hover:bg-indigo-50 cursor-pointer flex items-start gap-2 border-b border-slate-50 last:border-0"
+                                                className="px-4 py-2 hover:bg-[#17A2B8]/10 cursor-pointer flex items-start gap-2 border-b border-slate-50 last:border-0"
                                             >
                                                 <FaMapMarkerAlt className="mt-1 text-slate-400 flex-shrink-0" />
                                                 <span className="text-sm text-slate-700">{place.display_name}</span>

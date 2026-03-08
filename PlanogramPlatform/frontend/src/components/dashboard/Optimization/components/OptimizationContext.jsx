@@ -64,12 +64,12 @@ const OptimizationContext = ({ stats }) => {
                     </div>
 
                     {stats.issues > 0 ? (
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-amber-100 bg-amber-50/50">
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-[#17A2B8]/20 bg-[#17A2B8]/10">
                             <div className="flex items-center gap-3">
-                                <FaExclamationTriangle className="text-amber-500" />
+                                <FaExclamationTriangle className="text-[#17A2B8]" />
                                 <span className="text-sm font-medium text-slate-700">Product dims missing</span>
                             </div>
-                            <span className="text-xs font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{stats.issues}</span>
+                            <span className="text-xs font-bold bg-[#17A2B8]/10 text-[#1B4F72] px-2 py-1 rounded-full">{stats.issues}</span>
                         </div>
                     ) : (
                         <div className="flex items-center justify-between p-3 rounded-lg border border-green-100 bg-green-50/50">

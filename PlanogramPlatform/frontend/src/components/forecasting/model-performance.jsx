@@ -133,8 +133,8 @@ export function ModelPerformance() {
         <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden">
             <CardHeader className="pb-3 border-b border-slate-100 bg-white">
                 <CardTitle className="flex items-center gap-2.5 text-slate-800">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
-                        <Brain className="h-4 w-4 text-indigo-600" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#17A2B8]/10">
+                        <Brain className="h-4 w-4 text-[#1B4F72]" />
                     </div>
                     ML Model Status
                 </CardTitle>

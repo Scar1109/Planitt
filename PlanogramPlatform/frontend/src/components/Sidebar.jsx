@@ -56,8 +56,7 @@ const Sidebar = () => {
             subItems: [
                 { name: 'System Forensics', path: '/dashboard/compliance/analysis' },
                 { name: 'Compliance Intelligence', path: '/dashboard/compliance', end: true },
-                { name: 'Compliance History', path: '/dashboard/compliance/history' },
-                { name: 'Shelf Scan Audit', path: '/dashboard/compliance/shelf-scan' }
+                { name: 'Compliance History', path: '/dashboard/compliance/history' }
             ]
         },
         {

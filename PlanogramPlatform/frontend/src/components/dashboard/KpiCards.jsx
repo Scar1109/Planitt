@@ -15,7 +15,7 @@ function KpiCard({ title, value, change, changeLabel, icon, trend, color }) {
     const colorClasses = {
         blue: "bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400",
         green: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400",
-        amber: "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400",
+        amber: "bg-[#17A2B8]/10 text-[#17A2B8] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
         red: "bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400",
     }
 

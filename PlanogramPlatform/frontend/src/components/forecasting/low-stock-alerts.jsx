@@ -69,7 +69,7 @@ export function LowStockAlerts() {
                 }
             case 'medium':
                 return {
-                    className: "bg-amber-100 text-amber-700 border-amber-200",
+                    className: "bg-[#17A2B8]/10 text-[#1B4F72] border-[#17A2B8]/20",
                     icon: Clock,
                     label: "MEDIUM"
                 }
@@ -155,16 +155,16 @@ export function LowStockAlerts() {
                                         ? 'bg-red-50/50 border-red-100'
                                         : alert.alertLevel === 'high'
                                             ? 'bg-orange-50/50 border-orange-100'
-                                            : 'bg-amber-50/50 border-amber-100'
+                                            : 'bg-[#17A2B8]/10 border-[#17A2B8]/20'
                                         }`}
                                 >
                                     <div className="flex items-center justify-between gap-2">
                                         <div className="flex items-center gap-2 flex-1 min-w-0">
                                             <div className={`flex-shrink-0 p-1.5 rounded-md ${alert.alertLevel === 'critical' ? 'bg-red-100' :
-                                                alert.alertLevel === 'high' ? 'bg-orange-100' : 'bg-amber-100'
+                                                alert.alertLevel === 'high' ? 'bg-orange-100' : 'bg-[#17A2B8]/10'
                                                 }`}>
                                                 <BadgeIcon className={`h-3.5 w-3.5 ${alert.alertLevel === 'critical' ? 'text-red-600' :
-                                                    alert.alertLevel === 'high' ? 'text-orange-600' : 'text-amber-600'
+                                                    alert.alertLevel === 'high' ? 'text-orange-600' : 'text-[#17A2B8]'
                                                     }`} />
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -180,7 +180,7 @@ export function LowStockAlerts() {
                                                     <span>{alert.avgDailyDemand}/day</span>
                                                     <span>•</span>
                                                     <span className={`font-medium ${alert.alertLevel === 'critical' ? 'text-red-600' :
-                                                        alert.alertLevel === 'high' ? 'text-orange-600' : 'text-amber-600'
+                                                        alert.alertLevel === 'high' ? 'text-orange-600' : 'text-[#17A2B8]'
                                                         }`}>
                                                         ~{alert.daysOfStock}d left
                                                     </span>
@@ -195,7 +195,7 @@ export function LowStockAlerts() {
                                                     {alert.demandTrend && alert.demandTrend !== 0 ? (
                                                         <>
                                                             <span>•</span>
-                                                            <span className={`font-semibold ${alert.demandTrend > 0 ? "text-emerald-500" : "text-amber-500"}`}>
+                                                            <span className={`font-semibold ${alert.demandTrend > 0 ? "text-emerald-500" : "text-[#17A2B8]"}`}>
                                                                 {alert.demandTrend > 0 ? "↑" : "↓"} {(Math.abs(alert.demandTrend) * 100).toFixed(0)}% Trend
                                                             </span>
                                                         </>
@@ -205,14 +205,14 @@ export function LowStockAlerts() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <div className={`text-base font-bold ${alert.alertLevel === 'critical' ? 'text-red-600' :
-                                                alert.alertLevel === 'high' ? 'text-orange-600' : 'text-amber-600'
+                                                alert.alertLevel === 'high' ? 'text-orange-600' : 'text-[#17A2B8]'
                                                 }`}>
                                                 {alert.currentStock}
                                             </div>
                                             {alert.suggestedOrder > 0 && (
-                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-indigo-50 border border-indigo-100 text-[10px]">
-                                                    <ShoppingCart className="h-2.5 w-2.5 text-indigo-600" />
-                                                    <span className="font-semibold text-indigo-600">+{alert.suggestedOrder}</span>
+                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#17A2B8]/10 border border-[#17A2B8]/20 text-[10px]">
+                                                    <ShoppingCart className="h-2.5 w-2.5 text-[#1B4F72]" />
+                                                    <span className="font-semibold text-[#1B4F72]">+{alert.suggestedOrder}</span>
                                                 </div>
                                             )}
                                         </div>

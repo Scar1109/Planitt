@@ -39,7 +39,7 @@ const recommendationConfig = {
     },
     decrease: {
         label: "Reduce",
-        color: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
+        color: "bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
         icon: TrendingDown,
     },
     optimal: {
@@ -74,7 +74,7 @@ export function ShelfSpaceAnalysis() {
                                 <div className="space-y-1">
                                     <div className="flex items-center justify-between text-xs">
                                         <span className="text-muted-foreground">Utilization</span>
-                                        <span className={cn("font-medium", shelf.utilization > 90 ? "text-amber-600" : "text-foreground")}>
+                                        <span className={cn("font-medium", shelf.utilization > 90 ? "text-[#17A2B8]" : "text-foreground")}>
                                             {shelf.utilization}%
                                         </span>
                                     </div>

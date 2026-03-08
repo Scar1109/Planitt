@@ -91,7 +91,7 @@ const OptimizationExecutionModal = ({ isOpen, status, onClose, result, logs, onV
 
                             {/* Constraint Status */}
                             {result?.constraintViolations?.length > 0 ? (
-                                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-xs text-amber-700">
+                                <div className="bg-[#17A2B8]/10 border border-[#17A2B8]/20 rounded-xl p-3 mb-4 text-xs text-[#1B4F72]">
                                     ⚠️ {result.constraintViolations.length} soft constraint violation{result.constraintViolations.length > 1 ? 's' : ''}
                                 </div>
                             ) : (

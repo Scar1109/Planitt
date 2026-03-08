@@ -160,10 +160,10 @@ const Constraints = () => {
         adjacency_required: <FaLink className="text-[#17A2B8]" />,
         adjacency_forbidden: <FaBan className="text-red-500" />,
         min_facings_override: <FaSortAmountUp className="text-[#1B4F72]" />,
-        max_facings_override: <FaSortAmountDown className="text-amber-600" />,
+        max_facings_override: <FaSortAmountDown className="text-[#17A2B8]" />,
         category_shelf_affinity: <FaLayerGroup className="text-[#17A2B8]" />,
         brand_block: <FaTags className="text-[#1B4F72]" />,
-        max_shelf_share: <FaChartPie className="text-amber-600" />
+        max_shelf_share: <FaChartPie className="text-[#17A2B8]" />
     };
 
     const getRuleIcon = (ruleType) => {
@@ -217,10 +217,10 @@ const Constraints = () => {
                         </div>
                         <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
                             <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                                <div className="w-2 h-2 rounded-full bg-[#17A2B8]"></div>
                                 <p className="text-xs text-slate-400 uppercase font-bold">Soft Constraints</p>
                             </div>
-                            <p className="text-2xl font-bold text-amber-600 mt-1">{softCount}</p>
+                            <p className="text-2xl font-bold text-[#17A2B8] mt-1">{softCount}</p>
                         </div>
                     </div>
 
@@ -278,11 +278,11 @@ const Constraints = () => {
                                                 <td className="px-6 py-4">
                                                     <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${c.hardConstraint
                                                         ? 'bg-red-50 text-red-600 border border-red-200'
-                                                        : 'bg-amber-50 text-amber-600 border border-amber-200'
+                                                        : 'bg-[#17A2B8]/10 text-[#17A2B8] border border-[#17A2B8]/20'
                                                         }`}>
                                                         {c.hardConstraint ? 'HARD' : 'SOFT'}
                                                     </span>
-                                                    {!c.hardConstraint && <div className="text-xs text-amber-500 mt-1">Penalty: {c.penaltyWeight}</div>}
+                                                    {!c.hardConstraint && <div className="text-xs text-[#17A2B8] mt-1">Penalty: {c.penaltyWeight}</div>}
                                                 </td>
                                                 <td className="px-6 py-4 text-center">
                                                     <button
@@ -570,7 +570,7 @@ const Constraints = () => {
                                                 onClick={() => setForm({ ...form, hardConstraint: !form.hardConstraint })}
                                                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${form.hardConstraint
                                                     ? 'bg-red-50 text-red-600 border border-red-200'
-                                                    : 'bg-amber-50 text-amber-600 border border-amber-200'
+                                                    : 'bg-[#17A2B8]/10 text-[#17A2B8] border border-[#17A2B8]/20'
                                                     }`}
                                             >
                                                 {form.hardConstraint ? 'HARD' : 'SOFT'}
@@ -581,14 +581,14 @@ const Constraints = () => {
                                         {!form.hardConstraint && (
                                             <div className="mt-4">
                                                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                                                    Penalty Weight — <span className="text-amber-600">{form.penaltyWeight}</span>
+                                                    Penalty Weight — <span className="text-[#17A2B8]">{form.penaltyWeight}</span>
                                                 </label>
                                                 <input
                                                     type="range"
                                                     min="10" max="500" step="10"
                                                     value={form.penaltyWeight}
                                                     onChange={e => setForm({ ...form, penaltyWeight: parseInt(e.target.value) })}
-                                                    className="w-full accent-amber-500"
+                                                    className="w-full accent-[#17A2B8]"
                                                 />
                                                 <div className="flex justify-between text-xs text-slate-400 mt-1">
                                                     <span>Low (10)</span><span>Medium (250)</span><span>High (500)</span>

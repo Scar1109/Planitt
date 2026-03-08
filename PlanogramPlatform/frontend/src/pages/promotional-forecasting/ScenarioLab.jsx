@@ -585,8 +585,8 @@ const ScenarioLab = () => {
                         {trendResult ? (
                             <div className="space-y-6 animate-fadeIn">
                                 {/* The AI Event Narrative Box */}
-                                <div className={`p-4 rounded-lg border flex gap-3 ${trendResult.events.length > 0 ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
-                                    {trendResult.events.length > 0 ? <FaExclamationTriangle className="text-amber-500 mt-1 flex-shrink-0" /> : <FaRobot className="text-slate-400 mt-1 flex-shrink-0" />}
+                                <div className={`p-4 rounded-lg border flex gap-3 ${trendResult.events.length > 0 ? 'bg-[#17A2B8]/10 border-[#17A2B8]/20 text-[#1B4F72]' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
+                                    {trendResult.events.length > 0 ? <FaExclamationTriangle className="text-[#17A2B8] mt-1 flex-shrink-0" /> : <FaRobot className="text-slate-400 mt-1 flex-shrink-0" />}
                                     <div>
                                         <h4 className="font-semibold text-sm mb-1">{trendResult.readiness_status}</h4>
                                         <p className="text-sm">{trendResult.event_narrative}</p>

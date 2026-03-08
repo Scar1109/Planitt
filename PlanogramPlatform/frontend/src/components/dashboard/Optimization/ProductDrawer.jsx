@@ -64,7 +64,7 @@ const ProductDrawer = ({ isOpen, onClose, product, onSave, onDeactivate }) => {
     let marginClass = 'bg-slate-100 text-slate-600';
     if (margin > 30) marginClass = 'bg-green-100 text-green-700';
     else if (margin < 10) marginClass = 'bg-red-100 text-red-700'; // Low margin warning
-    else marginClass = 'bg-amber-100 text-amber-700';
+    else marginClass = 'bg-[#17A2B8]/10 text-[#1B4F72]';
 
     // Visual Scaling - Increased for larger modal
     const pxScale = 5; // 1cm = 5px (was 3)
