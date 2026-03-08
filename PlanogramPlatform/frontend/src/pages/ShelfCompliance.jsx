@@ -91,14 +91,14 @@ const ShelfCompliance = () => {
                 {/* Control Panel */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <FaUpload className="text-blue-500" /> Shelf Scan Configuration
+                        <FaUpload className="text-[#17A2B8]" /> Shelf Scan Configuration
                     </h3>
                     
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-600 mb-1">Target Optimization Run</label>
                             <select 
-                                className={`w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500/20 border transition ${fetchError ? 'border-red-300 bg-red-50' : ''}`}
+                                className={`w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-[#17A2B8]/20 border transition ${fetchError ? 'border-red-300 bg-red-50' : ''}`}
                                 value={selectedRun}
                                 onChange={(e) => setSelectedRun(e.target.value)}
                                 disabled={loadingData || fetchError}
@@ -121,7 +121,7 @@ const ShelfCompliance = () => {
                         <div>
                             <label className="block text-sm font-medium text-gray-600 mb-1">Active Fixture (Shelf)</label>
                             <select 
-                                className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500/20 border transition"
+                                className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-[#17A2B8]/20 border transition"
                                 value={selectedFixture}
                                 onChange={(e) => setSelectedFixture(e.target.value)}
                                 disabled={!selectedRun}
@@ -151,15 +151,15 @@ const ShelfCompliance = () => {
 
                         <div className="relative group">
                             <label className="block text-sm font-medium text-gray-600 mb-1">Upload Shelf Image</label>
-                            <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg transition ${preview ? 'border-blue-300 bg-blue-50/10' : 'border-gray-300 hover:border-blue-400'}`}>
+                            <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg transition ${preview ? 'border-[#17A2B8]/40 bg-[#17A2B8]/5' : 'border-gray-300 hover:border-[#17A2B8]/60'}`}>
                                 <div className="space-y-1 text-center">
                                     {preview ? (
                                         <img src={preview} alt="Preview" className="mx-auto h-48 w-full object-contain rounded-md" />
                                     ) : (
-                                        <FaUpload className="mx-auto h-12 w-12 text-gray-400 group-hover:text-blue-500 transition" />
+                                        <FaUpload className="mx-auto h-12 w-12 text-gray-400 group-hover:text-[#17A2B8] transition" />
                                     )}
                                     <div className="flex text-sm text-gray-600">
-                                        <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500">
+                                        <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-[#17A2B8] hover:text-[#17A2B8]">
                                             <span>{preview ? "Change image" : "Upload a file"}</span>
                                             <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleImageChange} accept="image/*" />
                                         </label>
@@ -172,7 +172,7 @@ const ShelfCompliance = () => {
                         <button
                             onClick={runAnalysis}
                             disabled={status === 'loading'}
-                            className={`w-full py-3 rounded-lg font-bold text-white transition-all transform active:scale-95 shadow-lg ${status === 'loading' ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'}`}
+                            className={`w-full py-3 rounded-lg font-bold text-white transition-all transform active:scale-95 shadow-lg ${status === 'loading' ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1B4F72] hover:bg-[#164060]'}`}
                         >
                             {status === 'loading' ? 'Running Intelligence Analysis...' : 'Analyze Shelf Compliance'}
                         </button>
@@ -182,12 +182,12 @@ const ShelfCompliance = () => {
                 {/* Quick Academic Overview (Before/After Report) */}
                 <div className="flex flex-col gap-6">
                     {status === 'idle' && (
-                        <div className="bg-blue-50 p-8 rounded-xl border border-blue-100 h-full flex flex-col justify-center items-center text-center">
+                        <div className="bg-[#17A2B8]/10 p-8 rounded-xl border border-[#17A2B8]/20 h-full flex flex-col justify-center items-center text-center">
                             <div className="p-4 bg-white rounded-full shadow-sm mb-4">
-                                <FaBoxOpen className="text-4xl text-blue-500" />
+                                <FaBoxOpen className="text-4xl text-[#17A2B8]" />
                             </div>
-                            <h4 className="text-xl font-bold text-blue-900 mb-2">Intelligence Audit System</h4>
-                            <p className="text-blue-700 max-w-md">
+                            <h4 className="text-xl font-bold text-[#1B4F72] mb-2">Intelligence Audit System</h4>
+                            <p className="text-[#1B4F72] max-w-md">
                                 Upload a photo of your physical shelf implementation to compare against the optimized planogram model. 
                                 Our specialized system detects deviations, stockout risks, and revenue recovery opportunities.
                             </p>
@@ -196,7 +196,7 @@ const ShelfCompliance = () => {
 
                     {status === 'loading' && (
                         <div className="bg-white p-8 rounded-xl border border-gray-100 h-full flex flex-col justify-center items-center">
-                            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+                            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#1B4F72]"></div>
                             <h4 className="mt-4 font-bold text-gray-800">Processing Visual Information</h4>
                             <p className="text-gray-500 text-sm">Identifying SKUs and measuring facings...</p>
                         </div>
@@ -212,9 +212,9 @@ const ShelfCompliance = () => {
                     )}
 
                     {status === 'success' && report && (
-                        <div className="bg-gradient-to-br from-indigo-900 to-blue-900 p-6 rounded-xl text-white shadow-xl h-full flex flex-col justify-between">
+                        <div className="bg-gradient-to-br from-[#164060] to-[#164060] p-6 rounded-xl text-white shadow-xl h-full flex flex-col justify-between">
                             <div>
-                                <h4 className="flex items-center gap-2 text-indigo-200 font-bold uppercase text-xs tracking-widest mb-4">
+                                <h4 className="flex items-center gap-2 text-[#17A2B8] font-bold uppercase text-xs tracking-widest mb-4">
                                     <FaBoxOpen /> Compliance Executive Summary
                                 </h4>
                                 <p className="text-lg italic leading-relaxed opacity-90">
@@ -224,11 +224,11 @@ const ShelfCompliance = () => {
                             
                             <div className="mt-6 pt-6 border-t border-white/10 grid grid-cols-2 gap-4">
                                 <div className="bg-white/10 p-4 rounded-lg">
-                                    <div className="text-xs text-indigo-200 mb-1">Stockout Risks</div>
+                                    <div className="text-xs text-[#17A2B8] mb-1">Stockout Risks</div>
                                     <div className="text-2xl font-bold">{report.metrics.stockoutRisks.length} <span className="text-xs font-normal">Items</span></div>
                                 </div>
                                 <div className="bg-white/10 p-4 rounded-lg">
-                                    <div className="text-xs text-indigo-200 mb-1">Audit Score (PAS)</div>
+                                    <div className="text-xs text-[#17A2B8] mb-1">Audit Score (PAS)</div>
                                     <div className="text-2xl font-bold transition-all" style={{ color: report.metrics.pas > 80 ? '#4ade80' : '#f87171' }}>
                                         {report.metrics.pas}%
                                     </div>
@@ -243,7 +243,7 @@ const ShelfCompliance = () => {
                 <div className="space-y-6 animate-in fade-in duration-700">
                     {/* Metric Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500">
+                        <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-[#17A2B8]">
                             <div className="text-xs font-medium text-gray-500 uppercase">Revenue Recovery</div>
                             <div className="text-2xl font-bold text-gray-800 mt-1 flex items-center gap-2">
                                 <FaMoneyBillWave className="text-green-500" /> {report.metrics.revenueRecovery} LKR
@@ -262,7 +262,7 @@ const ShelfCompliance = () => {
                             </div>
                             <div className="text-[10px] text-gray-400 mt-1">Critical gaps needing attention</div>
                         </div>
-                        <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-indigo-500">
+                        <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-[#17A2B8]">
                             <div className="text-xs font-medium text-gray-500 uppercase">Compliance Fidelity</div>
                             <div className="text-2xl font-bold text-gray-800 mt-1">Precision</div>
                             <div className="text-[10px] text-gray-400 mt-1">Grounded analysis methodology</div>
@@ -278,8 +278,8 @@ const ShelfCompliance = () => {
                             </h4>
                             <div className="space-y-4">
                                 {report.suggestions.map((s, i) => (
-                                    <div key={i} className="flex gap-3 items-start p-3 bg-gray-50 rounded-lg border-l-2 border-indigo-300">
-                                        <div className="bg-indigo-100 text-indigo-700 rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                                    <div key={i} className="flex gap-3 items-start p-3 bg-gray-50 rounded-lg border-l-2 border-[#17A2B8]">
+                                        <div className="bg-[#17A2B8]/10 text-[#1B4F72] rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                                             {i + 1}
                                         </div>
                                         <p className="text-sm text-gray-700 leading-tight">{s}</p>
@@ -306,7 +306,7 @@ const ShelfCompliance = () => {
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
                                         {report.comparison.map((item, idx) => (
-                                            <tr key={idx} className="hover:bg-blue-50/30 transition">
+                                            <tr key={idx} className="hover:bg-[#17A2B8]/10 transition">
                                                 <td className="px-6 py-4">
                                                     <div className="font-bold text-gray-800 text-sm">{item.productName}</div>
                                                     <div className="text-xs font-mono text-gray-400">{item.sku}</div>
@@ -314,7 +314,7 @@ const ShelfCompliance = () => {
                                                 <td className="px-6 py-4 text-center">
                                                     <div className="text-sm font-bold text-slate-700">{item.expected}</div>
                                                 </td>
-                                                <td className="px-6 py-4 text-center font-bold text-sm text-blue-600">{item.detected}</td>
+                                                <td className="px-6 py-4 text-center font-bold text-sm text-[#17A2B8]">{item.detected}</td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex justify-center">
                                                         {item.deviation === 0 ? (

@@ -195,13 +195,13 @@ const UserManagement = () => {
             {/* Tabs */}
             <div className="flex space-x-4 mb-6 border-b border-slate-200">
                 <button
-                    className={`pb-2 px-4 font-medium transition-colors ${activeTab === 'store' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`pb-2 px-4 font-medium transition-colors ${activeTab === 'store' ? 'text-[#1B4F72] border-b-2 border-[#17A2B8]' : 'text-slate-500 hover:text-slate-700'}`}
                     onClick={() => setActiveTab('store')}
                 >
                     Store Users
                 </button>
                 <button
-                    className={`pb-2 px-4 font-medium transition-colors ${activeTab === 'pending' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`pb-2 px-4 font-medium transition-colors ${activeTab === 'pending' ? 'text-[#1B4F72] border-b-2 border-[#17A2B8]' : 'text-slate-500 hover:text-slate-700'}`}
                     onClick={() => setActiveTab('pending')}
                 >
                     Pending Approvals
@@ -226,7 +226,7 @@ const UserManagement = () => {
                             {loading ? (
                                 <tr>
                                     <td colSpan="6" className="px-6 py-8 text-center">
-                                        <FaSpinner className="animate-spin h-6 w-6 text-indigo-500 mx-auto" />
+                                        <FaSpinner className="animate-spin h-6 w-6 text-[#17A2B8] mx-auto" />
                                     </td>
                                 </tr>
                             ) : users.length === 0 ? (
@@ -243,7 +243,7 @@ const UserManagement = () => {
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
                                                 ${user.role === 'Admin' ? 'bg-red-100 text-red-800' :
-                                                    user.role === 'owner' ? 'bg-purple-100 text-purple-800' :
+                                                    user.role === 'owner' ? 'bg-slate-50 text-[#164060]' :
                                                         user.role === 'manager' ? 'bg-blue-100 text-blue-800' :
                                                             'bg-gray-100 text-gray-800'}`}>
                                                 {user.role}
@@ -273,7 +273,7 @@ const UserManagement = () => {
                                                 <>
                                                     <button
                                                         onClick={() => openEditModal(user)}
-                                                        className="text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50 transition-colors"
+                                                        className="text-[#1B4F72] hover:text-[#1B4F72] p-1 rounded hover:bg-[#17A2B8]/10 transition-colors"
                                                         title="Edit"
                                                     >
                                                         <FaEdit />
@@ -324,7 +324,7 @@ const UserManagement = () => {
                                     value={formData.fullName}
                                     onChange={handleInputChange}
                                     required
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] outline-none transition-all"
                                     placeholder="John Doe"
                                 />
                             </div>
@@ -337,7 +337,7 @@ const UserManagement = () => {
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     required
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] outline-none transition-all"
                                     placeholder="john@example.com"
                                 />
                             </div>
@@ -351,7 +351,7 @@ const UserManagement = () => {
                                             name="store"
                                             value={formData.store}
                                             onChange={handleInputChange}
-                                            className="w-full px-4 py-2 pl-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all appearance-none"
+                                            className="w-full px-4 py-2 pl-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] outline-none transition-all appearance-none"
                                         >
                                             <option value="">-- Unassigned --</option>
                                             {stores.map(store => (
@@ -375,7 +375,7 @@ const UserManagement = () => {
                                         value={formData.password}
                                         onChange={handleInputChange}
                                         required={!editingUser}
-                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] outline-none transition-all"
                                         placeholder="••••••••"
                                     />
                                 </div>
@@ -387,7 +387,7 @@ const UserManagement = () => {
                                     name="role"
                                     value={formData.role}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] outline-none transition-all"
                                 >
                                     <option value="staff">Staff</option>
                                     <option value="manager">Manager</option>

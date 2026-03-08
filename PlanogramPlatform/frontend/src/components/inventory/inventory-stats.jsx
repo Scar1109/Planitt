@@ -17,7 +17,7 @@ export function InventoryStats() {
             value: "...",
             change: "",
             icon: AlertTriangle,
-            color: "text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400",
+            color: "text-[#17A2B8] bg-[#17A2B8]/10 dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
         },
         {
             label: "Total Sold (Latest)",
@@ -54,7 +54,7 @@ export function InventoryStats() {
                             value: s.lowStockCount?.toLocaleString() || "0",
                             change: `${s.outOfStock || 0} out of stock`,
                             icon: AlertTriangle,
-                            color: "text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400",
+                            color: "text-[#17A2B8] bg-[#17A2B8]/10 dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
                         },
                         {
                             label: "Total Sold (Latest day)",

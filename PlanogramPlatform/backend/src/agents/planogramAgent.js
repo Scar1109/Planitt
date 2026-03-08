@@ -7,6 +7,7 @@ import User from '../models/User.js';
 import Store from '../models/Store.js';
 import ShelfFixture from '../models/ShelfFixture.js';
 import ShelfLevel from '../models/ShelfLevel.js';
+import ConstraintRule from '../models/ConstraintRule.js';
 
 class PlanogramAgent {
     constructor() {
@@ -150,9 +151,17 @@ class PlanogramAgent {
         });
         await runRecord.save();
 
+        const startTime = Date.now();
         try {
             // 4. Gather Data (Products, Fixtures, Levels)
             const products = await Product.find({}).lean();
+
+            // Fetch active constraints for this user
+            const activeConstraints = await ConstraintRule.find({
+                ownerUserId: userId,
+                isActive: true
+            }).lean();
+            console.log(`[Agent] Loaded ${activeConstraints.length} active constraints.`);
 
             // Initial Fetch
             const allFixtures = await ShelfFixture.find({ storeId: store._id, isActive: true }).lean();
@@ -175,11 +184,9 @@ class PlanogramAgent {
 
                 } else if (config.scope.type === 'level' && config.scope.levelId) {
                     // Filter for Single Level
-                    // We need the level object to find its parent fixture ID
                     const selectedLevel = allLevels.find(l => l._id.toString() === config.scope.levelId);
                     if (selectedLevel) {
                         targetLevels = [selectedLevel];
-                        // We must send the parent fixture context
                         targetFixtures = allFixtures.filter(f => f._id.toString() === selectedLevel.fixtureId.toString());
                     }
                 }
@@ -193,8 +200,9 @@ class PlanogramAgent {
                 fixtures: targetFixtures,
                 levels: targetLevels.map(l => ({
                     ...l,
-                    tags: l.tags || [] // Ensure tags are sent!
-                }))
+                    tags: l.tags || []
+                })),
+                constraints: activeConstraints
             };
 
             // DEBUG: Log sample level to ensure tags are present
@@ -207,22 +215,40 @@ class PlanogramAgent {
             const response = await axios.post(`${this.pythonUrl}/optimize`, payload);
 
             if (response.data.status === 'success') {
-                console.log(`[Agent] Optimization Success. Score: ${response.data.score}`);
+                const runtimeMs = Date.now() - startTime;
+                const heuristicScore = response.data.heuristic_score || 0;
+                const bestScore = response.data.score;
+                const improvementPct = heuristicScore > 0
+                    ? ((bestScore - heuristicScore) / heuristicScore * 100)
+                    : 0;
+
+                console.log(`[Agent] Optimization Success. Score: ${bestScore}, Runtime: ${runtimeMs}ms, Improvement: ${improvementPct.toFixed(2)}%`);
 
                 // Update Run Record
                 runRecord.status = "success";
-                runRecord.bestScore = response.data.score;
+                runRecord.bestScore = bestScore;
+                runRecord.baselineScore = heuristicScore;
+                runRecord.improvementPct = Math.round(improvementPct * 100) / 100;
+                runRecord.runtimeMs = runtimeMs;
                 runRecord.resultingPlacements = response.data.placements;
+                runRecord.convergenceHistory = response.data.convergence_history || [];
+                runRecord.constraintViolations = response.data.constraint_violations || [];
+                runRecord.heuristicScore = heuristicScore;
                 runRecord.finishedAt = new Date();
-                runRecord.logsRef += `\nOptimization completed. Score: ${response.data.score}`;
+                runRecord.logsRef += `\nOptimization completed. Score: ${bestScore}. Improvement: ${improvementPct.toFixed(2)}%. Runtime: ${runtimeMs}ms`;
                 await runRecord.save();
 
                 return {
                     runId: runRecord._id,
                     status: "success",
-                    score: response.data.score,
+                    score: bestScore,
+                    heuristicScore: heuristicScore,
+                    improvementPct: Math.round(improvementPct * 100) / 100,
+                    runtimeMs: runtimeMs,
                     placementCount: response.data.placements.length,
                     resultingPlacements: response.data.placements,
+                    convergenceHistory: response.data.convergence_history || [],
+                    constraintViolations: response.data.constraint_violations || [],
                     message: "Optimization completed successfully."
                 };
             } else {

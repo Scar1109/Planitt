@@ -10,14 +10,6 @@ const impacts = [
         barClass: 'bar-blue',
     },
     {
-        value: '-41%',
-        valClass: 'val-purple',
-        label: 'Product Waste',
-        desc: 'Smart forecasting reduces overstocking and spoilage',
-        barWidth: '72%',
-        barClass: 'bar-purple',
-    },
-    {
         value: '+28%',
         valClass: 'val-green',
         label: 'Promotion ROI',

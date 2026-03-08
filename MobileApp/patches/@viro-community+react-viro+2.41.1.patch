@@ -1,0 +1,19 @@
+diff --git a/node_modules/@viro-community/react-viro/dist/plugins/withViroAndroid.js b/node_modules/@viro-community/react-viro/dist/plugins/withViroAndroid.js
+index 778f90a..9dbcdf3 100644
+--- a/node_modules/@viro-community/react-viro/dist/plugins/withViroAndroid.js
++++ b/node_modules/@viro-community/react-viro/dist/plugins/withViroAndroid.js
+@@ -51,12 +51,12 @@ const withBranchAndroid = (config) => {
+                     if (isJava) {
+                         target =
+                             target +
+-                                `      packages.add(new ReactViroPackage(ReactViroPackage.ViroPlatform.${viroConfig}))\n`;
++                            `      packages.add(new ReactViroPackage(ReactViroPackage.ViroPlatform.${viroConfig}));\n`;
+                     }
+                     else {
+                         target =
+                             target +
+-                                `              add(ReactViroPackage(ReactViroPackage.ViroPlatform.${viroConfig}))\n`;
++                            `              add(ReactViroPackage(ReactViroPackage.ViroPlatform.${viroConfig}))\n`;
+                     }
+                 }
+                 if (isJava) {

@@ -126,7 +126,7 @@ const Products = () => {
                             <div className="relative flex-1 max-w-md">
                                 <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                                 <input
-                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 outline-none text-sm"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#17A2B8]/20 outline-none text-sm"
                                     placeholder="Search by SKU or Name..."
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
@@ -198,10 +198,10 @@ const Products = () => {
                                             <tr
                                                 key={p._id}
                                                 onClick={() => handleRowClick(p)}
-                                                className="hover:bg-indigo-50/50 cursor-pointer transition-colors group"
+                                                className="hover:bg-[#17A2B8]/5 cursor-pointer transition-colors group"
                                             >
                                                 <td className="px-6 py-3 font-mono text-slate-600">{p.sku}</td>
-                                                <td className="px-6 py-3 font-medium text-slate-800 group-hover:text-indigo-600">{p.productName}</td>
+                                                <td className="px-6 py-3 font-medium text-slate-800 group-hover:text-[#1B4F72]">{p.productName}</td>
                                                 <td className="px-6 py-3 text-slate-600">
                                                     <span className="px-2 py-1 bg-slate-100 rounded text-xs">{p.category}</span>
                                                 </td>

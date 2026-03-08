@@ -9,7 +9,7 @@ const OptimizationContext = ({ stats }) => {
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-full flex flex-col">
             <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <span className="w-1 h-6 bg-indigo-500 rounded-full"></span>
+                <span className="w-1 h-6 bg-[#1B4F72] rounded-full"></span>
                 Context & Scope
             </h2>
 
@@ -64,12 +64,12 @@ const OptimizationContext = ({ stats }) => {
                     </div>
 
                     {stats.issues > 0 ? (
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-amber-100 bg-amber-50/50">
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-[#17A2B8]/20 bg-[#17A2B8]/10">
                             <div className="flex items-center gap-3">
-                                <FaExclamationTriangle className="text-amber-500" />
+                                <FaExclamationTriangle className="text-[#17A2B8]" />
                                 <span className="text-sm font-medium text-slate-700">Product dims missing</span>
                             </div>
-                            <span className="text-xs font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-full">{stats.issues}</span>
+                            <span className="text-xs font-bold bg-[#17A2B8]/10 text-[#1B4F72] px-2 py-1 rounded-full">{stats.issues}</span>
                         </div>
                     ) : (
                         <div className="flex items-center justify-between p-3 rounded-lg border border-green-100 bg-green-50/50">

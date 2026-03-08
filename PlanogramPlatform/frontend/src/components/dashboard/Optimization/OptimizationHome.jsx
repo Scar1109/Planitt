@@ -3,7 +3,7 @@ import OptimizationContext from './components/OptimizationContext';
 import OptimizationConfig from './components/OptimizationConfig';
 import OptimizationExecutionModal from './components/OptimizationExecutionModal';
 import PlanogramViewer from './components/PlanogramViewer';
-import { FaPlay, FaInfoCircle } from 'react-icons/fa';
+import { FaPlay, FaInfoCircle, FaShieldAlt } from 'react-icons/fa';
 import api from '../../../services/api';
 
 const OptimizationHome = () => {
@@ -11,6 +11,7 @@ const OptimizationHome = () => {
     const [products, setProducts] = useState([]);
     const [fixtures, setFixtures] = useState([]);
     const [levels, setLevels] = useState([]);
+    const [constraintCount, setConstraintCount] = useState(0);
 
     // UI State
     const [loading, setLoading] = useState(true);
@@ -34,9 +35,10 @@ const OptimizationHome = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [shelvesRes, productsRes] = await Promise.all([
+                const [shelvesRes, productsRes, constraintsRes] = await Promise.all([
                     api.get('/planograms/shelves'),
-                    api.get('/products?isActive=true')
+                    api.get('/products?isActive=true'),
+                    api.get('/constraints').catch(() => ({ data: { results: 0 } }))
                 ]);
 
                 const fixtures = shelvesRes.data || [];
@@ -57,6 +59,8 @@ const OptimizationHome = () => {
                     productsCount: products.length,
                     issueCount: issues
                 });
+
+                setConstraintCount(constraintsRes?.data?.results || (constraintsRes?.data?.data || []).filter(c => c.isActive).length || 0);
 
             } catch (error) {
                 console.error("Failed to fetch optimization data", error);
@@ -102,7 +106,7 @@ const OptimizationHome = () => {
     };
 
     return (
-        <div className="h-full flex flex-col p-6 min-h-[600px]">
+        <div className="flex flex-col p-6 min-h-[600px]">
             {/* Header */}
             <div className="mb-6 flex justify-between items-end">
                 <div>
@@ -112,10 +116,10 @@ const OptimizationHome = () => {
             </div>
 
             {/* 3-Column Layout */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden">
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 pb-8">
 
                 {/* LEFT: Context (3 cols) */}
-                <div className="lg:col-span-3 h-full overflow-hidden">
+                <div className="lg:col-span-3 h-full">
                     <OptimizationContext stats={{
                         fixtures: data.fixtures.length,
                         products: data.productsCount,
@@ -124,7 +128,7 @@ const OptimizationHome = () => {
                 </div>
 
                 {/* CENTER: Config (6 cols) */}
-                <div className="lg:col-span-6 h-full overflow-hidden">
+                <div className="lg:col-span-6 h-full">
                     <OptimizationConfig
                         config={config}
                         setConfig={setConfig}
@@ -146,7 +150,7 @@ const OptimizationHome = () => {
                         <div className="space-y-4 mb-8">
                             <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
                                 <p className="text-xs text-slate-400 uppercase font-bold mb-1">Strategy</p>
-                                <p className="text-sm font-bold text-indigo-700 capitalize">
+                                <p className="text-sm font-bold text-[#1B4F72] capitalize">
                                     {config.runType} Optimization
                                 </p>
                             </div>
@@ -158,16 +162,32 @@ const OptimizationHome = () => {
                             </div>
                         </div>
 
-                        <div className="bg-indigo-50 p-4 rounded-lg flex gap-3 text-xs text-indigo-800 leading-relaxed mb-6">
-                            <FaInfoCircle className="shrink-0 text-indigo-500 mt-0.5" />
+                        <div className="bg-[#17A2B8]/10 p-4 rounded-lg flex gap-3 text-xs text-[#1B4F72] leading-relaxed mb-4">
+                            <FaInfoCircle className="shrink-0 text-[#17A2B8] mt-0.5" />
                             <p>
                                 System will prioritize <strong>{config.objectiveWeights.sales > config.objectiveWeights.space ? 'Sales Performance' : 'Space Efficiency'}</strong> using {config.runType} solver logic.
                             </p>
                         </div>
 
+                        {/* Constraint Summary */}
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 flex items-center gap-3 mb-6">
+                            <div className="w-8 h-8 rounded-lg bg-[#17A2B8]/10 flex items-center justify-center">
+                                <FaShieldAlt className="text-[#17A2B8] text-sm" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-xs font-bold text-slate-700">Active Constraints</p>
+                                <p className="text-[10px] text-slate-400">
+                                    {constraintCount > 0
+                                        ? `${constraintCount} rule${constraintCount > 1 ? 's' : ''} will be enforced during optimization`
+                                        : 'No constraints defined — optimizer runs unconstrained'}
+                                </p>
+                            </div>
+                            <span className="text-lg font-bold text-[#1B4F72]">{constraintCount}</span>
+                        </div>
+
                         <button
                             onClick={handleRun}
-                            className="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-xl font-bold shadow-lg shadow-slate-200 flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                            className="w-full bg-gradient-to-r from-[#1B4F72] to-[#17A2B8] hover:from-[#163d58] hover:to-[#138f9e] text-white py-4 rounded-xl font-bold shadow-lg shadow-[#17A2B8]/20 flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
                         >
                             <FaPlay /> RUN OPTIMIZATION
                         </button>

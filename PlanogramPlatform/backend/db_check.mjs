@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import fs from 'fs';
+import dns from 'dns';
+
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+dns.setDefaultResultOrder('ipv4first');
 dotenv.config();
 
 const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/planogram-platform';

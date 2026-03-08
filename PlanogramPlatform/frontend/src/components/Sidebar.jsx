@@ -12,11 +12,10 @@ const Sidebar = () => {
     const [expandedMenus, setExpandedMenus] = useState({});
 
     const toggleMenu = (name) => {
-        setExpandedMenus(prev => ({ ...prev, [name]: !prev[name] }));
+        setExpandedMenus(prev => ({ [name]: !prev[name] }));
     };
 
     const settingsSubItems = [];
-    // Profile is available for everyone
     settingsSubItems.push({ name: 'My Profile', path: '/dashboard/settings/profile' });
 
     if (user && ['owner', 'admin'].includes(user.role)) {
@@ -57,8 +56,7 @@ const Sidebar = () => {
             subItems: [
                 { name: 'System Forensics', path: '/dashboard/compliance/analysis' },
                 { name: 'Compliance Intelligence', path: '/dashboard/compliance', end: true },
-                { name: 'Compliance History', path: '/dashboard/compliance/history' },
-                { name: 'Shelf Scan Audit', path: '/dashboard/compliance/shelf-scan' }
+                { name: 'Compliance History', path: '/dashboard/compliance/history' }
             ]
         },
         {
@@ -102,14 +100,14 @@ const Sidebar = () => {
                                     className={classNames(
                                         'w-full flex items-center justify-between px-4 lg:px-6 py-3.5 text-sm font-medium transition-all duration-200 group relative',
                                         {
-                                            'bg-indigo-50 text-indigo-600 border-r-4 border-indigo-600': activeParent,
+                                            'bg-[#17A2B8]/10 text-[#1B4F72] border-r-4 border-[#17A2B8]': activeParent,
                                             'text-slate-500 hover:bg-slate-50 hover:text-slate-700': !activeParent
                                         }
                                     )}
                                 >
                                     <div className="flex items-center">
                                         <item.icon className={classNames("h-5 w-5 transition-colors", {
-                                            "text-indigo-600": activeParent,
+                                            "text-[#17A2B8]": activeParent,
                                             "text-slate-400 group-hover:text-slate-600": !activeParent
                                         })} />
                                         <span className="ml-3 hidden lg:block">{item.name}</span>
@@ -126,16 +124,13 @@ const Sidebar = () => {
                                         classNames(
                                             'flex items-center px-4 lg:px-6 py-3.5 text-sm font-medium transition-all duration-200 group relative',
                                             {
-                                                'bg-indigo-50 text-indigo-600 border-r-4 border-indigo-600': isActive,
+                                                'bg-[#17A2B8]/10 text-[#1B4F72] border-r-4 border-[#17A2B8]': isActive,
                                                 'text-slate-500 hover:bg-slate-50 hover:text-slate-700': !isActive
                                             }
                                         )
                                     }
                                 >
-                                    <item.icon className={classNames("h-5 w-5 transition-colors", {
-                                        "text-indigo-600": (({ isActive }) => isActive),
-                                        "text-slate-400 group-hover:text-slate-600": (({ isActive }) => !isActive)
-                                    })} />
+                                    <item.icon className="h-5 w-5 transition-colors text-slate-400 group-hover:text-slate-600" />
                                     <span className="ml-3 hidden lg:block">{item.name}</span>
                                 </NavLink>
                             )}
@@ -152,7 +147,7 @@ const Sidebar = () => {
                                                 classNames(
                                                     'flex items-center pl-14 pr-6 py-2 text-sm font-medium transition-colors duration-200',
                                                     {
-                                                        'text-indigo-600 font-semibold': isActive,
+                                                        'text-[#17A2B8] font-semibold': isActive,
                                                         'text-slate-500 hover:text-slate-700': !isActive
                                                     }
                                                 )

@@ -33,7 +33,7 @@ const SystemAnalysis = () => {
                 {/* Model Card */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Active Model</h3>
-                    <div className="text-lg font-bold text-blue-600 truncate" title={metadata.ml_model?.model_type}>
+                    <div className="text-lg font-bold text-[#17A2B8] truncate" title={metadata.ml_model?.model_type}>
                         {metadata.ml_model?.model_type || "Unknown"}
                     </div>
                     <div className="mt-2 text-sm text-gray-500">
@@ -55,7 +55,7 @@ const SystemAnalysis = () => {
                 {/* Rules Accuracy Card (NEW) */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Rules Precision</h3>
-                    <div className="text-3xl font-bold text-indigo-600">
+                    <div className="text-3xl font-bold text-[#1B4F72]">
                         {metadata.rules_engine?.precision_guarantee || "100%"}
                     </div>
                     <div className="mt-2 text-xs text-gray-500">
@@ -87,7 +87,7 @@ const SystemAnalysis = () => {
                 </p>
                 <div className="flex flex-wrap gap-2">
                     {metadata.ml_model?.features?.map(f => (
-                        <span key={f} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm border border-blue-100">
+                        <span key={f} className="px-3 py-1 bg-[#17A2B8]/10 text-[#1B4F72] rounded-full text-sm border border-[#17A2B8]/20">
                             {f}
                         </span>
                     ))}
@@ -101,23 +101,23 @@ const SystemAnalysis = () => {
                 </h3>
 
                 <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-sm">
-                    <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 w-full md:w-auto hover:border-blue-300 transition-colors">
+                    <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 w-full md:w-auto hover:border-[#17A2B8]/40 transition-colors">
                         <div className="font-bold text-gray-700">Raw Planogram</div>
                         <div className="text-xs text-gray-400">MongoDB</div>
                     </div>
                     <FaArrowRight className="text-gray-300 hidden md:block" />
                     <FaArrowDown className="text-gray-300 md:hidden" />
 
-                    <div className="p-4 border-l-4 border-blue-500 rounded bg-blue-50 shadow-sm w-full md:w-auto">
-                        <div className="font-bold text-blue-900">Deterministic Engine</div>
-                        <div className="text-xs text-blue-600">Rule-Based Detection</div>
+                    <div className="p-4 border-l-4 border-[#17A2B8] rounded bg-[#17A2B8]/10 shadow-sm w-full md:w-auto">
+                        <div className="font-bold text-[#1B4F72]">Deterministic Engine</div>
+                        <div className="text-xs text-[#17A2B8]">Rule-Based Detection</div>
                     </div>
                     <FaArrowRight className="text-gray-300 hidden md:block" />
                     <FaArrowDown className="text-gray-300 md:hidden" />
 
-                    <div className="p-4 border-l-4 border-purple-500 rounded bg-purple-50 shadow-sm w-full md:w-auto">
-                        <div className="font-bold text-purple-900">Impact Estimator</div>
-                        <div className="text-xs text-purple-600">Stochastic Model (RF)</div>
+                    <div className="p-4 border-l-4 border-[#1B4F72] rounded bg-slate-50 shadow-sm w-full md:w-auto">
+                        <div className="font-bold text-[#1B4F72]">Impact Estimator</div>
+                        <div className="text-xs text-[#1B4F72]">Stochastic Model (RF)</div>
                     </div>
                     <FaArrowRight className="text-gray-300 hidden md:block" />
                     <FaArrowDown className="text-gray-300 md:hidden" />

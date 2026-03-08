@@ -10,7 +10,7 @@ import { api } from "@/api/client"
 const riskConfig = {
     Critical: { color: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300", border: "border-l-red-500" },
     High: { color: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300", border: "border-l-red-500" },
-    Medium: { color: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300", border: "border-l-amber-500" },
+    Medium: { color: "bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]", border: "border-l-[#17A2B8]" },
     Low: {
         color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300",
         border: "border-l-emerald-500",
@@ -66,7 +66,7 @@ export function WasteAlerts() {
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-foreground">
-                        <AlertTriangle className="h-5 w-5 text-amber-500" />
+                        <AlertTriangle className="h-5 w-5 text-[#17A2B8]" />
                         Waste Alerts
                     </CardTitle>
                     <Badge variant="destructive" className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">

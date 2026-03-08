@@ -74,7 +74,7 @@ export function ExternalFactorsWidget() {
         if (condLower.includes("cloud")) {
             return <Cloud className="h-5 w-5 text-gray-500" />
         }
-        return <Sun className="h-5 w-5 text-amber-500" />
+        return <Sun className="h-5 w-5 text-[#17A2B8]" />
     }
 
     const getImpactIcon = (impact) => {
@@ -91,7 +91,7 @@ export function ExternalFactorsWidget() {
     const getImpactBadge = (impact) => {
         const colors = {
             high: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300",
-            medium: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
+            medium: "bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
             low: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300",
         }
         return colors[impact] || colors.low
@@ -106,7 +106,7 @@ export function ExternalFactorsWidget() {
             )
         }
         return (
-            <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">
+            <Badge variant="outline" className="text-xs bg-[#17A2B8]/10 text-[#1B4F72] border-[#17A2B8]/20">
                 Mock Data
             </Badge>
         )
@@ -153,7 +153,7 @@ export function ExternalFactorsWidget() {
             </CardHeader>
             <CardContent className="space-y-4">
                 {error && (
-                    <div className="flex items-center gap-2 text-amber-600 text-sm p-2 bg-amber-50 rounded-lg">
+                    <div className="flex items-center gap-2 text-[#17A2B8] text-sm p-2 bg-[#17A2B8]/10 rounded-lg">
                         <AlertCircle className="h-4 w-4" />
                         {error}
                     </div>

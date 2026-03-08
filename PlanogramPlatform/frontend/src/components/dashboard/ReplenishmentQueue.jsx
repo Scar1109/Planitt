@@ -16,7 +16,7 @@ const urgencyConfig = {
     },
     soon: {
         label: "Soon",
-        color: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
+        color: "bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
         icon: Truck,
     },
     scheduled: {
@@ -127,7 +127,7 @@ export function ReplenishmentQueue() {
                             </Badge>
                         )}
                         {holidayAffectedCount > 0 && (
-                            <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 gap-1">
+                            <Badge className="bg-slate-50 text-[#1B4F72] dark:bg-[#164060] dark:text-[#17A2B8] gap-1">
                                 <Sparkles className="h-3 w-3" />
                                 {holidayAffectedCount} Holiday
                             </Badge>
@@ -175,7 +175,7 @@ export function ReplenishmentQueue() {
                                             className={cn(
                                                 "rounded-lg border border-border bg-background p-3 transition-colors hover:bg-accent/50",
                                                 isSelected && "ring-2 ring-primary",
-                                                order.hasHoliday && "border-l-4 border-l-purple-500"
+                                                order.hasHoliday && "border-l-4 border-l-[#1B4F72]"
                                             )}
                                         >
                                             <div className="flex items-start gap-3">
@@ -188,7 +188,7 @@ export function ReplenishmentQueue() {
                                                             {urgencyConfig[order.urgency]?.label}
                                                         </Badge>
                                                         {order.hasHoliday && (
-                                                            <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 gap-0.5">
+                                                            <Badge className="bg-slate-50 text-[#1B4F72] dark:bg-[#164060] dark:text-[#17A2B8] gap-0.5">
                                                                 <Sparkles className="h-3 w-3" />
                                                                 Holiday
                                                             </Badge>
@@ -199,7 +199,7 @@ export function ReplenishmentQueue() {
                                                             </Badge>
                                                         )}
                                                         {order.isDowngraded && (
-                                                            <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300 gap-0.5">
+                                                            <Badge className="bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72] gap-0.5">
                                                                 🌦️ Weather Downgrade
                                                             </Badge>
                                                         )}

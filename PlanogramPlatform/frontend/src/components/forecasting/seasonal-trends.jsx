@@ -147,7 +147,7 @@ export function SeasonalTrends() {
                         <button
                             onClick={() => setViewMode("weekly")}
                             className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${viewMode === "weekly"
-                                ? "bg-white text-indigo-600 shadow-sm"
+                                ? "bg-white text-[#1B4F72] shadow-sm"
                                 : "text-slate-500 hover:text-slate-700"}`}
                         >
                             Weekly
@@ -155,7 +155,7 @@ export function SeasonalTrends() {
                         <button
                             onClick={() => setViewMode("daily")}
                             className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${viewMode === "daily"
-                                ? "bg-white text-indigo-600 shadow-sm"
+                                ? "bg-white text-[#1B4F72] shadow-sm"
                                 : "text-slate-500 hover:text-slate-700"}`}
                         >
                             Daily

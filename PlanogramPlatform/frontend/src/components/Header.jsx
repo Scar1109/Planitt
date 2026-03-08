@@ -18,7 +18,7 @@ const Header = () => {
                         <p className="text-sm font-semibold text-slate-800">{user?.fullName}</p>
                         <p className="text-xs text-slate-500 capitalize">{user?.role} • {user?.storeName}</p>
                     </div>
-                    <div className="h-10 w-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500">
+                    <div className="h-10 w-10 bg-[#17A2B8]/10 rounded-full flex items-center justify-center text-[#1B4F72]">
                         <FaUserCircle className="h-6 w-6" />
                     </div>
 

@@ -17,10 +17,10 @@ const LandingPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 overflow-hidden relative selection:bg-indigo-500 selection:text-white flex flex-col">
+        <div className="min-h-screen bg-slate-50 overflow-hidden relative selection:bg-[#17A2B8] selection:text-white flex flex-col">
             {/* Background Gradients */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-indigo-100 rounded-full blur-3xl opacity-50 -z-10 animate-pulse"></div>
-            <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-100 rounded-full blur-3xl opacity-40 -z-10"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-[#17A2B8]/10 rounded-full blur-3xl opacity-50 -z-10 animate-pulse"></div>
+            <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-[#1B4F72]/10 rounded-full blur-3xl opacity-40 -z-10"></div>
 
             {/* Navbar */}
             <nav className="relative z-10 flex justify-between items-center px-8 py-6 max-w-7xl w-full mx-auto">
@@ -40,7 +40,7 @@ const LandingPage = () => {
                                     <p className="text-sm font-bold text-slate-800 leading-tight">{user.fullName}</p>
                                     <p className="text-xs text-slate-500 capitalize font-medium">{user.role} • {user.storeName}</p>
                                 </div>
-                                <div className="h-10 w-10 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-50">
+                                <div className="h-10 w-10 bg-gradient-to-br from-[#17A2B8]/20 to-[#1B4F72]/10 rounded-full flex items-center justify-center text-[#1B4F72] shadow-sm border border-[#17A2B8]/10">
                                     <FaUserCircle className="h-6 w-6" />
                                 </div>
 
@@ -72,7 +72,7 @@ const LandingPage = () => {
             <main className="relative z-10 flex flex-grow flex-col items-center justify-center text-center px-4 max-w-4xl mx-auto w-full">
                 <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-slate-900">
                     Smart Planograms for <br />
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1B4F72] to-[#17A2B8]">
                         Modern Retail
                     </span>
                 </h1>
@@ -82,7 +82,7 @@ const LandingPage = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <Button variant="primary" onClick={handleGetStarted} className="text-lg px-8 py-4 shadow-lg shadow-indigo-200">
+                    <Button variant="primary" onClick={handleGetStarted} className="text-lg px-8 py-4 shadow-lg shadow-[#17A2B8]/20 bg-gradient-to-r from-[#1B4F72] to-[#17A2B8] hover:shadow-[#1B4F72]/30 text-white">
                         {user ? "Go to Dashboard" : "Get Started Free"}
                     </Button>
                 </div>

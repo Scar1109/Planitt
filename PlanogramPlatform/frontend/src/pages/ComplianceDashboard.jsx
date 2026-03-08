@@ -97,13 +97,13 @@ const ComplianceDashboard = () => {
             <div className="flex gap-4 mb-6 border-b border-gray-200">
                 <button 
                     onClick={() => setActiveTab('shelf')}
-                    className={`pb-3 px-2 font-bold transition-all flex items-center gap-2 ${activeTab === 'shelf' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                    className={`pb-3 px-2 font-bold transition-all flex items-center gap-2 ${activeTab === 'shelf' ? 'border-b-4 border-[#1B4F72] text-[#17A2B8]' : 'text-gray-400 hover:text-gray-600'}`}
                 >
                     <FaCamera size={14} /> Shelf-Level Visual Audit
                 </button>
                 <button 
                     onClick={() => setActiveTab('global')}
-                    className={`pb-3 px-2 font-bold transition-all flex items-center gap-2 ${activeTab === 'global' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                    className={`pb-3 px-2 font-bold transition-all flex items-center gap-2 ${activeTab === 'global' ? 'border-b-4 border-[#1B4F72] text-[#17A2B8]' : 'text-gray-400 hover:text-gray-600'}`}
                 >
                     <FaSearch size={14} /> Global Compliance Map
                 </button>
@@ -117,7 +117,7 @@ const ComplianceDashboard = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Current Implementation (Floor Scan)</label>
                                 <select
-                                    className="w-full border-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border"
+                                    className="w-full border-gray-200 rounded-md shadow-sm focus:ring-[#17A2B8] focus:border-[#17A2B8] p-2.5 border"
                                     value={currentId}
                                     onChange={(e) => setCurrentId(e.target.value)}
                                 >
@@ -130,7 +130,7 @@ const ComplianceDashboard = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Optimized Model (Target)</label>
                                 <select
-                                    className="w-full border-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border"
+                                    className="w-full border-gray-200 rounded-md shadow-sm focus:ring-[#17A2B8] focus:border-[#17A2B8] p-2.5 border"
                                     value={optimizedId}
                                     onChange={(e) => setOptimizedId(e.target.value)}
                                 >
@@ -145,7 +145,7 @@ const ComplianceDashboard = () => {
                         <button
                             onClick={runCheck}
                             disabled={status === 'loading'}
-                            className={`px-8 py-2.5 rounded-lg font-bold text-white transition h-fit shadow-md ${status === 'loading' ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700 active:scale-95'}`}
+                            className={`px-8 py-2.5 rounded-lg font-bold text-white transition h-fit shadow-md ${status === 'loading' ? 'bg-gray-400' : 'bg-[#1B4F72] hover:bg-[#164060] active:scale-95'}`}
                         >
                             {status === 'loading' ? 'Calculating...' : 'Run Global Audit'}
                         </button>
@@ -203,14 +203,14 @@ const ComplianceDashboard = () => {
                             </div>
 
                             {/* Agent Insight */}
-                            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-xl text-white shadow-lg shadow-blue-200">
+                            <div className="bg-gradient-to-r from-[#1B4F72] to-[#164060] p-6 rounded-xl text-white shadow-lg shadow-[#17A2B8]/20">
                                 <div className="flex items-start space-x-4">
                                     <div className="bg-white/20 p-3 rounded-full backdrop-blur-md">
                                         <FaRobot size={24} />
                                     </div>
                                     <div>
                                         <div className="flex items-center space-x-2 mb-2">
-                                            <h3 className="font-black uppercase tracking-widest text-xs text-blue-100">AI Agent Intelligence Report</h3>
+                                            <h3 className="font-black uppercase tracking-widest text-xs text-[#17A2B8]">AI Agent Intelligence Report</h3>
                                         </div>
                                         <p className="text-lg font-medium leading-relaxed italic opacity-95">
                                             "{agentInsight}"

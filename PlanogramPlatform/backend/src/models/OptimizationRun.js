@@ -19,7 +19,10 @@ const OptimizationRunSchema = new mongoose.Schema({
     status: { type: String, enum: ["queued", "running", "success", "failed"], default: "queued" },
     errorMessage: { type: String, default: "" },
     logsRef: { type: String, default: "" },
-    resultingPlacements: { type: mongoose.Schema.Types.Mixed, default: [] }
+    resultingPlacements: { type: mongoose.Schema.Types.Mixed, default: [] },
+    convergenceHistory: { type: [mongoose.Schema.Types.Mixed], default: [] },
+    constraintViolations: { type: [mongoose.Schema.Types.Mixed], default: [] },
+    heuristicScore: { type: Number, default: null }
 }, { timestamps: true });
 
 export default mongoose.model("OptimizationRun", OptimizationRunSchema);

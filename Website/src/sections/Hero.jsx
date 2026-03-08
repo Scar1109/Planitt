@@ -28,7 +28,7 @@ export default function Hero() {
 
                     <h1 className="hero-title">
                         Transform Retail Shelves with{' '}
-                        <span className="highlight">AI-Powered Optimization</span>
+                        <span className="highlight"><span style={{ whiteSpace: 'nowrap' }}>AI-Powered</span> Optimization</span>
                     </h1>
 
                     <p className="hero-subtitle">
@@ -46,20 +46,7 @@ export default function Hero() {
                         </a>
                     </div>
 
-                    <div className="hero-stats">
-                        <div>
-                            <div className="hero-stat-value">+32%</div>
-                            <div className="hero-stat-label">Shelf Efficiency</div>
-                        </div>
-                        <div>
-                            <div className="hero-stat-value">-41%</div>
-                            <div className="hero-stat-label">Product Waste</div>
-                        </div>
-                        <div>
-                            <div className="hero-stat-value">+28%</div>
-                            <div className="hero-stat-label">Promo ROI</div>
-                        </div>
-                    </div>
+
                 </div>
 
                 <div className="hero-visual">
@@ -122,7 +109,7 @@ export default function Hero() {
 
                             <div className="dashboard-card">
                                 <div className="dashboard-card-label">Waste Reduction</div>
-                                <div className="dashboard-card-value green">-41%</div>
+                                <div className="dashboard-card-value green">-18%</div>
                                 <div className="mini-chart">
                                     {miniChartBars.map((bar, i) => (
                                         <div

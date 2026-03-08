@@ -106,7 +106,7 @@ const ModuleCard = ({ icon: Icon, title, subtitle, gradient, iconBg, stats, link
                     <div className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${iconBg}`}>
                         <Icon className="w-5.5 h-5.5 text-white" />
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all duration-300" />
+                    <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#17A2B8] group-hover:translate-x-1 transition-all duration-300" />
                 </div>
                 <h3 className="text-sm font-bold text-slate-800 mb-0.5">{title}</h3>
                 <p className="text-xs text-slate-400 mb-4">{subtitle}</p>
@@ -117,7 +117,7 @@ const ModuleCard = ({ icon: Icon, title, subtitle, gradient, iconBg, stats, link
                             <div className="flex items-center gap-1.5">
                                 {stat.bar && (
                                     <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                        <div className={`h-full rounded-full ${stat.barColor || 'bg-indigo-500'}`}
+                                        <div className={`h-full rounded-full ${stat.barColor || 'bg-[#1B4F72]'}`}
                                             style={{ width: `${stat.bar}%`, transition: 'width 1.5s ease-out' }} />
                                     </div>
                                 )}
@@ -128,9 +128,9 @@ const ModuleCard = ({ icon: Icon, title, subtitle, gradient, iconBg, stats, link
                 </div>
             </div>
             {/* Bottom link */}
-            <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between group-hover:bg-indigo-50 transition-colors duration-300">
-                <span className="text-xs font-semibold text-slate-500 group-hover:text-indigo-600 transition-colors">{linkLabel}</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+            <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between group-hover:bg-[#17A2B8]/10 transition-colors duration-300">
+                <span className="text-xs font-semibold text-slate-500 group-hover:text-[#1B4F72] transition-colors">{linkLabel}</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#17A2B8] transition-colors" />
             </div>
         </div>
     );
@@ -239,7 +239,7 @@ const DashboardHome = () => {
                 <KpiCard icon={Package} label="All Product Count" value={stats.allProducts} trend="up" trendValue="+8"
                     gradient="bg-gradient-to-br from-cyan-500 to-blue-600" delay={100} />
                 <KpiCard icon={AlertTriangle} label="Low Stock Count" value={stats.lowStockCount} trend="down" trendValue="-3"
-                    gradient="bg-gradient-to-br from-blue-500 to-indigo-600" delay={200} />
+                    gradient="bg-gradient-to-br from-blue-500 to-[#1B4F72]" delay={200} />
                 <KpiCard icon={CalendarDays} label="Upcoming Events" value={stats.upcomingEvents} trend="neutral" trendValue="Next 30 Days"
                     gradient="bg-gradient-to-br from-slate-600 to-slate-800" delay={300} />
             </div>
@@ -289,8 +289,8 @@ const DashboardHome = () => {
                     <ModuleCard
                         icon={ShieldCheck} title="Compliance Intelligence"
                         subtitle="Automated planogram audit & scoring"
-                        gradient="bg-gradient-to-r from-blue-500 to-indigo-500"
-                        iconBg="bg-gradient-to-br from-blue-500 to-indigo-600"
+                        gradient="bg-gradient-to-r from-blue-500 to-[#1B4F72]"
+                        iconBg="bg-gradient-to-br from-blue-500 to-[#1B4F72]"
                         link="/dashboard/compliance"
                         stats={[
                             { label: 'Compliance Score', value: `${stats.modules.compliance.score}%`, bar: stats.modules.compliance.score, barColor: 'bg-blue-500' },

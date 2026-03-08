@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-const PlanogramShelf = ({ facings, colorClass = "bg-indigo-500" }) => (
+const PlanogramShelf = ({ facings, colorClass = "bg-[#17A2B8]" }) => (
     <div className="mt-3">
         <div className="flex justify-between items-end mb-1">
             <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Visual Shelf</p>
@@ -25,8 +25,17 @@ const PlanogramShelf = ({ facings, colorClass = "bg-indigo-500" }) => (
 
 const FullPlanogramShelf = ({ items = [], products = [] }) => {
     // Generate a list of uniform boxes, colored by brand/category based on product logic
-    // We'll just generate simple colors from string hashes or fixed array
-    const colors = ["bg-indigo-500", "bg-emerald-500", "bg-rose-500", "bg-amber-500", "bg-cyan-500", "bg-fuchsia-500", "bg-blue-600", "bg-orange-500"];
+    // We'll just generate simple pastel colors from string hashes or fixed array
+    const colors = [
+        "bg-[#E0F7FA] text-[#006064] border-[#B2EBF2]", // Light Cyan
+        "bg-[#F1F8E9] text-[#33691E] border-[#DCEDC8]", // Light Light Green
+        "bg-[#FCE4EC] text-[#880E4F] border-[#F8BBD0]", // Light Pink
+        "bg-[#FFF8E1] text-[#FF6F00] border-[#FFECB3]", // Light Amber
+        "bg-[#E8EAF6] text-[#1A237E] border-[#C5CAE9]", // Light Indigo
+        "bg-[#F3E5F5] text-[#4A148C] border-[#E1BEE7]", // Light Purple
+        "bg-[#E3F2FD] text-[#0D47A1] border-[#BBDEFB]", // Light Blue
+        "bg-[#FFF3E0] text-[#E65100] border-[#FFE0B2]"  // Light Orange
+    ];
 
     // Flatten items into individual boxed rendered
     const shelfBoxes = [];
@@ -69,7 +78,7 @@ const FullPlanogramShelf = ({ items = [], products = [] }) => {
                     const name = prod?.productName || itemSku;
                     return (
                         <div key={index + '-' + itemSku} className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded border border-slate-100">
-                            <div className={`w-2 h-2 rounded-full ${colors[index % colors.length]}`}></div>
+                            <div className={`w-3 h-3 rounded-full border ${colors[index % colors.length]}`}></div>
                             <span className="truncate max-w-[120px]" title={name}>{name} (x{item.facings})</span>
                         </div>
                     );
@@ -77,19 +86,19 @@ const FullPlanogramShelf = ({ items = [], products = [] }) => {
             </div>
 
             <div className="bg-slate-300 h-3 w-full rounded-full relative mt-12 bg-opacity-70">
-                <div className="absolute bottom-2 left-0 flex items-end gap-[2px] px-3 overflow-hidden w-full h-10">
+                <div className="absolute bottom-2 left-0 flex items-end px-3 overflow-hidden w-full h-10 gap-[2px]">
                     {displayBoxes.map((box, i) => (
                         <div
                             key={i}
-                            className={`w-6 h-8 rounded-sm shadow-md border-r border-t border-black/20 ${box.color} flex-shrink-0 relative group`}
+                            className={`flex-1 h-8 rounded-sm shadow-sm border border-black/5 ${box.color} flex-shrink-1 relative group overflow-hidden`}
                             title={box.name}
                         >
-                            <div className="absolute font-bold text-white uppercase text-[8px] transform -rotate-90 origin-left top-1 left-2 opacity-50 whitespace-nowrap overflow-hidden line-clamp-1 w-6">
-                                {(box.sku ? String(box.sku) : 'UNK').substring(0, 4)}
+                            <div className="absolute font-semibold text-[8px] transform -rotate-90 origin-left top-1 left-2 opacity-70 whitespace-nowrap overflow-hidden line-clamp-1 w-full text-inherit">
+                                {(box.sku ? String(box.sku) : 'UNK').substring(0, 5)}
                             </div>
                         </div>
                     ))}
-                    {hiddenCount > 0 && <span className="text-xs font-bold text-slate-600 mb-1 ml-2 self-center">+{hiddenCount} more</span>}
+                    {hiddenCount > 0 && <span className="text-xs font-bold text-slate-600 mb-1 ml-2 self-center flex-shrink-0">+{hiddenCount}</span>}
                 </div>
             </div>
         </div>
@@ -260,7 +269,7 @@ const ScenarioLab = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                        <FaFlask className="text-indigo-600" />
+                        <FaFlask className="text-[#1B4F72]" />
                         Scenario Lab
                     </h1>
                     <p className="text-sm text-slate-500 mt-1">Experiment with what-if scenarios, planogram setups, and future trend planning.</p>
@@ -278,7 +287,7 @@ const ScenarioLab = () => {
                 <button
                     onClick={() => setActiveTab('compare')}
                     className={classNames('flex-1 py-2.5 px-4 text-sm font-medium rounded-lg flex items-center justify-center transition-all whitespace-nowrap', {
-                        'bg-indigo-50 text-indigo-700 shadow-sm': activeTab === 'compare',
+                        'bg-[#17A2B8]/5 text-[#164060] shadow-sm': activeTab === 'compare',
                         'text-slate-500 hover:text-slate-700 hover:bg-slate-50': activeTab !== 'compare'
                     })}
                 >
@@ -287,7 +296,7 @@ const ScenarioLab = () => {
                 <button
                     onClick={() => setActiveTab('trend')}
                     className={classNames('flex-1 py-2.5 px-4 text-sm font-medium rounded-lg flex items-center justify-center transition-all whitespace-nowrap', {
-                        'bg-indigo-50 text-indigo-700 shadow-sm': activeTab === 'trend',
+                        'bg-[#17A2B8]/5 text-[#164060] shadow-sm': activeTab === 'trend',
                         'text-slate-500 hover:text-slate-700 hover:bg-slate-50': activeTab !== 'trend'
                     })}
                 >
@@ -309,7 +318,7 @@ const ScenarioLab = () => {
                                 <div>
                                     <label className="block text-xs font-medium text-slate-700 mb-1">1. Select Store Planogram (Starting Point)</label>
                                     <select
-                                        className="w-full p-1.5 border border-slate-300 rounded text-sm focus:ring-indigo-500 bg-white"
+                                        className="w-full p-1.5 border border-slate-300 rounded text-sm focus:ring-[#17A2B8] bg-white"
                                         onChange={e => handleLoadPlanogram(e.target.value)}
                                         defaultValue=""
                                         title="Choose a previously saved store layout to serve as your baseline."
@@ -329,7 +338,7 @@ const ScenarioLab = () => {
                                         <div className="border-t border-slate-200 pt-3">
                                             <label className="block text-xs font-medium text-slate-700 mb-1">2. Pick a Shelf Level to Modify</label>
                                             <select
-                                                className="w-full p-1.5 border border-slate-300 rounded text-sm focus:ring-indigo-500 bg-white"
+                                                className="w-full p-1.5 border border-slate-300 rounded text-sm focus:ring-[#17A2B8] bg-white"
                                                 value={compareSim.selectedLevel}
                                                 title="Filter the products by a specific shelf row, or view the whole layout combined."
                                                 onChange={e => {
@@ -362,10 +371,10 @@ const ScenarioLab = () => {
                                     );
                                 })()}
 
-                                <div className="border-t border-slate-200 pt-3 bg-indigo-50/50 p-2 rounded border-l-4 border-l-indigo-400">
-                                    <label className="block text-xs font-bold text-indigo-900 mb-1">3. Choose a Product to Test</label>
+                                <div className="border-t border-slate-200 pt-3 bg-[#17A2B8]/5 p-2 rounded border-l-4 border-l-[#17A2B8]">
+                                    <label className="block text-xs font-bold text-[#0F3249] mb-1">3. Choose a Product to Test</label>
                                     <select
-                                        className="w-full p-1.5 border border-indigo-200 rounded text-sm focus:ring-indigo-500 bg-white shadow-sm"
+                                        className="w-full p-1.5 border border-[#17A2B8]/30 rounded text-sm focus:ring-[#17A2B8] bg-white shadow-sm"
                                         value={compareSim.skuId}
                                         title="Select the specific item you want to simulate a promotion or layout change for."
                                         onChange={e => {
@@ -417,19 +426,19 @@ const ScenarioLab = () => {
                                 <PlanogramShelf facings={compareSim.currFacings} colorClass="bg-slate-400" />
                             </div>
 
-                            <div className="bg-indigo-50 p-3 rounded shadow-sm border border-indigo-100">
-                                <p className="font-medium text-sm text-indigo-800 mb-2">Proposed Promotion / Layout (What-If)</p>
+                            <div className="bg-[#17A2B8]/5 p-3 rounded shadow-sm border border-[#17A2B8]/10">
+                                <p className="font-medium text-sm text-[#164060] mb-2">Proposed Promotion / Layout (What-If)</p>
                                 <div className="grid grid-cols-2 gap-3 mb-2">
                                     <div>
-                                        <label className="block text-xs text-indigo-600">Facings</label>
-                                        <input type="number" className="w-full p-1.5 border border-indigo-200 rounded text-sm bg-white" value={compareSim.propFacings} onChange={e => setCompareSim({ ...compareSim, propFacings: Number(e.target.value) })} title="Change this to see the impact of adding or removing shelf space for this product." />
+                                        <label className="block text-xs text-[#1B4F72]">Facings</label>
+                                        <input type="number" className="w-full p-1.5 border border-[#17A2B8]/30 rounded text-sm bg-white" value={compareSim.propFacings} onChange={e => setCompareSim({ ...compareSim, propFacings: Number(e.target.value) })} title="Change this to see the impact of adding or removing shelf space for this product." />
                                     </div>
                                     <div>
-                                        <label className="block text-xs text-indigo-600">Discount (%)</label>
-                                        <input type="number" className="w-full p-1.5 border border-indigo-200 rounded text-sm bg-white" value={compareSim.propDiscount} onChange={e => setCompareSim({ ...compareSim, propDiscount: Number(e.target.value) })} title="Change this to see the impact of running a sale on this product." />
+                                        <label className="block text-xs text-[#1B4F72]">Discount (%)</label>
+                                        <input type="number" className="w-full p-1.5 border border-[#17A2B8]/30 rounded text-sm bg-white" value={compareSim.propDiscount} onChange={e => setCompareSim({ ...compareSim, propDiscount: Number(e.target.value) })} title="Change this to see the impact of running a sale on this product." />
                                     </div>
                                 </div>
-                                <PlanogramShelf facings={compareSim.propFacings} colorClass="bg-indigo-500" />
+                                <PlanogramShelf facings={compareSim.propFacings} colorClass="bg-[#17A2B8]" />
                             </div>
 
                             <button
@@ -473,10 +482,10 @@ const ScenarioLab = () => {
 
                                     <div className="grid grid-cols-2 gap-6">
                                         {/* Current Card */}
-                                        <div className={`p-5 rounded-xl border ${compareResult.verdict?.recommended_setup === 'Current Setup' ? 'border-indigo-400 shadow-md bg-indigo-50/10' : 'border-slate-200 bg-white'}`}>
+                                        <div className={`p-5 rounded-xl border ${compareResult.verdict?.recommended_setup === 'Current Setup' ? 'border-[#17A2B8] shadow-md bg-[#17A2B8]/5/10' : 'border-slate-200 bg-white'}`}>
                                             <div className="flex justify-between items-center mb-4">
                                                 <h4 className="font-semibold text-slate-700">Current Setup</h4>
-                                                {compareResult.verdict?.recommended_setup === 'Current Setup' && <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-bold uppercase tracking-wider">Winner</span>}
+                                                {compareResult.verdict?.recommended_setup === 'Current Setup' && <span className="text-xs bg-[#17A2B8]/10 text-[#164060] px-2 py-1 rounded-full font-bold uppercase tracking-wider">Winner</span>}
                                             </div>
                                             <div className="space-y-3">
                                                 <div>
@@ -491,10 +500,10 @@ const ScenarioLab = () => {
                                         </div>
 
                                         {/* Proposed Card */}
-                                        <div className={`p-5 rounded-xl border ${compareResult.verdict?.recommended_setup === 'Proposed Setup' ? 'border-indigo-400 shadow-md bg-indigo-50/10' : 'border-slate-200 bg-white'}`}>
+                                        <div className={`p-5 rounded-xl border ${compareResult.verdict?.recommended_setup === 'Proposed Setup' ? 'border-[#17A2B8] shadow-md bg-[#17A2B8]/5/10' : 'border-slate-200 bg-white'}`}>
                                             <div className="flex justify-between items-center mb-4">
                                                 <h4 className="font-semibold text-slate-700">Proposed Setup</h4>
-                                                {compareResult.verdict?.recommended_setup === 'Proposed Setup' && <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-bold uppercase tracking-wider">Winner</span>}
+                                                {compareResult.verdict?.recommended_setup === 'Proposed Setup' && <span className="text-xs bg-[#17A2B8]/10 text-[#164060] px-2 py-1 rounded-full font-bold uppercase tracking-wider">Winner</span>}
                                             </div>
                                             <div className="space-y-3">
                                                 <div>
@@ -540,7 +549,7 @@ const ScenarioLab = () => {
                                 <div className="flex items-center gap-2" title="Select the product you want to forecast future demand for.">
                                     <label className="text-sm font-medium text-slate-700">Product:</label>
                                     <select
-                                        className="p-1.5 border border-slate-300 rounded text-sm focus:ring-indigo-500 bg-white shadow-sm"
+                                        className="p-1.5 border border-slate-300 rounded text-sm focus:ring-[#17A2B8] bg-white shadow-sm"
                                         value={trendSkuId}
                                         onChange={e => setTrendSkuId(e.target.value)}
                                     >
@@ -566,7 +575,7 @@ const ScenarioLab = () => {
                                 <button
                                     onClick={handleFetchTrend}
                                     disabled={loading}
-                                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium shadow-sm transition-colors"
+                                    className="bg-[#1B4F72] hover:bg-[#164060] text-white px-4 py-1.5 rounded-lg text-sm font-medium shadow-sm transition-colors"
                                 >
                                     {loading ? 'Fetching...' : 'Fetch Maps'}
                                 </button>
@@ -576,8 +585,8 @@ const ScenarioLab = () => {
                         {trendResult ? (
                             <div className="space-y-6 animate-fadeIn">
                                 {/* The AI Event Narrative Box */}
-                                <div className={`p-4 rounded-lg border flex gap-3 ${trendResult.events.length > 0 ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
-                                    {trendResult.events.length > 0 ? <FaExclamationTriangle className="text-amber-500 mt-1 flex-shrink-0" /> : <FaRobot className="text-slate-400 mt-1 flex-shrink-0" />}
+                                <div className={`p-4 rounded-lg border flex gap-3 ${trendResult.events.length > 0 ? 'bg-[#17A2B8]/10 border-[#17A2B8]/20 text-[#1B4F72]' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
+                                    {trendResult.events.length > 0 ? <FaExclamationTriangle className="text-[#17A2B8] mt-1 flex-shrink-0" /> : <FaRobot className="text-slate-400 mt-1 flex-shrink-0" />}
                                     <div>
                                         <h4 className="font-semibold text-sm mb-1">{trendResult.readiness_status}</h4>
                                         <p className="text-sm">{trendResult.event_narrative}</p>
