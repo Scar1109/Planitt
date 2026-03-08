@@ -8,7 +8,6 @@ export default function Footer() {
                     <div className="footer-brand">
                         <div className="navbar-logo">
                             <img src="/logo.png" alt="Planitt" />
-                            <span>Planitt</span>
                         </div>
                         <p>
                             AI-powered retail shelf optimization platform. Transforming

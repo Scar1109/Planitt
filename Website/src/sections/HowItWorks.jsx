@@ -18,11 +18,6 @@ const steps = [
     },
     {
         num: '04',
-        title: 'Monitor with AR & Computer Vision',
-        desc: 'Store teams use AR-powered mobile tools to scan shelves, detect compliance gaps, and receive real-time correction guidance.',
-    },
-    {
-        num: '05',
         title: 'Continuous Improvement Loop',
         desc: 'Performance data from shelf scans and sales feeds back into the AI engine, continuously improving planogram accuracy and forecasting precision.',
     },
@@ -38,7 +33,7 @@ export default function HowItWorks() {
                     <h2 className="section-title">
                         From Data to{' '}
                         <span className="gradient-text">Optimized Shelves</span>{' '}
-                        in 5 Steps
+                        in 4 Steps
                     </h2>
                     <p className="section-subtitle mx-auto">
                         Our end-to-end pipeline transforms raw retail data into actionable

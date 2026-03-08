@@ -2,13 +2,11 @@ import React, { useState } from 'react'
 
 const tabs = [
     { id: 'planogram', label: '📐 Planogram Generation' },
-    { id: 'ar', label: '📱 AR Shelf Scanning' },
     { id: 'forecast', label: '📈 Demand Forecasting' },
 ]
 
 const sidebarItems = {
     planogram: ['Overview', 'Category View', 'Shelf Layout', 'Product Mix', 'Revenue Map'],
-    ar: ['Live Scan', 'Gap Detection', 'Compliance Score', 'Fix Guidance', 'History'],
     forecast: ['30-Day Forecast', 'Seasonal Trends', 'Anomaly Detection', 'Reorder Queue', 'Reports'],
 }
 
@@ -17,11 +15,6 @@ const metrics = {
         { label: 'Products Optimized', value: '2,847', color: '#4f6cff' },
         { label: 'Revenue / Shelf Ft', value: '$142.30', color: '#8b5cf6' },
         { label: 'Layout Score', value: '96.4%', color: '#06b6d4' },
-    ],
-    ar: [
-        { label: 'Shelves Scanned', value: '1,203', color: '#10b981' },
-        { label: 'Compliance Rate', value: '94.7%', color: '#4f6cff' },
-        { label: 'Gaps Detected', value: '37', color: '#f59e0b' },
     ],
     forecast: [
         { label: 'Forecast Accuracy', value: '97.8%', color: '#8b5cf6' },
@@ -32,13 +25,11 @@ const metrics = {
 
 const chartPaths = {
     planogram: 'M0,50 C40,45 80,30 120,35 C160,40 200,20 240,25 C280,30 320,15 360,10 L360,80 L0,80Z',
-    ar: 'M0,40 C40,35 80,45 120,30 C160,25 200,35 240,20 C280,15 320,25 360,18 L360,80 L0,80Z',
     forecast: 'M0,55 C40,48 80,35 120,40 C160,38 200,22 240,28 C280,18 320,12 360,8 L360,80 L0,80Z',
 }
 
 const chartLinePaths = {
     planogram: 'M0,50 C40,45 80,30 120,35 C160,40 200,20 240,25 C280,30 320,15 360,10',
-    ar: 'M0,40 C40,35 80,45 120,30 C160,25 200,35 240,20 C280,15 320,25 360,18',
     forecast: 'M0,55 C40,48 80,35 120,40 C160,38 200,22 240,28 C280,18 320,12 360,8',
 }
 

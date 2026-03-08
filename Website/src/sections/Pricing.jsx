@@ -5,7 +5,7 @@ const plans = [
         tier: 'Starter',
         name: 'Per Store',
         desc: 'Perfect for single-location retailers looking to optimize shelf performance.',
-        amount: '$299',
+        amount: '$49',
         period: '/store/month',
         features: [
             'Planogram Optimization',
@@ -22,7 +22,7 @@ const plans = [
         tier: 'Enterprise',
         name: 'Retail Solutions',
         desc: 'Full-featured AI platform for multi-store retail chains with advanced analytics.',
-        amount: '$199',
+        amount: '$99',
         period: '/store/month (min 10)',
         features: [
             'All Starter Features',

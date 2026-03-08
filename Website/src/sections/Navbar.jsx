@@ -14,7 +14,6 @@ export default function Navbar() {
             <div className="container">
                 <a href="#hero" className="navbar-logo">
                     <img src="/logo.png" alt="Planitt" />
-                    <span>Planitt</span>
                 </a>
 
                 <ul className="navbar-links">
