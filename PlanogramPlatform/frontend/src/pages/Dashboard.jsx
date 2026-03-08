@@ -94,6 +94,15 @@ const Dashboard = () => {
                 <Route path="/promotional-forecasting/forecast" element={<ForecastPage />} />
                 <Route path="/promotional-forecasting/suggested" element={<RecommendationsPage />} />
                 <Route path="/promotional-forecasting/scenario-lab" element={<ScenarioLab />} />
+
+                {/* Inventory Routes */}
+                <Route path="/forecasting" element={<Forecasting />} />
+                <Route path="/inventory/wastage" element={<WastagePrevention />} />
+
+                {/* Compliance Routes */}
+                <Route path="/compliance" element={<ComplianceDashboard />} />
+                <Route path="/compliance/analysis" element={<SystemAnalysis />} />
+                <Route path="/compliance/history" element={<ComplianceHistory />} />
             </Routes>
         </DashboardLayout>
     );

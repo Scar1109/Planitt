@@ -254,19 +254,46 @@ const getMonsoonPattern = (date) => {
 // ECONOMIC FACTORS (Sri Lanka Specific)
 // ============================================
 
-const getEconomicFactors = () => {
-    // In production, these would come from external APIs or database
+const getEconomicFactors = (date) => {
+    // Check for Payday cycles (Sri Lankan context)
+    // Government payday is typically 25th, Private sector typically 25th-1st
+    // Some private sectors pay on the 10th
+    const day = date.getDate();
+
+    let paydayImpact = null;
+    let paydayMultiplier = 1.0;
+
+    // Core Payday window (25th to 5th)
+    if (day >= 25 || day <= 5) {
+        paydayImpact = 'Main Salary Period (Govt/Private)';
+        paydayMultiplier = 1.4; // 40% surge in general shopping
+    }
+    // Mid-month Payday window (10th)
+    else if (day >= 10 && day <= 12) {
+        paydayImpact = 'Mid-Month Salary Period (Some Private/Daily)';
+        paydayMultiplier = 1.15; // 15% surge
+    }
+    // Mid-month dip / end of month dip
+    else if (day >= 15 && day <= 24) {
+        paydayImpact = 'Month-End Dip';
+        paydayMultiplier = 0.85; // 15% drop in non-essentials
+    }
+
     return {
-        fuel_price_index: 1.15,  // Relative to baseline
-        inflation_rate: 5.2,      // Annual percentage
-        usd_lkr_rate: 325,        // Approximate exchange rate
+        fuel_price_index: 1.15,
+        inflation_rate: 5.2,
+        usd_lkr_rate: 325,
+        current_payday_cycle: paydayImpact,
         impact: {
-            imported_goods: 1.18,  // Higher costs due to USD rate
-            local_produce: 1.05,   // Moderate increase
-            dairy: 1.12,           // Affected by fuel for transport
-            transport_dependent: 1.10
+            imported_goods: 1.18 * paydayMultiplier,
+            local_produce: 1.05 * paydayMultiplier,
+            dairy: 1.12 * Math.max(1, paydayMultiplier), // Dairy rarely dips below baseline
+            transport_dependent: 1.10,
+            luxury_items: 1.0 * (paydayMultiplier > 1 ? 1.5 : 0.6) // Luxury highly sensitive to payday
         },
-        description: 'Current economic conditions affecting pricing'
+        description: paydayImpact
+            ? `Current economic conditions with ${paydayImpact} effect`
+            : 'Standard economic conditions affecting pricing'
     };
 };
 
@@ -406,7 +433,7 @@ export const getExternalFactorsAnalysis = async (req, res) => {
 
         const currentSeason = getSeasonalFactors(now);
         const currentMonsoon = getMonsoonPattern(now);
-        const economicFactors = getEconomicFactors();
+        const economicFactors = getEconomicFactors(now); // Pass the date parameter
         const schoolImpact = getSchoolTermImpact(now);
         const regionalFactors = getRegionalFactors(province);
 
@@ -849,8 +876,19 @@ function generateComprehensiveRecommendations(futurePredictions, weatherPatterns
         )
     });
 
-    // Economic factors
-    if (economic.fuel_price_index > 1.1) {
+    // Economic factors / Payday Cycles
+    if (economic.current_payday_cycle) {
+        const isDip = economic.current_payday_cycle.includes('Dip');
+        recommendations.push({
+            priority: isDip ? 'medium' : 'high',
+            type: 'economic_payday',
+            icon: '💸',
+            message: `${economic.current_payday_cycle} active - Adjust stock accordingly`,
+            actionItems: isDip
+                ? ['Reduce orders for luxury/non-essentials', 'Focus on basic provisions']
+                : ['Prioritize luxury items', 'Promote imported goods and large packs']
+        });
+    } else if (economic.fuel_price_index > 1.1) {
         recommendations.push({
             priority: 'low',
             type: 'economic',
