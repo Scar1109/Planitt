@@ -12,7 +12,7 @@ const Sidebar = () => {
     const [expandedMenus, setExpandedMenus] = useState({});
 
     const toggleMenu = (name) => {
-        setExpandedMenus(prev => ({ ...prev, [name]: !prev[name] }));
+        setExpandedMenus(prev => ({ [name]: !prev[name] }));
     };
 
     const settingsSubItems = [];
