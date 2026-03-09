@@ -15,7 +15,7 @@ import {
     ComposedChart,
     Bar,
 } from "recharts"
-import { Bot, TrendingUp, AlertTriangle, CheckCircle, Loader2, Sparkles, Search, ChevronDown, X } from "lucide-react"
+import { Bot, TrendingUp, AlertTriangle, CheckCircle, Loader2, Sparkles, Search, ChevronDown, X, Package } from "lucide-react"
 import { api } from "@/api/client"
 
 export function AgentInventoryForecast() {
@@ -457,12 +457,7 @@ export function AgentInventoryForecast() {
                                             </div>
                                         )}
 
-                                        {/* Metadata Footer */}
-                                        <div className="flex items-center gap-2 pt-2 text-[10px] text-slate-400">
-                                            <span>Powered by {forecastData.metadata?.agent || 'AI'}</span>
-                                            <span>•</span>
-                                            <span>{forecastData.metadata?.productName || forecastData.metadata?.productId}</span>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -526,14 +521,26 @@ export function AgentInventoryForecast() {
                             </div>
                         )}
 
-                        {/* Additional Data */}
+                        {/* Subtle Yet Cool Recommendation Block */}
                         {forecastData.data?.quantity !== null && (
-                            <div className="mt-4 pt-4 border-t border-slate-100">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-slate-500">Recommended Quantity:</span>
-                                    <span className="font-semibold text-lg text-[#1B4F72]">
-                                        {forecastData.data.quantity} units
-                                    </span>
+                            <div className="mt-4 pt-4 border-t border-slate-100 flex justify-end">
+                                <div className="inline-flex items-center gap-4 py-2.5 px-5 bg-gradient-to-r from-[#17A2B8]/5 to-slate-50 border border-[#17A2B8]/20 rounded-xl shadow-[0_2px_10px_-4px_rgba(23,162,184,0.2)]">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="bg-white p-1.5 rounded-lg border border-slate-100 shadow-sm">
+                                            <Package className="h-4 w-4 text-[#17A2B8]" />
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-700 text-[10px] font-bold uppercase tracking-wider leading-tight">Recommended Qty</p>
+                                            <p className="text-slate-400 text-[10px] leading-tight">Next {horizon} days</p>
+                                        </div>
+                                    </div>
+                                    <div className="h-6 w-px bg-slate-200" />
+                                    <div className="flex items-baseline gap-1 pr-1">
+                                        <span className="text-2xl font-black text-[#1B4F72] tabular-nums tracking-tight leading-none">
+                                            {forecastData.data.quantity}
+                                        </span>
+                                        <span className="text-xs font-semibold text-slate-500 leading-none">units</span>
+                                    </div>
                                 </div>
                             </div>
                         )}
