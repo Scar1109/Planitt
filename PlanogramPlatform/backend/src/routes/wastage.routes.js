@@ -282,13 +282,20 @@ router.get('/dashboard/:storeId', async (req, res, next) => {
             const recoverableForItem = stock * basePrice * (1 - fallbackDiscount / 100);
             totalRecoverableRevenue += dte > 0 ? recoverableForItem : 0;
 
+            let expiryLabelStr = 'Expired';
+            if (dte > 0) {
+                const dDate = new Date();
+                dDate.setDate(dDate.getDate() + dte);
+                expiryLabelStr = dDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
+
             enrichedRiskItems.push({
                 id: inv._id,
                 sku: inv.sku,
                 productName: product?.productName || inv.sku,
                 category,
                 daysToExpiry: dte,
-                expiryLabel: dte <= 0 ? 'Expired' : dte === 1 ? 'Tomorrow' : `${dte} Days`,
+                expiryLabel: expiryLabelStr,
                 closingStock: stock,
                 basePrice: Math.round(basePrice),
                 costPrice: Math.round(costPrice),
@@ -360,7 +367,9 @@ router.get('/dashboard/:storeId', async (req, res, next) => {
         // --- Expiry Timeline (value per day for next 7 days) ---
         const expiryTimeline = [];
         for (let d = 1; d <= 7; d++) {
-            const dayLabel = d === 1 ? 'Tomorrow' : `Day ${d}`;
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + d);
+            const dayLabel = targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             const dayItems = enrichedRiskItems.filter(item => item.daysToExpiry === d);
             const dayValue = dayItems.reduce((sum, item) => sum + item.value, 0);
             const dayCount = dayItems.length;
@@ -374,61 +383,82 @@ router.get('/dashboard/:storeId', async (req, res, next) => {
 
         // --- Smart Bundle Suggestions ---
         const bundleSuggestions = [];
-        const criticalItems = enrichedRiskItems.filter(i => i.daysToExpiry <= 3 && i.daysToExpiry > 0);
-        const categoryGroups = {};
-        for (const item of criticalItems) {
-            if (!categoryGroups[item.category]) categoryGroups[item.category] = [];
-            categoryGroups[item.category].push(item);
+        const criticalItems = enrichedRiskItems.filter(i => i.daysToExpiry <= 5 && i.daysToExpiry > 0);
+
+        // Define logical complementary categories to form smart bundles
+        const complementaryPairs = [
+            ['Beverages', 'Snacks'],
+            ['Bakery', 'Dairy'],
+            ['Produce', 'Meat'],
+            ['Spices', 'Produce'],
+            ['Breakfast', 'Dairy'],
+            ['Pantry', 'Spices']
+        ];
+
+        const usedSkus = new Set();
+
+        const createAndAddBundle = (item1, item2) => {
+            const totalPrice = item1.basePrice + item2.basePrice;
+
+            const getDiscountForDte = (dte) => {
+                if (dte <= 1) return 50;
+                if (dte <= 3) return 30;
+                if (dte <= 5) return 20;
+                if (dte <= 7) return 10;
+                return 0;
+            };
+
+            const d1 = getDiscountForDte(item1.daysToExpiry);
+            const d2 = getDiscountForDte(item2.daysToExpiry);
+
+            // Bundle discount = average of individual discounts + 5% incentive
+            let bundleDiscountPercent = Math.round((d1 + d2) / 2) + 5;
+            if (bundleDiscountPercent > 60) bundleDiscountPercent = 60;
+            if (bundleDiscountPercent < 15) bundleDiscountPercent = 15;
+
+            const bundlePrice = Math.round(totalPrice * (1 - (bundleDiscountPercent / 100)));
+
+            bundleSuggestions.push({
+                id: `bundle-${item1.sku}-${item2.sku}`,
+                items: [
+                    { sku: item1.sku, name: item1.productName, price: item1.basePrice },
+                    { sku: item2.sku, name: item2.productName, price: item2.basePrice },
+                ],
+                originalTotal: totalPrice,
+                bundlePrice,
+                savings: totalPrice - bundlePrice,
+                savingsPercent: bundleDiscountPercent,
+            });
+        };
+
+        // 1. Try to find logical complementary matches first
+        for (const [cat1, cat2] of complementaryPairs) {
+            if (bundleSuggestions.length >= 3) break; // Limit bundles
+
+            // Substring/case-insensitive category match
+            const item1 = criticalItems.find(i => !usedSkus.has(i.sku) && i.category.toLowerCase().includes(cat1.toLowerCase()));
+            const item2 = criticalItems.find(i => !usedSkus.has(i.sku) && i.category.toLowerCase().includes(cat2.toLowerCase()));
+
+            if (item1 && item2 && item1.sku !== item2.sku) {
+                usedSkus.add(item1.sku);
+                usedSkus.add(item2.sku);
+                createAndAddBundle(item1, item2);
+            }
         }
 
-        // Create cross-category bundles dynamically from items expiring close together
-        const bundleableCats = Object.keys(categoryGroups).sort((a, b) => categoryGroups[b].length - categoryGroups[a].length);
-        if (bundleableCats.length >= 2) {
-            for (let i = 0; i < Math.min(bundleableCats.length - 1, 3); i++) {
-                const cat1 = bundleableCats[i];
-                const cat2 = bundleableCats[i + 1];
+        // 2. Fallback: Pair remaining items that are highest risk to clear stock effectively
+        if (bundleSuggestions.length < 3) {
+            const remainingItems = criticalItems
+                .filter(i => !usedSkus.has(i.sku))
+                .sort((a, b) => a.daysToExpiry - b.daysToExpiry);
 
-                // Pick the highest risk items from each category for the bundle
-                const item1 = categoryGroups[cat1].sort((a, b) => a.daysToExpiry - b.daysToExpiry)[0];
-                const item2 = categoryGroups[cat2].sort((a, b) => a.daysToExpiry - b.daysToExpiry)[0];
-
-                if (item1 && item2) {
-                    const totalPrice = item1.basePrice + item2.basePrice;
-
-                    // Dynamic Discount Calculation
-                    // Calculate individual required discounts based on days to expiry
-                    const getDiscountForDte = (dte) => {
-                        if (dte <= 1) return 50;
-                        if (dte <= 3) return 30;
-                        if (dte <= 5) return 20;
-                        if (dte <= 7) return 10;
-                        return 0;
-                    };
-
-                    const d1 = getDiscountForDte(item1.daysToExpiry);
-                    const d2 = getDiscountForDte(item2.daysToExpiry);
-
-                    // Bundle discount = average of their individual discounts + 5% incentive kicker
-                    let bundleDiscountPercent = Math.round((d1 + d2) / 2) + 5;
-
-                    // Cap the bundle discount reasonably
-                    if (bundleDiscountPercent > 60) bundleDiscountPercent = 60;
-                    if (bundleDiscountPercent < 10) bundleDiscountPercent = 10;
-
-                    const bundlePrice = Math.round(totalPrice * (1 - (bundleDiscountPercent / 100)));
-
-                    bundleSuggestions.push({
-                        id: `bundle-${item1.sku}-${item2.sku}`,
-                        items: [
-                            { sku: item1.sku, name: item1.productName, price: item1.basePrice },
-                            { sku: item2.sku, name: item2.productName, price: item2.basePrice },
-                        ],
-                        originalTotal: totalPrice,
-                        bundlePrice,
-                        savings: totalPrice - bundlePrice,
-                        savingsPercent: bundleDiscountPercent,
-                    });
-                }
+            for (let i = 0; i < remainingItems.length - 1; i += 2) {
+                if (bundleSuggestions.length >= 3) break;
+                const item1 = remainingItems[i];
+                const item2 = remainingItems[i + 1];
+                usedSkus.add(item1.sku);
+                usedSkus.add(item2.sku);
+                createAndAddBundle(item1, item2);
             }
         }
 
@@ -519,10 +549,31 @@ router.post('/smart-discount', async (req, res, next) => {
 
             if (optimalResponse.data && optimalResponse.data.optimal_discount) {
                 const best = optimalResponse.data.simulation;
-                const optimalDiscountPct = Math.round(optimalResponse.data.optimal_discount * 100);
+                const mlDiscountPct = Math.round(optimalResponse.data.optimal_discount * 100);
 
-                const expectedSold = (best.uplift || 0) + (best.baseline_sales || 0);
-                const revenueSaved = Math.max(0, expectedSold * basePrice * (1 - optimalResponse.data.optimal_discount));
+                // Calculate Urgency-based requirement
+                let urgencyBase = 10;
+                if (daysToExpiry <= 1) urgencyBase = 50;
+                else if (daysToExpiry <= 3) urgencyBase = 35;
+                else if (daysToExpiry <= 5) urgencyBase = 20;
+
+                // Blend ML logic with Urgency timeframe
+                let blendedDiscountPct;
+                if (daysToExpiry <= 1) {
+                    // Critical: heavily weight the urgency rule (at least 50%)
+                    blendedDiscountPct = Math.max(urgencyBase, Math.round((mlDiscountPct * 0.4) + (urgencyBase * 0.6)));
+                } else if (daysToExpiry <= 3) {
+                    // High: balance ML optimal & urgency base
+                    blendedDiscountPct = Math.round((mlDiscountPct * 0.5) + (urgencyBase * 0.5));
+                } else {
+                    // Medium/Low: trust ML more but ensure a minimum floor
+                    blendedDiscountPct = Math.max(mlDiscountPct, urgencyBase);
+                }
+
+                const optimalDiscountPct = Math.min(80, Math.max(5, blendedDiscountPct));
+
+                const expectedSold = (best.uplift || 0) + (best.baseline || 0);
+                const revenueSaved = Math.max(0, expectedSold * basePrice * (1 - (optimalDiscountPct / 100)));
                 const wasteAvoid = Math.round((expectedSold / currentStock) * 100);
 
                 return res.json({
@@ -530,11 +581,11 @@ router.post('/smart-discount', async (req, res, next) => {
                     source: 'promotion-forecasting-module',
                     data: {
                         optimalDiscount: optimalDiscountPct,
-                        expectedUplift: Math.round(best.uplift || 0),
+                        expectedUplift: Math.ceil(best.uplift || 0),
                         profitLift: Math.round(best.profit_lift || 0),
                         revenueSaved: Math.round(revenueSaved),
-                        expectedUnitsSold: Math.round(expectedSold),
-                        wasteAvoidedPercent: Math.min(100, wasteAvoid),
+                        expectedUnitsSold: Math.ceil(expectedSold),
+                        wasteAvoidedPercent: Math.min(100, Math.max(0, wasteAvoid)),
                         allSimulations: (optimalResponse.data.top_5 || []).map(r => ({
                             discount: Math.round(r.discount * 100),
                             profitLift: Math.round(r.profit_lift || r.simulation.profit_lift || 0),
