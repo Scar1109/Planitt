@@ -20,22 +20,43 @@ Usage:
     python train_models.py
 """
 
+import argparse
+import json
 import os
 import logging
 import pickle
+import time
 import warnings
 from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+from sklearn.base import BaseEstimator, RegressorMixin, clone
+from sklearn.ensemble import (
+    HistGradientBoostingRegressor,
+    RandomForestClassifier,
+    RandomForestRegressor,
+)
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import Ridge
 from sklearn.metrics import (
     mean_absolute_error, mean_squared_error,
     classification_report, accuracy_score, precision_score, recall_score, f1_score
 )
+from sklearn.model_selection import TimeSeriesSplit, train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+
+try:
+    from xgboost import XGBRegressor
+except Exception:
+    XGBRegressor = None
+
+try:
+    from lightgbm import LGBMRegressor
+except Exception:
+    LGBMRegressor = None
 
 warnings.filterwarnings('ignore')
 
@@ -51,9 +72,11 @@ BASE_DIR = Path(__file__).parent
 # DATA_DIR = BASE_DIR / "data"  <-- Old path
 DATA_DIR = BASE_DIR.parent.parent / "Dataset" # Point to root Dataset folder
 MODELS_DIR = BASE_DIR / "models"
+COMPARISON_DIR = BASE_DIR / "comparison_results"
 
 # Create models directory
 MODELS_DIR.mkdir(exist_ok=True)
+COMPARISON_DIR.mkdir(exist_ok=True)
 
 
 def load_all_data():
@@ -639,7 +662,7 @@ def train_waste_model(X, y, feature_cols):
         min_samples_leaf=5,
         class_weight='balanced',
         random_state=42,
-        n_jobs=-1,
+        n_jobs=1,
         verbose=1
     )
     
