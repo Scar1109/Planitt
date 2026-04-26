@@ -99,7 +99,10 @@ export default function Pricing() {
                                 ))}
                             </ul>
 
-                            <a href="#cta" className={`btn ${plan.btnClass}`}>
+                            <a
+                                href={plan.btnText === 'Contact Sales' ? 'mailto:hello@planitt.online' : '#cta'}
+                                className={`btn ${plan.btnClass}`}
+                            >
                                 {plan.btnText}
                             </a>
                         </div>
