@@ -38,7 +38,7 @@ export default function Hero() {
                     </p>
 
                     <div className="hero-buttons">
-                        <a href="#cta" className="btn btn-primary btn-glow">
+                        <a href="mailto:demo@planitt.online" className="btn btn-primary btn-glow">
                             🚀 Request Demo
                         </a>
                         <a href="#how-it-works" className="btn btn-secondary">

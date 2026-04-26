@@ -29,10 +29,10 @@ export default function CTA() {
                     </p>
 
                     <div className="cta-buttons">
-                        <a href="#" className="btn btn-primary btn-glow">
+                        <a href="mailto:demo@planitt.online" className="btn btn-primary btn-glow">
                             🚀 Request Demo
                         </a>
-                        <a href="#" className="btn btn-secondary">
+                        <a href="mailto:hello@planitt.online" className="btn btn-secondary">
                             📧 Contact Sales
                         </a>
                     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function Navbar() {
+export default function Navbar({ theme, onToggleTheme }) {
     const [scrolled, setScrolled] = useState(false)
 
     useEffect(() => {
@@ -24,9 +24,22 @@ export default function Navbar() {
                     <li><a href="#demo">Demo</a></li>
                 </ul>
 
-                <a href="#cta" className="btn btn-primary navbar-cta">
-                    Request Demo
-                </a>
+                <div className="navbar-actions">
+                    <button
+                        type="button"
+                        className={`theme-toggle ${theme}`}
+                        onClick={onToggleTheme}
+                        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                        title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                    >
+                        <span className={`theme-toggle-option${theme === 'light' ? ' active' : ''}`}>Light</span>
+                        <span className={`theme-toggle-option${theme === 'dark' ? ' active' : ''}`}>Dark</span>
+                    </button>
+
+                    <a href="mailto:demo@planitt.online" className="btn btn-primary navbar-cta">
+                        Request Demo
+                    </a>
+                </div>
 
                 <button className="mobile-menu-btn" aria-label="Menu">
                     <span></span>
