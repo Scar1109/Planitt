@@ -13,7 +13,7 @@
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
-    "@viro-community/react-viro": "^2.41.1",
+    "@reactvision/react-viro": "2.41.6",
     "axios": "^1.6.0",
     "expo": "~49.0.0",
     "expo-build-properties": "^55.0.9",

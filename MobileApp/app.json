@@ -49,9 +49,9 @@
         }
       ],
       [
-        "@viro-community/react-viro",
+        "@reactvision/react-viro",
         {
-          "androidXreRMode": "AR"
+          "androidXrMode": "AR"
         }
       ]
     ]

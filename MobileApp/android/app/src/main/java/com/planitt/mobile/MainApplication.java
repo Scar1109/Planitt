@@ -1,5 +1,5 @@
 package com.planitt.mobile;
-import com.viromedia.bridge.ReactViroPackage;
+import com.planitt.mobile.ar.ARMeasurePackage;
 
 import android.app.Application;
 import android.content.res.Configuration;
@@ -32,8 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
       protected List<ReactPackage> getPackages() {
         @SuppressWarnings("UnnecessaryLocalVariable")
         List<ReactPackage> packages = new PackageList(this).getPackages();
-      packages.add(new ReactViroPackage(ReactViroPackage.ViroPlatform.AR));
-      packages.add(new ReactViroPackage(ReactViroPackage.ViroPlatform.GVR));
+        packages.add(new ARMeasurePackage());
 
         // Packages that cannot be autolinked yet can be added manually here, for example:
         // packages.add(new MyReactNativePackage());
