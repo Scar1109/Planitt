@@ -21,7 +21,9 @@ import {
     CheckCircle2,
     Lightbulb,
     TrendingDown,
+    Loader2,
 } from "lucide-react"
+import api from "../../api/client"
 import { buildScenarioForecast, getScenarioDefaults } from "./scenario-engine"
 
 const WEATHER_OPTIONS = [
@@ -54,10 +56,22 @@ const getCurrentStock = (product) => {
 export function WhatIfScenarioPanel({ forecastData, selectedProductData, horizon = 7 }) {
     const selectedProductStock = getCurrentStock(selectedProductData)
     const [scenario, setScenario] = useState(getScenarioDefaults(selectedProductStock))
+    const [isSimulating, setIsSimulating] = useState(false)
+    const [aiResult, setAiResult] = useState(null)
+    const [debouncedScenario, setDebouncedScenario] = useState(scenario)
 
     useEffect(() => {
         setScenario(getScenarioDefaults(selectedProductStock))
     }, [selectedProductData, selectedProductStock])
+
+    // Debounce the scenario input
+    useEffect(() => {
+        setIsSimulating(true)
+        const handler = setTimeout(() => {
+            setDebouncedScenario(scenario)
+        }, 500)
+        return () => clearTimeout(handler)
+    }, [scenario])
 
     const forecasts = forecastData?.data?.forecasts || []
     const baseTotalDemand = forecasts.reduce((sum, item) => sum + (item.forecast || 0), 0)
@@ -72,7 +86,38 @@ export function WhatIfScenarioPanel({ forecastData, selectedProductData, horizon
         urgency: forecastData.data?.insights?.urgency || "low",
     } : null
 
-    const scenarioResult = baseMetrics ? buildScenarioForecast(baseMetrics, scenario) : null
+    // Fetch from AI backend when debounced scenario changes
+    useEffect(() => {
+        if (!baseMetrics) return;
+        
+        let isMounted = true;
+        
+        const fetchAiScenario = async () => {
+            try {
+                const result = await api.simulateInventoryScenario({
+                    baseMetrics,
+                    scenario: debouncedScenario
+                });
+                if (isMounted && result.success) {
+                    setAiResult(result.data)
+                }
+            } catch (error) {
+                console.error("Failed to simulate AI scenario", error)
+                // Fallback to local math if API fails
+                if (isMounted) {
+                    setAiResult(buildScenarioForecast(baseMetrics, debouncedScenario))
+                }
+            } finally {
+                if (isMounted) setIsSimulating(false)
+            }
+        }
+        
+        fetchAiScenario()
+        
+        return () => { isMounted = false }
+    }, [debouncedScenario, baseTotalDemand, horizon])
+
+    const scenarioResult = aiResult || (baseMetrics ? buildScenarioForecast(baseMetrics, scenario) : null)
     const scenarioWeather = WEATHER_OPTIONS.find((option) => option.value === scenario.weather) || WEATHER_OPTIONS[0]
     const demandDeltaPct = baseTotalDemand > 0
         ? Math.round((((scenarioResult?.adjustedDemand || 0) - baseTotalDemand) / baseTotalDemand) * 100)
@@ -102,17 +147,26 @@ export function WhatIfScenarioPanel({ forecastData, selectedProductData, horizon
                                 <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Scenario Inputs</h4>
                                 <p className="mt-0.5 text-[11px] text-slate-400">Adjust the factors below to see potential impact</p>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={resetScenario}
-                                    className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition-all duration-200 hover:border-slate-300 hover:bg-slate-50"
-                                >
-                                    <RotateCcw className="h-3 w-3" />
-                                    Reset
-                                </button>
-                                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[11px] font-semibold text-emerald-600">Live</span>
-                            </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={resetScenario}
+                                        className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition-all duration-200 hover:border-slate-300 hover:bg-slate-50"
+                                    >
+                                        <RotateCcw className="h-3 w-3" />
+                                        Reset
+                                    </button>
+                                    {isSimulating ? (
+                                        <div className="flex items-center gap-1.5 px-2">
+                                            <Loader2 className="h-3 w-3 animate-spin text-emerald-600" />
+                                            <span className="text-[11px] font-semibold text-emerald-600">Calculating...</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-1.5 px-2">
+                                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                                            <span className="text-[11px] font-semibold text-emerald-600">Live AI</span>
+                                        </div>
+                                    )}
+                                </div>
                         </div>
 
                         <div className="grid gap-3 sm:grid-cols-2">
@@ -241,8 +295,13 @@ export function WhatIfScenarioPanel({ forecastData, selectedProductData, horizon
                                 <Lightbulb className="h-4 w-4 text-[#1B4F72]" />
                                 <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Why the Recommendation Changed</p>
                             </div>
-                            <div className="space-y-2">
-                                {scenarioResult.explanations.slice(0, 2).map((reason, index) => (
+                            <div className="space-y-2 relative">
+                                {isSimulating && (
+                                    <div className="absolute inset-0 bg-slate-50/50 backdrop-blur-[1px] z-10 flex items-center justify-center rounded-lg">
+                                        <Loader2 className="h-5 w-5 animate-spin text-[#1B4F72]" />
+                                    </div>
+                                )}
+                                {(scenarioResult.explanations || []).map((reason, index) => (
                                     <div key={index} className="flex items-start gap-2.5 rounded-lg border border-slate-100 bg-white px-3 py-2.5 text-xs leading-relaxed text-slate-600">
                                         <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
                                         <span>{reason}</span>
@@ -255,32 +314,23 @@ export function WhatIfScenarioPanel({ forecastData, selectedProductData, horizon
                     <div className="space-y-3.5">
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">AI Recommendation</h4>
 
-                        <div className={`rounded-xl border p-4 ${scenarioResult.riskLevel === "high" ? "border-red-200 bg-gradient-to-br from-red-50/40 to-white" : scenarioResult.riskLevel === "medium" ? "border-amber-200 bg-gradient-to-br from-amber-50/40 to-white" : "border-emerald-200 bg-gradient-to-br from-emerald-50/40 to-white"}`}>
-                            <div className="flex items-start justify-between gap-3">
-                                <div className="flex-1">
-                                    <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">AI Recommendation</p>
-                                    <h3 className="text-lg font-bold tracking-tight text-slate-900">{scenarioResult.recommendedAction}</h3>
-                                    {isStockout && (
-                                        <Badge className="mt-2 border-red-200 bg-red-100 text-[10px] font-semibold text-red-700 shadow-none">
-                                            Stockout imminent
-                                        </Badge>
-                                    )}
-                                    <p className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
-                                        <span className={`h-2 w-2 rounded-full ${confidenceLevel === "High" ? "bg-emerald-500" : "bg-amber-500"}`} />
-                                        {confidenceLevel} confidence recommendation
-                                    </p>
-                                </div>
-                                <div className="min-w-[116px] rounded-xl bg-[#1B4F72] px-3.5 py-3 text-center text-white shadow-sm">
-                                    <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-slate-300">Suggested Reorder</p>
-                                    <p className="mt-0.5 text-2xl font-black tabular-nums">{scenarioResult.recommendedQuantity}<span className="ml-1 text-xs font-semibold text-slate-300">units</span></p>
-                                    <div className="mt-2 border-t border-white/20 pt-2">
-                                        <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-slate-300">Demand Δ</p>
-                                        <p className={`flex items-center justify-center gap-1 text-sm font-bold tabular-nums ${demandDeltaPct > 0 ? "text-emerald-300" : demandDeltaPct < 0 ? "text-red-300" : "text-white"}`}>
-                                            {demandDeltaPct < 0 && <TrendingDown className="h-3 w-3" />}
-                                            {demandDeltaPct > 0 ? "↑" : ""} {Math.abs(demandDeltaPct)}%
-                                            <span className="ml-0.5 text-[10px] font-normal text-slate-400">vs baseline</span>
-                                        </p>
+                        <div className="rounded-xl bg-[#1B4F72] px-5 py-4 text-white shadow-lg border border-[#164060]">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200/70 mb-1">Suggested Reorder</p>
+                                    <div className="flex items-baseline gap-1.5">
+                                        <span className="text-3xl font-black tabular-nums">{scenarioResult.recommendedQuantity}</span>
+                                        <span className="text-xs font-semibold text-blue-300/50">units</span>
                                     </div>
+                                </div>
+                                <div className="h-10 w-px bg-white/10" />
+                                <div className="text-right">
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200/70 mb-1">Demand Δ</p>
+                                    <p className={`flex items-center justify-end gap-1.5 text-lg font-bold tabular-nums ${demandDeltaPct > 0 ? "text-emerald-400" : demandDeltaPct < 0 ? "text-red-400" : "text-white"}`}>
+                                        {demandDeltaPct < 0 && <TrendingDown className="h-4 w-4" />}
+                                        {demandDeltaPct > 0 ? "↑" : ""} {Math.abs(demandDeltaPct)}%
+                                        <span className="ml-1 text-[10px] font-normal text-blue-300/40">vs base</span>
+                                    </p>
                                 </div>
                             </div>
                         </div>
