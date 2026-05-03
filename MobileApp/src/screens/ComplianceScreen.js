@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import { Text, Card, useTheme } from 'react-native-paper';
-import { ClipboardList } from 'lucide-react-native';
+import { Text, Card, useTheme, FAB } from 'react-native-paper';
+import { ClipboardList, Plus } from 'lucide-react-native';
 import { jwtToken } from '../utils/auth';
 import { getApiUrl } from '../utils/config';
 
@@ -80,6 +80,14 @@ const ComplianceScreen = ({ navigation }) => {
                     }
                 />
             )}
+
+            <FAB
+                icon={() => <Plus size={24} color="#fff" />}
+                style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+                onPress={() => navigation.navigate('ShelfCompliance')}
+                label="New Shelf Audit"
+                color="#fff"
+            />
         </View>
     );
 };
@@ -135,6 +143,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 16,
+        borderRadius: 16,
     },
 });
 

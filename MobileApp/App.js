@@ -34,6 +34,9 @@ import SettingsScreen from './src/screens/SettingsScreen';
 import ComplianceScreen from './src/screens/ComplianceScreen';
 import AlertsScreen from './src/screens/AlertsScreen';
 import ReportsScreen from './src/screens/ReportsScreen';
+import ShelfComplianceScreen from './src/screens/ShelfComplianceScreen';
+import ARShelfComplianceScreen from './src/screens/ARShelfComplianceScreen';
+import ComplianceFixScreen from './src/screens/ComplianceFixScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -84,6 +87,9 @@ const App = () => {
                     <Stack.Screen name="Compliance" component={ComplianceScreen} />
                     <Stack.Screen name="Alerts" component={AlertsScreen} />
                     <Stack.Screen name="Reports" component={ReportsScreen} />
+                    <Stack.Screen name="ShelfCompliance" component={ShelfComplianceScreen} />
+                    <Stack.Screen name="ARShelfCompliance" component={ARShelfComplianceScreen} />
+                    <Stack.Screen name="ComplianceFix" component={ComplianceFixScreen} />
 
                 </Stack.Navigator>
             </NavigationContainer>

@@ -34,17 +34,17 @@ const HomeScreen = ({ navigation }) => {
             });
             if (wastageRes.ok) {
                 const responseJson = await wastageRes.json();
-                console.log('Wastage API Response:', JSON.stringify(responseJson).substring(0, 500));
+
                 const data = responseJson.data; 
                 if (data && data.bundleSuggestions) {
-                    console.log('Bundles found:', data.bundleSuggestions.length);
+
                     setSmartBundlesCount(data.bundleSuggestions.length);
                     setSmartBundles(data.bundleSuggestions);
                 } else {
-                    console.log('No bundle suggestions in data object');
+
                 }
             } else {
-                console.log('Wastage API failed with status:', wastageRes.status);
+
             }
 
             // Fetch Demand Forecast
@@ -65,7 +65,7 @@ const HomeScreen = ({ navigation }) => {
                 }
             }
         } catch (error) {
-            console.log("Error fetching dashboard data", error);
+
         }
     };
 
@@ -167,7 +167,7 @@ const HomeScreen = ({ navigation }) => {
                 {/* Smart Bundle Suggestions Section */}
                 <View style={styles.quickActionsSection}>
                     <Text variant="titleMedium" style={styles.sectionTitle}>Smart Bundle Suggestions</Text>
-                    {console.log('Rendering smartBundles, count:', smartBundles.length)}
+
                     {smartBundles.length > 0 ? (
                         smartBundles.map((bundle, index) => (
                             <Card key={index} style={[styles.bundleCard, { elevation: 1 }]}>

@@ -19,13 +19,13 @@ const ConstraintsScreen = ({ navigation }) => {
             });
             if (response.ok) {
                 const result = await response.json();
-                console.log('Constraints API Result:', JSON.stringify(result));
+
                 // Match the res.data.data pattern seen in the web frontend
                 const list = result.data || (Array.isArray(result) ? result : []);
-                console.log('Processed constraints list length:', list.length);
+
                 setConstraints(list);
             } else {
-                console.log('Constraints API failed status:', response.status);
+
             }
         } catch (error) {
             console.log("Error fetching constraints", error);
