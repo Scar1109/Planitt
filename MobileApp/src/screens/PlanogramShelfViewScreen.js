@@ -161,6 +161,13 @@ const PlanogramShelfViewScreen = ({ navigation, route }) => {
     const handleZoomOut = () => setZoom(z => Math.max(0.5, z - 0.25));
     const handleZoomReset = () => setZoom(1);
 
+    const openARView = () => {
+        navigation.navigate('ARShelfView', {
+            fixture,
+            placements
+        });
+    };
+
     return (
         <View style={[styles.container, { backgroundColor: '#F1F5F9' }]}>
             {/* Header */}
@@ -181,16 +188,25 @@ const PlanogramShelfViewScreen = ({ navigation, route }) => {
                     </View>
                 </View>
 
-                {/* Zoom Controls */}
-                <View style={styles.zoomBar}>
-                    <TouchableOpacity style={styles.zoomButton} onPress={handleZoomOut}>
-                        <ZoomOut size={16} color="#fff" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleZoomReset}>
-                        <Text style={styles.zoomText}>{(zoom * 100).toFixed(0)}%</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.zoomButton} onPress={handleZoomIn}>
-                        <ZoomIn size={16} color="#fff" />
+                {/* Actions Bar */}
+                <View style={styles.actionsBar}>
+                    {/* Zoom Controls */}
+                    <View style={styles.zoomControls}>
+                        <TouchableOpacity style={styles.zoomButton} onPress={handleZoomOut}>
+                            <ZoomOut size={16} color="#fff" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleZoomReset}>
+                            <Text style={styles.zoomText}>{(zoom * 100).toFixed(0)}%</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.zoomButton} onPress={handleZoomIn}>
+                            <ZoomIn size={16} color="#fff" />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* View in AR Button */}
+                    <TouchableOpacity style={styles.arButton} onPress={openARView}>
+                        <Box size={16} color="#fff" />
+                        <Text style={styles.arButtonText}>View in AR</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -443,17 +459,35 @@ const styles = StyleSheet.create({
         fontSize: 11,
         marginTop: 2,
     },
-    zoomBar: {
+    actionsBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: 12,
-        marginTop: 8,
+        justifyContent: 'space-between',
+        marginTop: 12,
+        paddingHorizontal: 12,
+    },
+    zoomControls: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: 'rgba(255,255,255,0.15)',
         borderRadius: 10,
         paddingVertical: 4,
+        paddingHorizontal: 8,
+        gap: 8,
+    },
+    arButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#06D6A0', // Accent color
+        borderRadius: 10,
+        paddingVertical: 8,
         paddingHorizontal: 12,
-        alignSelf: 'center',
+        gap: 6,
+    },
+    arButtonText: {
+        color: '#fff',
+        fontSize: 13,
+        fontWeight: 'bold',
     },
     zoomButton: {
         padding: 6,

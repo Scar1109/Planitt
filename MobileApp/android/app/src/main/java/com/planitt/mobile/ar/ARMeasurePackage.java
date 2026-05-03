@@ -14,6 +14,7 @@ public class ARMeasurePackage implements ReactPackage {
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new ARMeasureModule(reactContext));
+        modules.add(new ARShelfViewModule(reactContext));
         return modules;
     }
 

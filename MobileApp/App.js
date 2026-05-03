@@ -9,6 +9,16 @@ import { Layers, User, Home, LayoutDashboard, Package } from 'lucide-react-nativ
 import { theme } from './src/theme';
 import { loadApiUrl } from './src/utils/config';
 
+// Intercept fetch to add localtunnel bypass header globally
+const originalFetch = global.fetch;
+global.fetch = async (url, options = {}) => {
+    options.headers = {
+        ...options.headers,
+        'Bypass-Tunnel-Reminder': 'true'
+    };
+    return originalFetch(url, options);
+};
+
 // Screens
 import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
