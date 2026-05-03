@@ -14,7 +14,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import ShelfStack from './src/screens/ShelfStack';
-import PlanogramsScreen from './src/screens/PlanogramsScreen';
+import PlanogramStack from './src/screens/PlanogramStack';
 import EditProfileScreen from './src/screens/EditProfileScreen';
 import ProductsScreen from './src/screens/ProductsScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
@@ -24,6 +24,7 @@ import SettingsScreen from './src/screens/SettingsScreen';
 import ComplianceScreen from './src/screens/ComplianceScreen';
 import AlertsScreen from './src/screens/AlertsScreen';
 import ReportsScreen from './src/screens/ReportsScreen';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,7 +48,7 @@ const MainTabs = () => {
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Shelves" component={ShelfStack} />
             <Tab.Screen name="Products" component={ProductsScreen} />
-            <Tab.Screen name="Planograms" component={PlanogramsScreen} />
+            <Tab.Screen name="Planograms" component={PlanogramStack} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
         </Tab.Navigator>
     );
@@ -73,6 +74,7 @@ const App = () => {
                     <Stack.Screen name="Compliance" component={ComplianceScreen} />
                     <Stack.Screen name="Alerts" component={AlertsScreen} />
                     <Stack.Screen name="Reports" component={ReportsScreen} />
+
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>
