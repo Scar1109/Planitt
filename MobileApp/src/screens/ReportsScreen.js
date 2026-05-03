@@ -6,6 +6,8 @@ import Svg, { Polyline, Circle, Rect, G, Text as SvgText } from 'react-native-sv
 import { jwtToken } from '../utils/auth';
 import { getApiUrl, getMlApiUrl } from '../utils/config';
 
+const MAX_LOW_STOCK_ALERTS = 10;
+
 const ReportsScreen = ({ navigation }) => {
     const theme = useTheme();
     const [loading, setLoading] = useState(true);
@@ -90,9 +92,10 @@ const ReportsScreen = ({ navigation }) => {
                 if (kpiRes.ok) {
                     const data = await kpiRes.json();
                     if (data.data) {
+                        const lowStockCount = Math.min(data.data.lowStockCount || 0, MAX_LOW_STOCK_ALERTS);
                         newStats.activePlanograms = data.data.activePlanograms || 0;
-                        newStats.lowStockCount = data.data.lowStockCount || 0;
-                        newStats.alertCount = (data.data.lowStockCount || 0) + (data.data.modules?.compliance?.violations || 0);
+                        newStats.lowStockCount = lowStockCount;
+                        newStats.alertCount = lowStockCount + (data.data.modules?.compliance?.violations || 0);
                     }
                 }
             } catch (e) { console.log('KPI error', e); }

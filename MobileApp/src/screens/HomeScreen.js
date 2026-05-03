@@ -6,6 +6,8 @@ import Svg, { Polyline, Polygon } from 'react-native-svg';
 import { jwtToken } from '../utils/auth';
 import { getApiUrl, getMlApiUrl } from '../utils/config';
 
+const MAX_LOW_STOCK_ALERTS = 10;
+
 const HomeScreen = ({ navigation }) => {
     const theme = useTheme();
     const [lowStockCount, setLowStockCount] = useState(0);
@@ -17,12 +19,13 @@ const HomeScreen = ({ navigation }) => {
     const fetchDashboardData = async () => {
         try {
             // Fetch Low Stock Alerts
-            const lowStockRes = await fetch(`${getApiUrl()}/api/inventory/low-stock-alerts?limit=10`, {
+            const lowStockRes = await fetch(`${getApiUrl()}/api/inventory/low-stock-alerts?limit=${MAX_LOW_STOCK_ALERTS}`, {
                 headers: { 'Authorization': `Bearer ${jwtToken}` }
             });
             if (lowStockRes.ok) {
                 const data = await lowStockRes.json();
-                setLowStockCount(data.totalLowStock || data.alerts?.length || 0);
+                const alertCount = data.totalLowStock || data.alerts?.length || 0;
+                setLowStockCount(Math.min(alertCount, MAX_LOW_STOCK_ALERTS));
             }
 
             // Fetch Smart Bundles

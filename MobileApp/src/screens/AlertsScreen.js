@@ -5,6 +5,8 @@ import { AlertTriangle, ArrowLeft } from 'lucide-react-native';
 import { jwtToken } from '../utils/auth';
 import { getApiUrl } from '../utils/config';
 
+const MAX_LOW_STOCK_ALERTS = 10;
+
 const AlertsScreen = ({ navigation }) => {
     const theme = useTheme();
     const [alerts, setAlerts] = useState([]);
@@ -13,12 +15,12 @@ const AlertsScreen = ({ navigation }) => {
     useEffect(() => {
         const fetchAlerts = async () => {
             try {
-                const response = await fetch(`${getApiUrl()}/api/inventory/low-stock-alerts?limit=20`, {
+                const response = await fetch(`${getApiUrl()}/api/inventory/low-stock-alerts?limit=${MAX_LOW_STOCK_ALERTS}`, {
                     headers: { 'Authorization': `Bearer ${jwtToken}` }
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    setAlerts(data.alerts || []);
+                    setAlerts((data.alerts || []).slice(0, MAX_LOW_STOCK_ALERTS));
                 }
             } catch (error) {
                 console.log("Error fetching alerts", error);
