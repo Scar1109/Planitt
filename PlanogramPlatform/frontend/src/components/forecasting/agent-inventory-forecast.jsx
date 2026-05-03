@@ -1,24 +1,14 @@
 import { useState, useEffect, useRef } from "react"
 import { useLocation } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    ComposedChart,
-    Bar,
-} from "recharts"
 import { Bot, TrendingUp, AlertTriangle, CheckCircle, Loader2, Sparkles, Search, ChevronDown, X, Package } from "lucide-react"
 import { api } from "@/api/client"
 
-export function AgentInventoryForecast() {
+
+export function AgentInventoryForecast({ onDataChange }) {
     const location = useLocation()
     const urlParams = new URLSearchParams(location.search)
     const initialSku = urlParams.get("sku")
@@ -55,7 +45,6 @@ export function AgentInventoryForecast() {
 
     // Get selected product details
     const selectedProductData = productsList.find(p => p.sku === selectedProduct)
-
     // Fetch products on mount
     useEffect(() => {
         const fetchProducts = async () => {
@@ -112,19 +101,16 @@ export function AgentInventoryForecast() {
         fetchAgentForecast()
     }, [selectedProduct, horizon])
 
-
-    // Parse the days from the message text
-    const parseChartData = (message) => {
-        if (!message) return []
-
-        const dayRegex = /- Day (\d+): (\d+) units/g
-        const matches = [...message.matchAll(dayRegex)]
-
-        return matches.map(match => ({
-            day: `Day ${match[1]}`,
-            units: parseInt(match[2])
-        }))
-    }
+    // Report data back to parent for shared components
+    useEffect(() => {
+        if (onDataChange && selectedProductData) {
+            onDataChange({
+                forecastData,
+                selectedProductData,
+                horizon
+            })
+        }
+    }, [forecastData, selectedProductData, horizon, onDataChange])
 
     // Get recommendation badge styling with user-friendly colors and labels
     const getRecommendationBadge = (recommendation) => {
@@ -160,12 +146,9 @@ export function AgentInventoryForecast() {
         }
     }
 
-    const chartData = forecastData?.success ? parseChartData(forecastData.message) : []
     const recommendationBadge = forecastData?.data?.recommendation
         ? getRecommendationBadge(forecastData.data.recommendation)
         : null
-
-    const BadgeIcon = recommendationBadge?.icon || Bot
 
     return (
         <Card className="overflow-visible bg-white border-slate-100 shadow-sm rounded-xl">
@@ -460,64 +443,6 @@ export function AgentInventoryForecast() {
 
                                     </div>
                                 </div>
-                            </div>
-                        )}
-
-                        {/* Chart */}
-                        {chartData.length > 0 && (
-                            <div className="h-[320px]">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
-                                        <defs>
-                                            <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#17A2B8" stopOpacity={0.8} />
-                                                <stop offset="95%" stopColor="#17A2B8" stopOpacity={0.3} />
-                                            </linearGradient>
-                                        </defs>
-                                        <CartesianGrid
-                                            strokeDasharray="3 3"
-                                            stroke="#e2e8f0"
-                                            strokeOpacity={0.8}
-                                            vertical={false}
-                                        />
-                                        <XAxis
-                                            dataKey="day"
-                                            tick={{ fill: "#64748b", fontSize: 11 }}
-                                            axisLine={{ stroke: "#e2e8f0" }}
-                                            tickLine={false}
-                                            dy={8}
-                                        />
-                                        <YAxis
-                                            tick={{ fill: "#64748b", fontSize: 11 }}
-                                            axisLine={false}
-                                            tickLine={false}
-                                            dx={-8}
-                                        />
-                                        <Tooltip
-                                            contentStyle={{
-                                                backgroundColor: "#ffffff",
-                                                border: "1px solid #e2e8f0",
-                                                borderRadius: "8px",
-                                                boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                                            }}
-                                            labelStyle={{ color: "#1e293b" }}
-                                        />
-                                        <Bar
-                                            dataKey="units"
-                                            fill="url(#barGradient)"
-                                            radius={[6, 6, 0, 0]}
-                                            name="Predicted Demand"
-                                        />
-                                        <Line
-                                            type="monotone"
-                                            dataKey="units"
-                                            stroke="#17A2B8"
-                                            strokeWidth={2}
-                                            dot={{ fill: "#17A2B8", r: 4 }}
-                                            activeDot={{ r: 6 }}
-                                        />
-                                    </ComposedChart>
-                                </ResponsiveContainer>
                             </div>
                         )}
 

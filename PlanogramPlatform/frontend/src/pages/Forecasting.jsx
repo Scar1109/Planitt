@@ -1,12 +1,16 @@
+import { useState } from "react"
 import { ForecastChart } from "@/components/forecasting/forecast-chart"
 import { WeatherImpact } from "@/components/forecasting/weather-impact"
 
 import { ExternalFactors } from "@/components/forecasting/external-factors"
 import { AgentInventoryForecast } from "@/components/forecasting/agent-inventory-forecast"
+import { WhatIfScenarioPanel } from "@/components/forecasting/whatif-scenario-panel"
 import { LowStockAlerts } from "@/components/forecasting/low-stock-alerts"
 import { AdaptiveLearning } from "@/components/forecasting/adaptive-learning"
 
 export default function Forecasting() {
+    const [agentData, setAgentData] = useState(null)
+
     return (
         <div className="space-y-6">
             {/* Page Header */}
@@ -22,7 +26,16 @@ export default function Forecasting() {
 
                 {/* Left Area: Wide Charts */}
                 <div className="lg:col-span-2 space-y-6">
-                    <AgentInventoryForecast />
+                    <AgentInventoryForecast onDataChange={setAgentData} />
+                    
+                    {agentData && (
+                        <WhatIfScenarioPanel 
+                            forecastData={agentData.forecastData}
+                            selectedProductData={agentData.selectedProductData}
+                            horizon={agentData.horizon}
+                        />
+                    )}
+
                     <ForecastChart />
                     <AdaptiveLearning />
                 </div>
