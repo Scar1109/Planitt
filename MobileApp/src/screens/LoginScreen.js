@@ -1,15 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { Text, TextInput, Button, useTheme } from 'react-native-paper';
 
+import { Alert } from 'react-native';
+import { setJwtToken } from '../utils/auth';
+import { getApiUrl } from '../utils/config';
+
 const LoginScreen = ({ navigation }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    // Auto-fill credentials for testing
+    const [email, setEmail] = useState('admin@planitt.com');
+    const [password, setPassword] = useState('admin123');
+    const [loading, setLoading] = useState(false);
     const theme = useTheme();
 
-    const handleLogin = () => {
-        // Basic placeholder for auth, navigate immediately to Main App for now
-        navigation.replace('Main');
+    // Auto-login on mount for testing
+    useEffect(() => {
+        handleLogin();
+    }, []);
+
+    const handleLogin = async () => {
+        if (!email || !password) {
+            Alert.alert('Error', 'Please enter email and password');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const response = await fetch(`${getApiUrl()}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.token) {
+                setJwtToken(data.token);
+                navigation.replace('Main');
+            } else {
+                Alert.alert('Login Failed', data.message || 'Invalid credentials');
+            }
+        } catch (error) {
+            console.log('Login error:', error);
+            Alert.alert('Error', 'Could not connect to the server');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -45,6 +83,8 @@ const LoginScreen = ({ navigation }) => {
                     <Button
                         mode="contained"
                         onPress={handleLogin}
+                        loading={loading}
+                        disabled={loading}
                         style={styles.button}
                         contentStyle={styles.buttonContent}
                     >

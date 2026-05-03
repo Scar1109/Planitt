@@ -1,173 +1,207 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import {
-    ViroARScene,
-    ViroText,
-    ViroARSceneNavigator,
-    ViroNode,
-    ViroSphere,
-    ViroPolyline,
-} from '@viro-community/react-viro';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, Text, NativeModules, AppState } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { useTheme, Button } from 'react-native-paper';
-import { Check, X, RotateCcw } from 'lucide-react-native';
+import { Check, X, RotateCcw, Camera } from 'lucide-react-native';
 
-const MeasurementScene = (props) => {
-    const [nodes, setNodes] = useState([]);
-    const [distance, setDistance] = useState(0);
+const { ARMeasureModule } = NativeModules;
 
-    // Calculate distance between two 3D points
-    const calculateDistance = (p1, p2) => {
-        const dx = p2[0] - p1[0];
-        const dy = p2[1] - p1[1];
-        const dz = p2[2] - p1[2];
-        // Return in cm
-        return Math.sqrt(dx * dx + dy * dy + dz * dz) * 100;
-    };
-
-    const onSceneClick = (position, source) => {
-        if (nodes.length < 2) {
-            const newNodes = [...nodes, position];
-            setNodes(newNodes);
-
-            if (newNodes.length === 2) {
-                const dist = calculateDistance(newNodes[0], newNodes[1]);
-                setDistance(dist);
-                if (props.arSceneNavigator.viroAppProps.onDistanceMeasured) {
-                    props.arSceneNavigator.viroAppProps.onDistanceMeasured(dist);
-                }
-            }
-        }
-    };
-
-    return (
-        <ViroARScene onAnchorFound={() => { }} onClick={onSceneClick}>
-            {/* Instructions Node */}
-            {nodes.length === 0 && (
-                <ViroText
-                    text="Tap on a surface to set the first point"
-                    scale={[0.5, 0.5, 0.5]}
-                    position={[0, 0, -1]}
-                    style={{ fontFamily: 'Arial', fontSize: 20, color: 'white', textAlignVertical: 'center', textAlign: 'center' }}
-                />
-            )}
-
-            {/* Point 1 */}
-            {nodes.length > 0 && (
-                <ViroSphere
-                    position={nodes[0]}
-                    radius={0.02}
-                    materials={["red"]}
-                />
-            )}
-
-            {/* Point 2 */}
-            {nodes.length > 1 && (
-                <ViroSphere
-                    position={nodes[1]}
-                    radius={0.02}
-                    materials={["blue"]}
-                />
-            )}
-
-            {/* Line connecting points */}
-            {nodes.length === 2 && (
-                <ViroPolyline
-                    position={[0, 0, 0]}
-                    points={[nodes[0], nodes[1]]}
-                    thickness={0.01}
-                    materials={["white"]}
-                />
-            )}
-
-            {/* Distance Text */}
-            {nodes.length === 2 && (
-                <ViroText
-                    text={`${distance.toFixed(1)} cm`}
-                    scale={[0.2, 0.2, 0.2]}
-                    position={[
-                        (nodes[0][0] + nodes[1][0]) / 2,
-                        (nodes[0][1] + nodes[1][1]) / 2 + 0.1, // slightly above
-                        (nodes[0][2] + nodes[1][2]) / 2
-                    ]}
-                    style={{ fontFamily: 'Arial', fontSize: 20, color: '#06D6A0', textAlign: 'center' }}
-                />
-            )}
-        </ViroARScene>
-    );
+const logAR = (message, payload) => {
+    const line = `[ARMeasure] ${message}`;
+    if (payload !== undefined) {
+        console.log(line, payload);
+    } else {
+        console.log(line);
+    }
 };
 
 const ARMeasureScreen = ({ navigation, route }) => {
     const theme = useTheme();
+    const isFocused = useIsFocused();
     const [measuredDistance, setMeasuredDistance] = useState(null);
+    const [isMeasuring, setIsMeasuring] = useState(false);
+    const [error, setError] = useState(null);
+    
+    const initialTarget = route.params?.target || 'length';
+    const [targetMeasurement, setTargetMeasurement] = useState(initialTarget);
 
-    const resetMeasurement = () => {
-        setMeasuredDistance(null);
-        // ViroReact state forces component to remount to reset internal scene state easily
-    };
+    useEffect(() => {
+        const parent = navigation.getParent?.();
+
+        if (isFocused) {
+            parent?.setOptions({ tabBarStyle: { display: 'none' } });
+        }
+
+        return () => {
+            parent?.setOptions({ tabBarStyle: undefined });
+        };
+    }, [isFocused, navigation]);
+
+    const startMeasurement = useCallback(async () => {
+        if (!ARMeasureModule) {
+            setError('AR module not available. Rebuild the app.');
+            logAR('ARMeasureModule is null');
+            return;
+        }
+
+        setIsMeasuring(true);
+        setError(null);
+        logAR('Starting native AR measurement');
+
+        try {
+            const distanceCm = await ARMeasureModule.startMeasurement();
+            logAR('Measurement result', { distanceCm });
+
+            if (distanceCm > 0) {
+                setMeasuredDistance(distanceCm);
+            } else {
+                // User cancelled
+                logAR('User cancelled measurement');
+            }
+        } catch (err) {
+            logAR('Measurement error', err?.message);
+            setError(err?.message || 'AR measurement failed');
+        } finally {
+            setIsMeasuring(false);
+        }
+    }, []);
+
+    // Auto-launch AR on screen focus
+    useEffect(() => {
+        if (isFocused && !isMeasuring && measuredDistance === null) {
+            // Small delay for screen transition
+            const timer = setTimeout(() => startMeasurement(), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [isFocused]);
+
+    const mode = route.params?.mode || 'form';
+    const isQuickMode = mode === 'quick';
 
     const handleConfirm = () => {
-        if (route.params?.onMeasureComplete && measuredDistance) {
-            // By default, assigning it to length for simplicity. 
-            // The user can assign it where needed back in the detail screen.
-            route.params.onMeasureComplete({ length: Math.round(measuredDistance) });
+        if (isQuickMode) {
+            navigation.goBack();
+            return;
         }
-        navigation.goBack();
+        
+        if (measuredDistance) {
+            navigation.navigate({
+                name: 'ShelfDetail',
+                params: { measurements: { [targetMeasurement]: Math.round(measuredDistance) } },
+                merge: true,
+            });
+        } else {
+            navigation.goBack();
+        }
     };
+
+    const isLevelMeasurement = targetMeasurement.startsWith('level_');
+    const targetLabel = isLevelMeasurement ? `Level ${targetMeasurement.split('_')[1]}` : targetMeasurement;
 
     return (
         <View style={styles.container}>
-            <ViroARSceneNavigator
-                autofocus={true}
-                initialScene={{
-                    scene: MeasurementScene,
-                }}
-                viroAppProps={{
-                    onDistanceMeasured: setMeasuredDistance
-                }}
-                style={styles.arView}
-            />
-
-            {/* UI Overlay */}
-            <View style={styles.overlay}>
+            <View style={styles.content}>
+                {/* Header */}
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeBtn}>
-                        <X color="#fff" size={24} />
-                    </TouchableOpacity>
-                    <Text style={styles.title}>AR Measure</Text>
-                    <View style={{ width: 40 }} />
+                    <Text style={styles.title}>{isQuickMode ? 'Quick Measure' : 'AR Measure'}</Text>
                 </View>
 
-                <View style={styles.footer}>
-                    <View style={styles.statusBox}>
-                        <Text style={styles.statusText}>
-                            {measuredDistance === null
-                                ? "Tap two points to measure"
-                                : `Distance: ${measuredDistance.toFixed(1)} cm`}
+                {/* Target Selection */}
+                {!isQuickMode && !isLevelMeasurement && (
+                    <View style={{ marginBottom: 24 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 8, padding: 4 }}>
+                            {['length', 'width', 'height'].map((t) => (
+                                <Button
+                                    key={t}
+                                    mode={targetMeasurement === t ? 'contained' : 'text'}
+                                    onPress={() => setTargetMeasurement(t)}
+                                    buttonColor={targetMeasurement === t ? theme.colors.primary : 'transparent'}
+                                    textColor={targetMeasurement === t ? '#fff' : 'rgba(255,255,255,0.6)'}
+                                    style={{ flex: 1, borderRadius: 6 }}
+                                    compact
+                                >
+                                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                                </Button>
+                            ))}
+                        </View>
+                    </View>
+                )}
+                {!isQuickMode && isLevelMeasurement && (
+                    <Text style={{ color: theme.colors.primary, textAlign: 'center', marginBottom: 24, fontSize: 16, fontWeight: 'bold' }}>
+                        Measuring: {targetLabel} Height
+                    </Text>
+                )}
+                {isQuickMode && (
+                    <Text style={{ color: theme.colors.secondary, textAlign: 'center', marginBottom: 24, fontSize: 16, fontWeight: 'bold' }}>
+                        Free Measurement Mode
+                    </Text>
+                )}
+
+                {/* Result display */}
+                {measuredDistance !== null ? (
+                    <View style={styles.resultBox}>
+                        <Text style={styles.resultLabel}>Measured Distance</Text>
+                        <Text style={styles.resultValue}>{measuredDistance.toFixed(1)} cm</Text>
+                        <Text style={styles.resultHint}>
+                            {isQuickMode 
+                                ? 'Use this tool to measure any distance' 
+                                : `${Math.round(measuredDistance)} cm will be used for ${targetLabel}`}
                         </Text>
                     </View>
-
-                    <View style={styles.controls}>
-                        <Button
-                            mode="outlined"
-                            onPress={resetMeasurement}
-                            textColor="#fff"
-                            style={{ borderColor: '#fff' }}
-                            icon={() => <RotateCcw size={20} color="#fff" />}
-                        >
-                            Reset
-                        </Button>
-
-                        <Button
-                            mode="contained"
-                            onPress={handleConfirm}
-                            disabled={measuredDistance === null}
-                            buttonColor={theme.colors.success}
-                            icon={() => <Check size={20} color="#fff" />}
-                        >
-                            Confirm
-                        </Button>
+                ) : (
+                    <View style={styles.resultBox}>
+                        <Camera color="#06D6A0" size={48} style={{ marginBottom: 16 }} />
+                        <Text style={styles.resultLabel}>
+                            {isMeasuring ? 'AR camera is open...' : 'Ready to measure'}
+                        </Text>
+                        <Text style={styles.resultHint}>
+                            {isMeasuring
+                                ? (isQuickMode ? 'Tap two points in the AR view' : 'Tap two points on the shelf in the AR view')
+                                : 'Tap "Measure" to open the AR camera'}
+                        </Text>
+                        {error && (
+                            <Text style={styles.errorText}>{error}</Text>
+                        )}
                     </View>
+                )}
+
+                {/* Action buttons */}
+                <View style={styles.controls}>
+                    <Button
+                        mode="outlined"
+                        onPress={() => {
+                            setMeasuredDistance(null);
+                            setError(null);
+                            startMeasurement();
+                        }}
+                        textColor="#fff"
+                        style={{ borderColor: '#fff', flex: 1, marginRight: 8 }}
+                        icon={() => <RotateCcw size={20} color="#fff" />}
+                    >
+                        {measuredDistance !== null ? 'Re-measure' : 'Measure'}
+                    </Button>
+
+                    <Button
+                        mode="contained"
+                        onPress={handleConfirm}
+                        disabled={measuredDistance === null}
+                        buttonColor={theme.colors.success}
+                        style={{ flex: 1, marginLeft: 8 }}
+                        icon={() => <Check size={20} color="#fff" />}
+                    >
+                        Confirm
+                    </Button>
                 </View>
+
+                <Button
+                    mode="text"
+                    onPress={() => navigation.goBack()}
+                    textColor="rgba(255,255,255,0.7)"
+                    style={{ marginTop: 8 }}
+                    icon={() => <X size={18} color="rgba(255,255,255,0.7)" />}
+                >
+                    Cancel
+                </Button>
             </View>
         </View>
     );
@@ -176,54 +210,57 @@ const ARMeasureScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000',
+        backgroundColor: '#111',
     },
-    arView: {
+    content: {
         flex: 1,
-    },
-    overlay: {
-        ...StyleSheet.absoluteFillObject,
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         padding: 24,
-        paddingTop: 54, // safe area top
-        paddingBottom: 40, // safe area bottom
+        paddingTop: 54,
+        paddingBottom: 40,
     },
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-    },
-    closeBtn: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
+        marginBottom: 32,
     },
     title: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 'bold',
     },
-    footer: {
-        gap: 16,
-    },
-    statusBox: {
-        backgroundColor: 'rgba(0,0,0,0.7)',
-        padding: 16,
-        borderRadius: 12,
+    resultBox: {
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        padding: 32,
+        borderRadius: 16,
         alignItems: 'center',
+        marginBottom: 32,
     },
-    statusText: {
-        color: '#fff',
-        fontSize: 16,
+    resultLabel: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: 14,
+        marginBottom: 8,
+    },
+    resultValue: {
+        color: '#06D6A0',
+        fontSize: 48,
         fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    resultHint: {
+        color: 'rgba(255,255,255,0.5)',
+        fontSize: 12,
+        textAlign: 'center',
+    },
+    errorText: {
+        color: '#ff6b6b',
+        fontSize: 13,
+        marginTop: 12,
+        textAlign: 'center',
     },
     controls: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-    }
+    },
 });
 
 export default ARMeasureScreen;

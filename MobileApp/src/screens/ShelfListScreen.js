@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, FAB, Card, List, useTheme, IconButton, Searchbar } from 'react-native-paper';
 import { Layers, Plus, Search } from 'lucide-react-native';
+import { jwtToken } from '../utils/auth';
+import { getApiUrl } from '../utils/config';
 
 // Placeholder data
 const initialShelves = [
@@ -13,9 +15,61 @@ const initialShelves = [
 const ShelfListScreen = ({ navigation }) => {
     const theme = useTheme();
     const [searchQuery, setSearchQuery] = useState('');
-    const [shelves, setShelves] = useState(initialShelves);
+    const [shelves, setShelves] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState(null);
 
-    const filteredShelves = shelves.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const fetchShelves = async () => {
+        setIsLoading(true);
+        setErrorMsg(null);
+        try {
+            // Fetch from local network backend using Expo env variables
+            const response = await fetch(`${getApiUrl()}/api/planograms/shelves?storeId=6956357610ec0ab348888893`, {
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    // Map backend data to local structure
+                    const formattedShelves = data.map(s => ({
+                        id: s.id?.toString() || s._id?.toString(),
+                        name: s.aisleBaySide || s.fixtureType || 'Unnamed Shelf',
+                        levels: s.levels ? s.levels.length : 0,
+                        dimensions: `${s.totalWidthCm || 0}W x ${s.totalDepthCm || 0}D x ${s.totalHeightCm || 0}H cm`,
+                        rawWidth: s.totalWidthCm || 0,
+                        rawDepth: s.totalDepthCm || 0,
+                        rawHeight: s.totalHeightCm || 0,
+                        loadedFromBackend: true
+                    }));
+                    setShelves(formattedShelves);
+                } else {
+                    setShelves([]);
+                }
+            } else {
+                setShelves([]);
+                setErrorMsg('Failed to load shelves from server.');
+            }
+        } catch (error) {
+            console.log('Backend fetch error:', error);
+            setShelves([]);
+            setErrorMsg('Something went wrong connecting to the backend.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchShelves();
+        });
+
+        fetchShelves();
+        return unsubscribe;
+    }, [navigation]);
+
+    const filteredShelves = shelves.filter(s => (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()));
 
     const renderItem = ({ item }) => (
         <Card
@@ -53,7 +107,13 @@ const ShelfListScreen = ({ navigation }) => {
                 keyExtractor={item => item.id}
                 renderItem={renderItem}
                 contentContainerStyle={styles.listContainer}
-                ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 32, opacity: 0.5 }}>No shelves found.</Text>}
+                refreshing={isLoading}
+                onRefresh={fetchShelves}
+                ListEmptyComponent={
+                    <Text style={{ textAlign: 'center', marginTop: 32, opacity: 0.5 }}>
+                        {isLoading ? 'Loading shelves...' : (errorMsg || 'No shelves found.')}
+                    </Text>
+                }
             />
 
             <FAB
