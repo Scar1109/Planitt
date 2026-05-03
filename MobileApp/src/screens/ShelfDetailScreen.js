@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Text, TextInput, Button, useTheme, Card, IconButton, Divider } from 'react-native-paper';
-import { Ruler, Plus, Trash2, ArrowLeft, Camera } from 'lucide-react-native';
+import { Ruler, Plus, Trash2, ArrowLeft, Camera, Save } from 'lucide-react-native';
 import { jwtToken } from '../utils/auth';
+import { getApiUrl } from '../utils/config';
 
 const ShelfDetailScreen = ({ route, navigation }) => {
     const theme = useTheme();
@@ -30,7 +31,7 @@ const ShelfDetailScreen = ({ route, navigation }) => {
                 setIsLoading(true);
                 try {
                     // This points to PlanogramPlatform/backend running on local network
-                    const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/planograms/shelves/${initialData.id || 1}?storeId=6956357610ec0ab348888893`, {
+                    const response = await fetch(`${getApiUrl()}/api/planograms/shelves/${initialData.id || 1}?storeId=6956357610ec0ab348888893`, {
                         headers: {
                             'Authorization': `Bearer ${jwtToken}`
                         }
@@ -107,10 +108,10 @@ const ShelfDetailScreen = ({ route, navigation }) => {
         };
 
         try {
-            // Attempt to save to backend
-            await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/planograms/shelves${isEditing ? `/${initialData.id || 1}` : ''}`, {
+            // This will use real PUT/POST to local planogram-platform API
+            const response = await fetch(`${getApiUrl()}/api/planograms/shelves${isEditing ? `/${initialData.id || 1}` : ''}?storeId=6956357610ec0ab348888893`, {
                 method: isEditing ? 'PUT' : 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${jwtToken}`
                 },

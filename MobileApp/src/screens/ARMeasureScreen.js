@@ -75,7 +75,15 @@ const ARMeasureScreen = ({ navigation, route }) => {
         }
     }, [isFocused]);
 
+    const mode = route.params?.mode || 'form';
+    const isQuickMode = mode === 'quick';
+
     const handleConfirm = () => {
+        if (isQuickMode) {
+            navigation.goBack();
+            return;
+        }
+        
         if (measuredDistance) {
             navigation.navigate({
                 name: 'ShelfDetail',
@@ -95,11 +103,11 @@ const ARMeasureScreen = ({ navigation, route }) => {
             <View style={styles.content}>
                 {/* Header */}
                 <View style={styles.header}>
-                    <Text style={styles.title}>AR Measure</Text>
+                    <Text style={styles.title}>{isQuickMode ? 'Quick Measure' : 'AR Measure'}</Text>
                 </View>
 
                 {/* Target Selection */}
-                {!isLevelMeasurement && (
+                {!isQuickMode && !isLevelMeasurement && (
                     <View style={{ marginBottom: 24 }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 8, padding: 4 }}>
                             {['length', 'width', 'height'].map((t) => (
@@ -118,9 +126,14 @@ const ARMeasureScreen = ({ navigation, route }) => {
                         </View>
                     </View>
                 )}
-                {isLevelMeasurement && (
+                {!isQuickMode && isLevelMeasurement && (
                     <Text style={{ color: theme.colors.primary, textAlign: 'center', marginBottom: 24, fontSize: 16, fontWeight: 'bold' }}>
                         Measuring: {targetLabel} Height
+                    </Text>
+                )}
+                {isQuickMode && (
+                    <Text style={{ color: theme.colors.secondary, textAlign: 'center', marginBottom: 24, fontSize: 16, fontWeight: 'bold' }}>
+                        Free Measurement Mode
                     </Text>
                 )}
 
@@ -130,7 +143,9 @@ const ARMeasureScreen = ({ navigation, route }) => {
                         <Text style={styles.resultLabel}>Measured Distance</Text>
                         <Text style={styles.resultValue}>{measuredDistance.toFixed(1)} cm</Text>
                         <Text style={styles.resultHint}>
-                            {Math.round(measuredDistance)} cm will be used for {targetLabel}
+                            {isQuickMode 
+                                ? 'Use this tool to measure any distance' 
+                                : `${Math.round(measuredDistance)} cm will be used for ${targetLabel}`}
                         </Text>
                     </View>
                 ) : (
@@ -141,7 +156,7 @@ const ARMeasureScreen = ({ navigation, route }) => {
                         </Text>
                         <Text style={styles.resultHint}>
                             {isMeasuring
-                                ? 'Tap two points on the shelf in the AR view'
+                                ? (isQuickMode ? 'Tap two points in the AR view' : 'Tap two points on the shelf in the AR view')
                                 : 'Tap "Measure" to open the AR camera'}
                         </Text>
                         {error && (

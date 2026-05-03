@@ -4,6 +4,7 @@ import { Text, TextInput, Button, useTheme } from 'react-native-paper';
 
 import { Alert } from 'react-native';
 import { setJwtToken } from '../utils/auth';
+import { getApiUrl } from '../utils/config';
 
 const LoginScreen = ({ navigation }) => {
     // Auto-fill credentials for testing
@@ -25,7 +26,7 @@ const LoginScreen = ({ navigation }) => {
 
         setLoading(true);
         try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/auth/login`, {
+            const response = await fetch(`${getApiUrl()}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

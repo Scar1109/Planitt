@@ -3,6 +3,7 @@ import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, FAB, Card, List, useTheme, IconButton, Searchbar } from 'react-native-paper';
 import { Layers, Plus, Search } from 'lucide-react-native';
 import { jwtToken } from '../utils/auth';
+import { getApiUrl } from '../utils/config';
 
 // Placeholder data
 const initialShelves = [
@@ -23,7 +24,7 @@ const ShelfListScreen = ({ navigation }) => {
         setErrorMsg(null);
         try {
             // Fetch from local network backend using Expo env variables
-            const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/api/planograms/shelves?storeId=6956357610ec0ab348888893`, {
+            const response = await fetch(`${getApiUrl()}/api/planograms/shelves?storeId=6956357610ec0ab348888893`, {
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
                 }
