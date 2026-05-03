@@ -53,6 +53,19 @@
         {
           "androidXrMode": "AR"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Planitt to access your photos to analyze shelf compliance.",
+          "cameraPermission": "Allow Planitt to access your camera to capture shelf images."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Planitt to access your camera to capture shelf images."
+        }
       ]
     ]
   }

@@ -55,43 +55,63 @@ const ShelfComplianceScreen = ({ navigation }) => {
     }, []);
 
     const pickImage = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
-            return;
-        }
+        try {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
+                return;
+            }
 
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 1,
-        });
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: false, // Disabling editing for better reliability
+                quality: 0.7,
+            });
 
-        if (!result.canceled) {
-            setImage(result.assets[0]);
+            if (!result.canceled) {
+                const selectedAsset = result.assets ? result.assets[0] : result;
+                setImage(selectedAsset);
+            }
+        } catch (error) {
+            console.log("Error picking image:", error);
+            Alert.alert("Error", "Failed to pick image from gallery.");
         }
     };
 
     const takePhoto = async () => {
-        const { status } = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert('Permission Denied', 'Sorry, we need camera permissions to make this work!');
-            return;
-        }
+        try {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Denied', 'Sorry, we need camera permissions to make this work!');
+                return;
+            }
 
-        const result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            quality: 1,
-        });
+            const result = await ImagePicker.launchCameraAsync({
+                allowsEditing: false,
+                quality: 0.7,
+            });
 
-        if (!result.canceled) {
-            setImage(result.assets[0]);
+            if (!result.canceled) {
+                const selectedAsset = result.assets ? result.assets[0] : result;
+                setImage(selectedAsset);
+            }
+        } catch (error) {
+            console.log("Error taking photo:", error);
+            Alert.alert("Error", "Failed to open camera.");
         }
     };
 
     const runAnalysis = async () => {
-        if (!selectedRun || !selectedFixture || !image) {
-            Alert.alert("Missing Information", "Please select a run, a fixture, and provide an image.");
+        if (!selectedRun) {
+            Alert.alert("Missing Selection", "Please select an Optimization Run first.");
+            return;
+        }
+        if (!selectedFixture) {
+            Alert.alert("Missing Selection", "Please select a Target Fixture (Shelf).");
+            return;
+        }
+        if (!image) {
+            Alert.alert("Missing Image", "Please take a photo or upload an image of the shelf.");
             return;
         }
 
@@ -121,15 +141,23 @@ const ShelfComplianceScreen = ({ navigation }) => {
                 body: formData,
             });
 
-            const data = await response.json();
+            let data;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                throw new Error(`Server returned non-JSON response: ${text.slice(0, 100)}`);
+            }
+
             if (response.ok) {
                 setReport(data);
             } else {
                 Alert.alert("Analysis Failed", data.message || "Failed to analyze shelf compliance.");
             }
         } catch (error) {
-            console.error("Analysis error", error);
-            Alert.alert("Error", "An unexpected error occurred during analysis.");
+            console.log("Analysis error", error);
+            Alert.alert("Critical Error", error.message || "An unexpected error occurred during analysis.");
         } finally {
             setIsAnalyzing(false);
         }
@@ -259,7 +287,7 @@ const ShelfComplianceScreen = ({ navigation }) => {
                     mode="contained" 
                     onPress={runAnalysis}
                     loading={isAnalyzing}
-                    disabled={isAnalyzing || !image || !selectedRun || !selectedFixture}
+                    disabled={isAnalyzing}
                     style={styles.mainBtn}
                     contentStyle={styles.mainBtnContent}
                 >
