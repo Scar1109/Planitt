@@ -163,7 +163,7 @@ export function AgentInventoryForecast({ onDataChange }) {
                             {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-400" />}
                         </CardTitle>
                         <p className="text-sm text-slate-500">
-                            Autonomous agent-based demand predictions with intelligent recommendations
+                            Autonomous agent-based demand predictions with intelligent recommendations.
                         </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
