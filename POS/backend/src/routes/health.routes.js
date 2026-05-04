@@ -7,7 +7,9 @@ router.get('/', (req, res) => {
     res.json({
         status: "ok",
         service: "pos-backend",
-        database: dbStatus
+        database: dbStatus,
+        uptimeSeconds: process.uptime(),
+        timestamp: new Date().toISOString(),
     });
 });
 

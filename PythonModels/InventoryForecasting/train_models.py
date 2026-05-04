@@ -67,7 +67,7 @@ def load_all_data():
     all_products = []
     all_weather = []
     
-    years = ["2022", "2023", "2024"]
+    years = ["2023", "2024", "2025"]
     
     for year in years:
         year_path = DATA_DIR / year

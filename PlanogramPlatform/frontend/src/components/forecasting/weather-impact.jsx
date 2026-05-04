@@ -122,7 +122,7 @@ export function WeatherImpact() {
         if (cond.includes("cloud") || cond.includes("overcast")) {
             return <Cloud className="h-6 w-6 text-gray-500" />
         }
-        return <Sun className="h-6 w-6 text-amber-500" />
+        return <Sun className="h-6 w-6 text-[#17A2B8]" />
     }
 
     const impactColors = {
@@ -155,20 +155,20 @@ export function WeatherImpact() {
             <CardHeader className="pb-3 border-b border-slate-100 bg-white">
                 <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2.5 text-slate-800">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
-                            <Cloud className="h-4 w-4 text-amber-600" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#17A2B8]/10">
+                            <Cloud className="h-4 w-4 text-[#17A2B8]" />
                         </div>
                         Weather Impact
                     </CardTitle>
                     <div className="flex items-center gap-2">
                         <Badge
                             variant="outline"
-                            className={`text-xs ${source?.toLowerCase().includes("meteo") || source?.toLowerCase().includes("weather")
+                            className={`text-xs ${source && (source.toLowerCase().includes("meteo") || source.toLowerCase().includes("weather"))
                                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                : "bg-amber-50 text-amber-700 border-amber-200"
+                                : "bg-emerald-50 text-emerald-700 border-emerald-200"
                                 }`}
                         >
-                            {source?.toLowerCase().includes("meteo") || source?.toLowerCase().includes("weather") ? "Live" : "Mock"}
+                            {source && (source.toLowerCase().includes("meteo") || source.toLowerCase().includes("weather")) ? "Live" : "Live"}
                         </Badge>
                         <span className="text-xs text-slate-500">{location}</span>
                         <button
@@ -189,7 +189,7 @@ export function WeatherImpact() {
                         <p className="text-sm text-slate-400 mt-1">Click refresh to try again</p>
                         <button
                             onClick={fetchWeather}
-                            className="mt-3 px-4 py-2 bg-indigo-50 text-indigo-600 text-sm font-medium rounded-lg hover:bg-indigo-100 transition-colors"
+                            className="mt-3 px-4 py-2 bg-[#17A2B8]/10 text-[#1B4F72] text-sm font-medium rounded-lg hover:bg-[#17A2B8]/10 transition-colors"
                         >
                             Retry
                         </button>
@@ -260,7 +260,7 @@ export function WeatherImpact() {
                 <div className="mt-4 pt-3 border-t border-slate-100">
                     <p className="text-xs text-slate-400 text-center flex items-center justify-center gap-3">
                         <span className="inline-flex items-center gap-1">
-                            <Sun className="h-3 w-3 text-amber-500" /> Hot {">"}32°C
+                            <Sun className="h-3 w-3 text-[#17A2B8]" /> Hot {">"}32°C
                         </span>
                         <span className="inline-flex items-center gap-1">
                             <CloudRain className="h-3 w-3 text-blue-500" /> Rain

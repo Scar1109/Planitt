@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { useLocation } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -20,8 +21,12 @@ import { TrendingUp, Download, Loader2, Eye, EyeOff, Sparkles, CalendarDays, Sea
 import { api } from "@/api/client"
 
 export function ForecastChart() {
+    const location = useLocation()
+    const urlParams = new URLSearchParams(location.search)
+    const initialSku = urlParams.get("sku")
+
     const [timeRange, setTimeRange] = useState("14d")
-    const [selectedProduct, setSelectedProduct] = useState("")
+    const [selectedProduct, setSelectedProduct] = useState(initialSku || "")
     const [showConfidence, setShowConfidence] = useState(true)
     const [forecastData, setForecastData] = useState([])
     const [holidays, setHolidays] = useState([])
@@ -155,7 +160,8 @@ export function ForecastChart() {
                         ...existing,
                         forecast: Math.round(point.forecast),
                         lower: Math.round(point.lower_bound),
-                        upper: Math.round(point.upper_bound)
+                        upper: Math.round(point.upper_bound),
+                        reason: point.reason
                     })
                 })
 
@@ -211,34 +217,53 @@ export function ForecastChart() {
 
         const data = payload[0]?.payload
         const isHoliday = data?.holiday
+        const actionReason = data?.reason
 
         return (
-            <div className="bg-popover border border-border rounded-lg shadow-lg p-3">
-                <p className="font-semibold text-foreground mb-2">{label}</p>
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg p-3 min-w-[200px]">
+                <p className="font-semibold text-slate-800 dark:text-slate-100 mb-2">{label}</p>
                 {isHoliday && (
-                    <div className="mb-2 pb-2 border-b border-border">
+                    <div className="mb-2 pb-2 border-b border-slate-100 dark:border-slate-800">
                         <div className="flex items-center gap-1.5 text-xs">
-                            <Sparkles className="h-3 w-3 text-amber-500" />
-                            <span className="font-medium text-amber-600 dark:text-amber-400">
+                            <Sparkles className="h-3 w-3 text-[#17A2B8]" />
+                            <span className="font-medium text-[#17A2B8] dark:text-[#1B4F72]">
                                 {data.holidayName}
                             </span>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                             Expected +{data.holidayImpact === 'high' ? '40' : data.holidayImpact === 'medium' ? '20' : '10'}% demand
                         </p>
                     </div>
                 )}
-                {payload.map((entry, index) => {
-                    if (entry.value === null) return null
-                    return (
-                        <div key={index} className="flex items-center justify-between gap-3 text-sm">
-                            <span className="text-muted-foreground">{entry.name}:</span>
-                            <span className="font-medium text-foreground">
-                                {Number(entry.value).toLocaleString()} units
-                            </span>
-                        </div>
-                    )
-                })}
+                {actionReason && (
+                    <div className="mb-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <p className="text-[10px] uppercase font-bold text-[#17A2B8] dark:text-[#17A2B8] tracking-wider mb-1">
+                            AI Driven Factor
+                        </p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-snug">
+                            {actionReason}
+                        </p>
+                    </div>
+                )}
+                <div className="space-y-1.5">
+                    {payload.map((entry, index) => {
+                        if (entry.value === null) return null
+                        return (
+                            <div key={index} className="flex items-center justify-between gap-4 text-sm">
+                                <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                                    <div
+                                        className="w-2 h-2 rounded-full"
+                                        style={{ backgroundColor: entry.color }}
+                                    />
+                                    {entry.name}:
+                                </span>
+                                <span className="font-medium text-slate-800 dark:text-slate-100">
+                                    {Number(entry.value).toLocaleString()} units
+                                </span>
+                            </div>
+                        )
+                    })}
+                </div>
             </div>
         )
     }
@@ -247,7 +272,7 @@ export function ForecastChart() {
     const getImpactColor = (impact) => {
         switch (impact) {
             case 'high': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-            case 'medium': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+            case 'medium': return 'bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]'
             default: return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
         }
     }
@@ -258,8 +283,8 @@ export function ForecastChart() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="space-y-1">
                         <CardTitle className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
-                                <TrendingUp className="h-4 w-4 text-indigo-600" />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#17A2B8]/10">
+                                <TrendingUp className="h-4 w-4 text-[#1B4F72]" />
                             </div>
                             <span className="text-slate-800">Demand Forecast</span>
                             {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-400" />}
@@ -281,14 +306,14 @@ export function ForecastChart() {
                                 type="button"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 disabled={productsLoading}
-                                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 min-w-[280px] max-w-[320px] h-10 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-[#17A2B8] focus:ring-offset-2 min-w-[280px] max-w-[320px] h-10 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <span className="truncate text-left flex-1 font-medium text-slate-700">
                                     {productsLoading ? "Loading products..." : selectedProductData
                                         ? `${selectedProductData.name || selectedProductData.sku}${selectedProductData.unitSize ? ` (${selectedProductData.unitSize})` : ''}`
                                         : "Select Product..."}
                                 </span>
-                                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-indigo-600' : ''}`} />
+                                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-[#1B4F72]' : ''}`} />
                             </button>
 
                             {isDropdownOpen && !productsLoading && (
@@ -302,7 +327,7 @@ export function ForecastChart() {
                                                 placeholder="Search by SKU, name, or category..."
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="pl-9 pr-9 h-10 text-sm rounded-lg border-slate-200 bg-white focus:ring-indigo-500 transition-colors"
+                                                className="pl-9 pr-9 h-10 text-sm rounded-lg border-slate-200 bg-white focus:ring-[#17A2B8] transition-colors"
                                                 autoFocus
                                             />
                                             {searchQuery && (
@@ -329,19 +354,19 @@ export function ForecastChart() {
                                                             setSearchQuery("")
                                                         }}
                                                         className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group ${selectedProduct === p.sku
-                                                            ? 'bg-indigo-50 border border-indigo-100'
+                                                            ? 'bg-[#17A2B8]/10 border border-[#17A2B8]/20'
                                                             : 'hover:bg-slate-50 border border-transparent'
                                                             }`}
                                                     >
                                                         <div className="flex items-start gap-3">
                                                             <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${selectedProduct === p.sku
-                                                                ? 'bg-indigo-600 text-white'
-                                                                : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600'
+                                                                ? 'bg-[#1B4F72] text-white'
+                                                                : 'bg-slate-100 text-slate-500 group-hover:bg-[#17A2B8]/10 group-hover:text-[#1B4F72]'
                                                                 } transition-colors`}>
                                                                 {(p.name || p.sku).charAt(0).toUpperCase()}
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <p className={`font-medium truncate ${selectedProduct === p.sku ? 'text-indigo-700' : 'text-slate-700'}`}>
+                                                                <p className={`font-medium truncate ${selectedProduct === p.sku ? 'text-[#1B4F72]' : 'text-slate-700'}`}>
                                                                     {p.name || p.sku}
                                                                 </p>
                                                                 <div className="flex items-center gap-2 mt-0.5">
@@ -361,7 +386,7 @@ export function ForecastChart() {
                                                                 </div>
                                                             </div>
                                                             {selectedProduct === p.sku && (
-                                                                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center">
+                                                                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[#1B4F72] flex items-center justify-center">
                                                                     <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                                                     </svg>
@@ -404,7 +429,7 @@ export function ForecastChart() {
                                     key={range}
                                     onClick={() => setTimeRange(range)}
                                     className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${timeRange === range
-                                        ? "bg-white text-indigo-600 shadow-sm"
+                                        ? "bg-white text-[#1B4F72] shadow-sm"
                                         : "text-slate-500 hover:text-slate-700"
                                         }`}
                                 >
@@ -421,7 +446,7 @@ export function ForecastChart() {
                 {!loading && holidays.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-border/50">
                         <div className="flex items-start gap-2">
-                            <Sparkles className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                            <Sparkles className="h-4 w-4 text-[#17A2B8] mt-0.5 flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                                 <p className="text-xs font-medium text-foreground mb-2">Holidays in Forecast Period:</p>
                                 <div className="flex flex-wrap gap-2">
@@ -471,8 +496,8 @@ export function ForecastChart() {
                                 <ComposedChart data={forecastData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="confidenceGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.1} />
-                                            <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.01} />
+                                            <stop offset="5%" stopColor="#17A2B8" stopOpacity={0.1} />
+                                            <stop offset="95%" stopColor="#17A2B8" stopOpacity={0.01} />
                                         </linearGradient>
                                         <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
@@ -563,7 +588,7 @@ export function ForecastChart() {
                                     <Line
                                         type="monotone"
                                         dataKey="forecast"
-                                        stroke="#4f46e5"
+                                        stroke="#17A2B8"
                                         strokeWidth={2.5}
                                         strokeDasharray="6 4"
                                         dot={(props) => {
@@ -575,7 +600,7 @@ export function ForecastChart() {
                                                         cx={cx}
                                                         cy={cy}
                                                         r={payload.holiday ? 4 : 2}
-                                                        fill={payload.holiday ? "#fbbf24" : "#4f46e5"}
+                                                        fill={payload.holiday ? "#fbbf24" : "#17A2B8"}
                                                         strokeWidth={0}
                                                     />
                                                     {payload.holiday && (
@@ -592,7 +617,7 @@ export function ForecastChart() {
                                                 </g>
                                             )
                                         }}
-                                        activeDot={{ r: 5, fill: "#4f46e5", stroke: "#ffffff", strokeWidth: 2 }}
+                                        activeDot={{ r: 5, fill: "#17A2B8", stroke: "#ffffff", strokeWidth: 2 }}
                                         name="Forecast"
                                     />
                                 </ComposedChart>
@@ -606,19 +631,19 @@ export function ForecastChart() {
                                     <span className="text-xs font-medium text-slate-600">Actual Sales</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="h-0.5 w-6 rounded-full bg-indigo-600/20 forced-colors:bg-transparent">
-                                        <span className="block h-full w-full" style={{ backgroundImage: "repeating-linear-gradient(90deg, #4f46e5, #4f46e5 4px, transparent 4px, transparent 8px)" }}></span>
+                                    <span className="h-0.5 w-6 rounded-full bg-[#1B4F72]/20 forced-colors:bg-transparent">
+                                        <span className="block h-full w-full" style={{ backgroundImage: "repeating-linear-gradient(90deg, #17A2B8, #17A2B8 4px, transparent 4px, transparent 8px)" }}></span>
                                     </span>
                                     <span className="text-xs font-medium text-slate-600">Forecast</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="h-2.5 w-2.5 rounded bg-indigo-100 border border-indigo-200" />
+                                    <span className="h-2.5 w-2.5 rounded bg-[#17A2B8]/10 border border-[#17A2B8]/20" />
                                     <span className="text-xs font-medium text-slate-600">95% Confidence</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className="relative flex items-center justify-center h-3 w-3">
-                                        <span className="h-2 w-2 rounded-full bg-amber-400" />
-                                        <span className="absolute inset-0 rounded-full border border-amber-200 animate-pulse" />
+                                        <span className="h-2 w-2 rounded-full bg-[#17A2B8]/10" />
+                                        <span className="absolute inset-0 rounded-full border border-[#17A2B8]/20 animate-pulse" />
                                     </div>
                                     <span className="text-xs font-medium text-slate-600">Holiday</span>
                                 </div>
@@ -627,7 +652,7 @@ export function ForecastChart() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setShowConfidence(!showConfidence)}
-                                className="h-8 text-xs gap-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50"
+                                className="h-8 text-xs gap-1.5 text-slate-500 hover:text-[#1B4F72] hover:bg-[#17A2B8]/10"
                             >
                                 {showConfidence ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                                 {showConfidence ? "Hide" : "Show"} Confidence

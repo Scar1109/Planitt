@@ -76,12 +76,10 @@ export async function getDemandForecast({ productId, storeId, horizon = 7 }) {
         const result = await pythonMLService.getDemandForecast(productId, storeId, horizon);
 
         if (!result.success) {
-            // Return mock data as fallback
             return {
-                forecast: Array(horizon).fill(0).map(() => Math.floor(Math.random() * 20) + 10),
-                confidence: 0.5,
-                source: 'fallback',
-                message: 'Using fallback forecast - Python service unavailable',
+                error: 'ML Service Unavailable',
+                message: 'Failed to retrieve forecast from ML engine.',
+                details: result.error || 'Unknown error'
             };
         }
 

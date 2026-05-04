@@ -1,0 +1,19 @@
+{
+    "name": "planitt-workspace",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "pos": "concurrently \"npm run pos:backend\" \"npm run pos:frontend\"",
+        "pos:backend": "cd POS/backend && npm run dev",
+        "pos:frontend": "cd POS/frontend && npm run dev:electron",
+        "portal": "cd PlanogramPlatform && npm start",
+        "portal:backend": "cd PlanogramPlatform/backend && npm start",
+        "portal:frontend": "cd PlanogramPlatform/frontend && npm start",
+        "web": "cd Website && npm run dev",
+        "py": "cd PythonModels && npm start",
+        "all": "concurrently \"npm run portal\" \"npm run web\" \"npm run py\""
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}

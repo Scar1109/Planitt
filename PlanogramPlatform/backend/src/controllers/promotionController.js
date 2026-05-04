@@ -317,41 +317,46 @@ export const explainSimulation = async (req, res) => {
 
 export const findOptimalDiscount = async (req, res) => {
     try {
-        const { sku, duration_days } = req.body;
+        const payload = req.body; // should pass { sku: {...}, duration_days: X }
 
-        // ── Input Validation (Item 3) ──────────────────────────────
-        const errors = [
-            ...validateSKU(sku),
-            ...validateDuration(duration_days)
-        ];
-        if (errors.length > 0) {
-            return res.status(400).json({ message: 'Input validation failed', errors });
+        // Search discount levels from 5% to 80% in 5% steps (16 levels instead of 76)
+        // Process in small sequential batches to avoid overwhelming the Python API server
+        const discountLevels = [];
+        for (let d = 5; d <= 80; d += 5) {
+            discountLevels.push(d / 100);
         }
 
-        // ── Sweep discounts 5%–80% concurrently ───────────────────
-        const requests = [];
-        for (let d = 5; d <= 80; d++) {
-            const discount = d / 100;
-            const simPayload = { ...req.body, test_discount: discount };
-            requests.push(
-                axios.post(`${PYTHON_SERVICE_URL}/simulate/sku`, simPayload)
-                    .then(response => ({
-                        discount,
-                        simulation: response.data,
-                        profit_lift: response.data.profit_lift
-                    }))
-                    .catch(() => null) // don't let one failure kill the sweep
-            );
+        const BATCH_SIZE = 4; // Process 4 at a time to avoid ECONNRESET
+        const allResults = [];
+
+        for (let i = 0; i < discountLevels.length; i += BATCH_SIZE) {
+            const batch = discountLevels.slice(i, i + BATCH_SIZE);
+            const batchPromises = batch.map(discount => {
+                const simPayload = { ...payload, test_discount: discount };
+                return axios.post(`${PYTHON_SERVICE_URL}/simulate/sku`, simPayload, {
+                    timeout: 30000 // 30s timeout per request
+                }).then(response => ({
+                    discount: discount,
+                    simulation: response.data,
+                    profit_lift: response.data.profit_lift
+                })).catch(err => {
+                    console.warn(`Discount ${(discount * 100).toFixed(0)}% failed: ${err.message}`);
+                    return null; // Skip failed requests instead of crashing
+                });
+            });
+
+            const batchResults = await Promise.all(batchPromises);
+            allResults.push(...batchResults.filter(r => r !== null));
         }
 
-        const simulations = (await Promise.all(requests)).filter(Boolean);
-
-        if (simulations.length === 0) {
-            return res.status(503).json({ message: 'All discount simulations failed — Python service may be unavailable' });
+        if (allResults.length === 0) {
+            return res.status(500).json({ message: 'All discount simulations failed' });
         }
 
-        simulations.sort((a, b) => b.profit_lift - a.profit_lift);
-        const top5 = simulations.slice(0, 5);
+        // Sort by absolute profit generation descending
+        allResults.sort((a, b) => b.profit_lift - a.profit_lift);
+
+        const top5 = allResults.slice(0, 5);
 
         // ── Output Sanity Check on optimal result (Item 5) ─────────
         const sanitizedOptimal = sanitizeSimulationOutput(

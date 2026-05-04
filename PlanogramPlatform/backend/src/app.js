@@ -27,7 +27,9 @@ import eventsRoutes from './routes/events.routes.js';
 import externalFactorsRoutes from './routes/externalFactors.routes.js';
 import inventoryRoutes from './routes/inventory.routes.js';
 import complianceRoutes from './routes/compliance.routes.js';
+import wastageRoutes from './routes/wastage.routes.js';
 import scenarioRoutes from './routes/scenarioRoutes.js';
+import constraintRoutes from './routes/constraintRoutes.js';
 
 app.use('/api/stores', storeRoutes);
 app.use('/api/products', productRoutes);
@@ -41,7 +43,9 @@ app.use('/api/users', userRoutes);
 app.use('/api/promotions', promotionRoutes);
 app.use('/api/planograms', planogramRoutes);
 app.use('/api/compliance', complianceRoutes);
+app.use('/api/wastage', wastageRoutes);
 app.use('/api/scenario', scenarioRoutes);
+app.use('/api/constraints', constraintRoutes);
 
 
 

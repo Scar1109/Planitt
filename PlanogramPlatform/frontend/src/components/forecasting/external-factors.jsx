@@ -9,7 +9,7 @@ import {
 import { api } from "@/api/client"
 
 const typeConfig = {
-    poya: { icon: PartyPopper, color: "bg-purple-50 text-purple-600", label: "Poya Day" },
+    poya: { icon: PartyPopper, color: "bg-slate-50 text-[#1B4F72]", label: "Poya Day" },
     holiday: { icon: PartyPopper, color: "bg-red-50 text-red-600", label: "Holiday" },
     public: { icon: Calendar, color: "bg-blue-50 text-blue-600", label: "Public Holiday" },
     weekend: { icon: Calendar, color: "bg-emerald-50 text-emerald-600", label: "Weekend" },
@@ -27,10 +27,85 @@ export function ExternalFactors() {
                 setLoading(true)
                 setError(null)
 
-                console.log("📊 Fetching external factors analysis...")
-                const response = await api.getExternalFactorsAnalysis(30)
-                console.log("📊 External factors response:", response)
+                console.log("📊 Fetching external factors analysis and events...")
 
+                // Fetch external factors analysis along with real events
+                const [response, eventsData] = await Promise.all([
+                    api.getExternalFactorsAnalysis(30).catch(() => ({})),
+                    api.getEvents("Colombo", "LK").catch(() => ({ events: [] }))
+                ])
+
+                // Combine and format real events
+                const rawEvents = eventsData?.events || []
+
+                const combinedLiveEvents = [...rawEvents]
+                    .map(item => {
+                        const isHoliday = !!item.type
+
+                        // Parse date and calculate days until
+                        const eventDate = new Date(item.date)
+                        const today = new Date()
+                        today.setHours(0, 0, 0, 0)
+
+                        let daysUntil = item.daysUntil
+                        if (daysUntil === undefined) {
+                            const diffTime = Math.abs(eventDate - today)
+                            daysUntil = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)))
+                        }
+
+                        // Derive urgency/impact colors based on expectedImpact or type
+                        const urgency = item.expectedImpact || (isHoliday && item.type === 'public' ? 'high' : 'medium')
+
+                        // Calculate an estimated overall impact percentage (if not provided)
+                        let overallImpact = 0
+                        if (item.demandMultiplier) {
+                            overallImpact = Math.round((item.demandMultiplier - 1) * 100)
+                        } else if (isHoliday) {
+                            overallImpact = item.type === 'poya' ? 25 : 15
+                        }
+
+                        // Generates realistic mocked category impacts based on the event name
+                        const isPoya = item.name?.toLowerCase().includes("poya")
+                        const isFestival = item.name?.toLowerCase().includes("new year") || item.name?.toLowerCase().includes("christmas")
+
+                        const predictedImpacts = isPoya ? [
+                            { category: "Beverages (Non-Alcoholic)", change: 30, direction: "increase" },
+                            { category: "Incense & Candles", change: 45, direction: "increase" },
+                            { category: "Meat/Alcohol", change: 80, direction: "decrease" }
+                        ] : isFestival ? [
+                            { category: "Sweets & Biscuits", change: 60, direction: "increase" },
+                            { category: "Gifts & Hampers", change: 120, direction: "increase" },
+                            { category: "Beverages", change: 40, direction: "increase" }
+                        ] : [
+                            { category: "Staples", change: 10, direction: "increase" },
+                            { category: "Snacks", change: 15, direction: "increase" },
+                            { category: "Beverages", change: 12, direction: "increase" }
+                        ]
+
+                        return {
+                            name: item.name,
+                            date: item.date,
+                            type: isPoya ? "poya" : isHoliday ? "public" : "holiday",
+                            daysUntil,
+                            urgency,
+                            overallImpact,
+                            predictedImpacts
+                        }
+                    })
+                    // Only keep future events
+                    .filter(e => e.daysUntil >= 0)
+                    // Sort by upcoming date
+                    .sort((a, b) => new Date(a.date) - new Date(b.date))
+
+                // Ensure futurePredictions object exists
+                if (!response.futurePredictions) {
+                    response.futurePredictions = {}
+                }
+
+                // Override upcomingEvents with our live merged data (limit to 6)
+                response.futurePredictions.upcomingEvents = combinedLiveEvents.slice(0, 6)
+
+                console.log("📊 Transformed External factors response:", response)
                 setData(response)
             } catch (err) {
                 console.error("Failed to fetch external factors:", err)
@@ -47,7 +122,7 @@ export function ExternalFactors() {
         return (
             <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden h-[500px]">
                 <CardContent className="flex items-center justify-center h-full">
-                    <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                    <Loader2 className="h-6 w-6 animate-spin text-[#1B4F72]" />
                     <span className="ml-2 text-slate-500 text-sm">Analyzing external factors...</span>
                 </CardContent>
             </Card>
@@ -58,7 +133,7 @@ export function ExternalFactors() {
         return (
             <Card className="bg-white border-slate-100 shadow-sm rounded-xl overflow-hidden h-[500px]">
                 <CardContent className="flex flex-col items-center justify-center h-full">
-                    <AlertTriangle className="h-12 w-12 text-amber-400 mb-3" />
+                    <AlertTriangle className="h-12 w-12 text-[#1B4F72] mb-3" />
                     <p className="text-slate-600 font-medium">Unable to load analysis</p>
                     <p className="text-sm text-slate-400 mt-1">{error}</p>
                 </CardContent>
@@ -73,8 +148,8 @@ export function ExternalFactors() {
             <CardHeader className="pb-3 border-b border-slate-100 bg-white">
                 <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2.5 text-slate-800">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
-                            <TrendingUp className="h-4 w-4 text-indigo-600" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#17A2B8]/10">
+                            <TrendingUp className="h-4 w-4 text-[#1B4F72]" />
                         </div>
                         External Factors Analysis
                     </CardTitle>
@@ -91,21 +166,21 @@ export function ExternalFactors() {
                     <TabsList className="grid w-full grid-cols-3 mb-4 bg-slate-100 p-1 rounded-lg">
                         <TabsTrigger
                             value="future"
-                            className="data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm rounded-md text-sm"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#1B4F72] data-[state=active]:shadow-sm rounded-md text-sm"
                         >
                             <Rocket className="h-3.5 w-3.5 mr-1.5" />
                             Future
                         </TabsTrigger>
                         <TabsTrigger
                             value="past"
-                            className="data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm rounded-md text-sm"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#1B4F72] data-[state=active]:shadow-sm rounded-md text-sm"
                         >
                             <History className="h-3.5 w-3.5 mr-1.5" />
                             Past Impact
                         </TabsTrigger>
                         <TabsTrigger
                             value="recommendations"
-                            className="data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm rounded-md text-sm"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#1B4F72] data-[state=active]:shadow-sm rounded-md text-sm"
                         >
                             <Lightbulb className="h-3.5 w-3.5 mr-1.5" />
                             Actions
@@ -130,7 +205,7 @@ export function ExternalFactors() {
                                         className={`rounded-lg border p-3 transition-colors ${event.urgency === 'high'
                                             ? 'border-red-200 bg-red-50/30'
                                             : event.urgency === 'medium'
-                                                ? 'border-amber-200 bg-amber-50/30'
+                                                ? 'border-[#17A2B8]/20 bg-[#17A2B8]/10'
                                                 : 'border-slate-100 hover:bg-slate-50/50'
                                             }`}
                                     >
@@ -150,7 +225,7 @@ export function ExternalFactors() {
                                                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${event.daysUntil <= 3
                                                             ? "bg-red-50 text-red-700 border-red-200"
                                                             : event.daysUntil <= 7
-                                                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                                                ? "bg-[#17A2B8]/10 text-[#1B4F72] border-[#17A2B8]/20"
                                                                 : "bg-slate-50 text-slate-500 border-slate-200"
                                                             }`}>
                                                             {event.daysUntil === 0 ? "Today" : event.daysUntil === 1 ? "Tomorrow" : `${event.daysUntil} days`}
@@ -225,9 +300,9 @@ export function ExternalFactors() {
                                         className="flex items-center justify-between p-2 rounded-lg border border-slate-100 bg-white"
                                     >
                                         <div className="flex items-center gap-2">
-                                            {pattern.icon === 'sun' && <Sun className="h-4 w-4 text-amber-500" />}
+                                            {pattern.icon === 'sun' && <Sun className="h-4 w-4 text-[#17A2B8]" />}
                                             {pattern.icon === 'cloud-rain' && <CloudRain className="h-4 w-4 text-blue-500" />}
-                                            {pattern.icon === 'calendar' && <Calendar className="h-4 w-4 text-indigo-500" />}
+                                            {pattern.icon === 'calendar' && <Calendar className="h-4 w-4 text-[#17A2B8]" />}
                                             <div>
                                                 <p className="text-sm font-medium text-slate-700">{pattern.factor}</p>
                                                 <p className="text-[10px] text-slate-400">{pattern.description}</p>
@@ -288,14 +363,12 @@ export function ExternalFactors() {
                                 className={`rounded-lg border p-3 ${rec.priority === 'high'
                                     ? 'border-red-200 bg-red-50/50'
                                     : rec.priority === 'medium'
-                                        ? 'border-amber-200 bg-amber-50/50'
+                                        ? 'border-[#17A2B8]/20 bg-[#17A2B8]/10'
                                         : 'border-slate-100 bg-slate-50/30'
                                     }`}
                             >
                                 <div className="flex items-start gap-2 mb-2">
-                                    {rec.priority === 'high' && <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />}
-                                    {rec.priority === 'medium' && <Lightbulb className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />}
-                                    {rec.priority === 'low' && <Lightbulb className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />}
+                                    <span className="text-sm shrink-0 mt-0.5">{rec.icon || (rec.priority === 'high' ? '⚠️' : rec.priority === 'medium' ? '💡' : '💡')}</span>
                                     <p className="text-sm font-medium text-slate-700">{rec.message}</p>
                                 </div>
                                 {rec.actionItems?.length > 0 && (
@@ -323,7 +396,7 @@ export function ExternalFactors() {
                                         <p className="text-[10px] text-slate-500">Avg Stock</p>
                                     </div>
                                     <div className="text-center p-2 rounded-lg bg-slate-50 border border-slate-100">
-                                        <p className="text-lg font-bold text-amber-600">{inventorySummary.wastePercentage}%</p>
+                                        <p className="text-lg font-bold text-[#17A2B8]">{inventorySummary.wastePercentage}%</p>
                                         <p className="text-[10px] text-slate-500">Waste</p>
                                     </div>
                                     <div className="text-center p-2 rounded-lg bg-slate-50 border border-slate-100">

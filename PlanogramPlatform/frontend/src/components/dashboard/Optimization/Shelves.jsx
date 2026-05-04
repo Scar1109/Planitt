@@ -116,7 +116,7 @@ const Shelves = () => {
                 </div>
                 <button
                     onClick={handleAdd}
-                    className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all flex items-center gap-2 font-medium"
+                    className="bg-[#1B4F72] text-white px-5 py-2.5 rounded-xl hover:bg-[#164060] shadow-lg shadow-[#1B4F72]/20 transition-all flex items-center gap-2 font-medium"
                 >
                     <FaPlus /> Add New Fixture
                 </button>
@@ -127,7 +127,7 @@ const Shelves = () => {
                 <div className="relative w-full max-w-md">
                     <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
-                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#17A2B8]/20 focus:border-[#17A2B8] outline-none"
                         placeholder="Search fixtures..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -151,14 +151,14 @@ const Shelves = () => {
                             <div
                                 key={shelf._id}
                                 onClick={() => handleEdit(shelf)}
-                                className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all cursor-pointer group flex flex-col overflow-hidden"
+                                className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-[#17A2B8]/30 transition-all cursor-pointer group flex flex-col overflow-hidden"
                             >
                                 {/* Card Header (Visual Hint) */}
-                                <div className="h-2 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                                <div className="h-2 bg-gradient-to-r from-[#1B4F72] to-[#17A2B8]"></div>
 
                                 <div className="p-5 flex-1">
                                     <div className="flex justify-between items-start mb-2">
-                                        <h3 className="font-bold text-lg text-slate-800 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                                        <h3 className="font-bold text-lg text-slate-800 line-clamp-1 group-hover:text-[#1B4F72] transition-colors">
                                             {shelf.aisleBaySide}
                                         </h3>
                                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${shelf.fixtureType === 'cooler' ? 'bg-cyan-100 text-cyan-700' : 'bg-slate-100 text-slate-600'}`}>
@@ -191,7 +191,7 @@ const Shelves = () => {
                                 </div>
 
                                 <div className="bg-slate-50 p-3 border-t border-slate-100 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <span className="text-xs text-indigo-600 font-medium">Click to Edit</span>
+                                    <span className="text-xs text-[#1B4F72] font-medium">Click to Edit</span>
                                     <button
                                         onClick={(e) => handleDelete(e, shelf._id)}
                                         className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"

@@ -103,11 +103,11 @@ export function ProductForecasts() {
             <CardHeader className="pb-4 border-b border-slate-100 bg-white">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <CardTitle className="flex items-center gap-2.5 text-slate-800">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
-                            <Package className="h-4 w-4 text-indigo-600" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#17A2B8]/10">
+                            <Package className="h-4 w-4 text-[#1B4F72]" />
                         </div>
                         Product-Level Forecasts
-                        {loading && <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />}
+                        {loading && <Loader2 className="h-4 w-4 animate-spin text-[#1B4F72]" />}
                     </CardTitle>
                     <div className="flex items-center gap-3">
                         <div className="relative w-64">
@@ -116,7 +116,7 @@ export function ProductForecasts() {
                                 placeholder="Search products..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="pl-9 border-slate-200 focus:border-indigo-300 focus:ring-indigo-200"
+                                className="pl-9 border-slate-200 focus:border-[#17A2B8] focus:ring-[#17A2B8]/10"
                             />
                         </div>
                         <Select value={category} onValueChange={setCategory}>
@@ -141,7 +141,7 @@ export function ProductForecasts() {
                 {loading && (
                     <div className="h-[350px] flex items-center justify-center">
                         <div className="flex flex-col items-center gap-3">
-                            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                            <Loader2 className="h-8 w-8 animate-spin text-[#1B4F72]" />
                             <p className="text-sm text-slate-500">Loading product forecasts...</p>
                         </div>
                     </div>
@@ -221,7 +221,7 @@ export function ProductForecasts() {
                                                     product.confidence >= 85
                                                         ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                                                         : product.confidence >= 70
-                                                            ? "bg-amber-50 text-amber-700 border-amber-100"
+                                                            ? "bg-[#17A2B8]/10 text-[#1B4F72] border-[#17A2B8]/20"
                                                             : "bg-slate-100 text-slate-600 border-slate-200",
                                                 )}
                                             >

@@ -59,7 +59,7 @@ const ProfileSettings = () => {
         <div className="max-w-4xl mx-auto p-6">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                    <FaUser className="text-indigo-600" /> My Profile
+                    <FaUser className="text-[#1B4F72]" /> My Profile
                 </h1>
                 <p className="text-slate-500 mt-1">Manage your personal information and security settings.</p>
             </div>
@@ -111,7 +111,7 @@ const ProfileSettings = () => {
                                     name="fullName"
                                     value={formData.fullName}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#17A2B8]/10 focus:border-[#17A2B8] outline-none transition-all"
                                     placeholder="Your Name"
                                 />
                                 <FaUser className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -126,7 +126,7 @@ const ProfileSettings = () => {
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#17A2B8]/10 focus:border-[#17A2B8] outline-none transition-all"
                                     placeholder="+1 (555) 000-0000"
                                 />
                                 <FaPhone className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -135,7 +135,7 @@ const ProfileSettings = () => {
 
                         <div className="col-span-2 border-t border-slate-100 pt-6 mt-2">
                             <h4 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                                <FaLock className="text-indigo-500" /> Security
+                                <FaLock className="text-[#17A2B8]" /> Security
                             </h4>
 
                             <div className="space-y-4">
@@ -147,7 +147,7 @@ const ProfileSettings = () => {
                                             name="currentPassword"
                                             value={formData.currentPassword}
                                             onChange={handleChange}
-                                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all"
+                                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#17A2B8]/10 focus:border-[#17A2B8] outline-none transition-all"
                                             placeholder="Enter current password"
                                         />
                                         <FaLock className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -163,7 +163,7 @@ const ProfileSettings = () => {
                                                 name="newPassword"
                                                 value={formData.newPassword}
                                                 onChange={handleChange}
-                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all"
+                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#17A2B8]/10 focus:border-[#17A2B8] outline-none transition-all"
                                                 placeholder="Enter new password"
                                             />
                                             <FaLock className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -178,7 +178,7 @@ const ProfileSettings = () => {
                                                 name="confirmPassword"
                                                 value={formData.confirmPassword}
                                                 onChange={handleChange}
-                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all"
+                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#17A2B8]/10 focus:border-[#17A2B8] outline-none transition-all"
                                                 placeholder="Confirm new password"
                                             />
                                             <FaLock className="absolute left-3.5 top-3.5 text-slate-400" />

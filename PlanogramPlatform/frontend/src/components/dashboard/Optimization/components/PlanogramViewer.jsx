@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaArrowLeft, FaBox, FaInfoCircle, FaSearchPlus, FaSearchMinus, FaExpand } from 'react-icons/fa';
+import { ProductShape, getProductBgColor } from './ProductShapes';
 
 const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products = [] }) => {
     const [zoom, setZoom] = useState(1);
@@ -51,7 +52,8 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
             widthCm: product.widthCm || 10,
             heightCm: productHeight,
             depthCm: productDepth,
-            image_url: product.image_url,
+            category: product.category || 'General',
+            brand: product.brand || '',
             product_id: product._id,
             facings: p.facings || 1,
             shelfDepth: shelfDepth,
@@ -133,43 +135,57 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
 
                                         {/* Render Products on this shelf */}
                                         {itemsOnShelf.map((item, idx) => {
-                                            // Calculate dimensions based on enhanced data
-                                            const w = (item.widthCm * item.facings) * SCALE;
+                                            // Per-facing width (one square = one facing)
+                                            const singleW = item.widthCm * SCALE;
                                             const h = item.heightCm * SCALE;
-                                            const x = item.x_position * SCALE;
+                                            const baseX = item.x_position * SCALE;
+                                            const bgColor = getProductBgColor(item.product_name, item.sku);
 
                                             const isSelected = selectedPlacement && selectedPlacement._id === item._id;
 
-                                            // Vertical Stacking Loop
-                                            return Array.from({ length: item.unitsHigh || 1 }).map((_, stackIdx) => (
-                                                <div
-                                                    key={`${idx}-${stackIdx}`}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setSelectedPlacement(item);
-                                                    }}
-                                                    className={`absolute border border-black/10 hover:border-indigo-500 hover:z-[60] cursor-pointer transition-all shadow-sm group/item
-                                                        ${isSelected ? 'ring-2 ring-indigo-500 z-40' : 'z-10'}`}
-                                                    style={{
-                                                        left: x,
-                                                        width: w,
-                                                        height: h,
-                                                        bottom: 4 + (stackIdx * h), // Stack upwards. Fixed 4px offset to match shelf height.
-                                                        backgroundImage: `url(${item.image_url || 'https://via.placeholder.com/50?text=' + item.product_name.substring(0, 2)})`,
-                                                        backgroundSize: 'cover',
-                                                        backgroundRepeat: 'no-repeat',
-                                                        backgroundPosition: 'center',
-                                                        backgroundColor: 'white'
-                                                    }}
-                                                >
-                                                    {/* Hover Tooltip - Top Item Only */}
-                                                    {stackIdx === (item.unitsHigh - 1) && (
-                                                        <div className="hidden group-hover/item:block absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none shadow-lg">
-                                                            {item.product_name} ({item.facings}f x {item.unitsHigh}h)
+                                            // Render individual squares: one per facing × stacking height
+                                            const elements = [];
+                                            for (let facingIdx = 0; facingIdx < (item.facings || 1); facingIdx++) {
+                                                for (let stackIdx = 0; stackIdx < (item.unitsHigh || 1); stackIdx++) {
+                                                    const isTopOfStack = stackIdx === (item.unitsHigh - 1) && facingIdx === 0;
+                                                    elements.push(
+                                                        <div
+                                                            key={`${idx}-f${facingIdx}-s${stackIdx}`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSelectedPlacement(item);
+                                                            }}
+                                                            className={`absolute border border-black/10 hover:border-[#17A2B8] hover:z-[60] cursor-pointer transition-all shadow-sm group/item rounded-[2px] overflow-hidden
+                                                                ${isSelected ? 'ring-2 ring-[#17A2B8] z-40' : 'z-10'}`}
+                                                            style={{
+                                                                left: baseX + (facingIdx * singleW),
+                                                                width: singleW,
+                                                                height: h,
+                                                                bottom: 4 + (stackIdx * h),
+                                                                backgroundColor: bgColor,
+                                                            }}
+                                                        >
+                                                            {/* Category shape as label */}
+                                                            <div className="w-full h-full flex items-center justify-center p-[1px]">
+                                                                <ProductShape
+                                                                    category={item.category}
+                                                                    brand={item.brand}
+                                                                    productName={item.product_name}
+                                                                    sku={item.sku}
+                                                                />
+                                                            </div>
+
+                                                            {/* Hover Tooltip - only on top-left unit */}
+                                                            {isTopOfStack && (
+                                                                <div className="hidden group-hover/item:block absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none shadow-lg">
+                                                                    {item.product_name} ({item.facings}f × {item.unitsHigh}h × {item.unitsDeep}d)
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    )}
-                                                </div>
-                                            ));
+                                                    );
+                                                }
+                                            }
+                                            return elements;
                                         })}
                                     </div>
                                 );
@@ -182,21 +198,28 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
             {/* Sidebar Details Panel */}
             {selectedPlacement && (
                 <div className="absolute right-6 top-24 w-80 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden animate-in slide-in-from-right duration-200 z-50">
-                    <div className="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-start">
-                        <h3 className="font-bold text-indigo-900">Product Details</h3>
-                        <button onClick={() => setSelectedPlacement(null)} className="text-indigo-400 hover:text-indigo-700"><FaTimesCircle /></button>
+                    <div className="bg-[#17A2B8]/10 p-4 border-b border-[#17A2B8]/20 flex justify-between items-start">
+                        <h3 className="font-bold text-[#1B4F72]">Product Details</h3>
+                        <button onClick={() => setSelectedPlacement(null)} className="text-[#17A2B8] hover:text-[#138f9e]"><FaTimesCircle /></button>
                     </div>
                     <div className="p-4 space-y-4">
                         <div className="flex gap-4">
-                            <div className="w-16 h-16 bg-white border border-slate-200 rounded-lg flex items-center justify-center p-2 overflow-hidden">
-                                {selectedPlacement.image_url ?
-                                    <img src={selectedPlacement.image_url} alt="" className="object-contain w-full h-full" /> :
-                                    <FaBox className="text-slate-300 text-2xl" />
-                                }
+                            <div className="w-16 h-16 border border-slate-200 rounded-lg flex items-center justify-center p-2 overflow-hidden"
+                                style={{ backgroundColor: getProductBgColor(selectedPlacement.product_name, selectedPlacement.sku) }}>
+                                <ProductShape
+                                    category={selectedPlacement.category}
+                                    brand={selectedPlacement.brand}
+                                    productName={selectedPlacement.product_name}
+                                    sku={selectedPlacement.sku}
+                                />
                             </div>
                             <div>
                                 <p className="font-bold text-slate-800 leading-tight text-sm">{selectedPlacement.product_name}</p>
                                 <p className="text-xs text-slate-500 mt-1">SKU: {selectedPlacement.sku}</p>
+                                <div className="flex gap-1 mt-1">
+                                    <span className="px-1.5 py-0.5 bg-[#17A2B8]/10 text-[#1B4F72] text-[9px] font-bold rounded">{selectedPlacement.category}</span>
+                                    {selectedPlacement.brand && <span className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[9px] font-bold rounded">{selectedPlacement.brand}</span>}
+                                </div>
                             </div>
                         </div>
 
@@ -221,9 +244,9 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
                                 <p className="text-[10px] text-slate-400 uppercase">Units High</p>
                                 <p className="font-medium">{selectedPlacement.unitsHigh}</p>
                             </div>
-                            <div className="bg-indigo-50 p-2 rounded col-span-2">
-                                <p className="text-[10px] text-indigo-400 uppercase font-bold">Total Stock Capacity</p>
-                                <p className="font-bold text-indigo-700">{selectedPlacement.facings * selectedPlacement.unitsDeep * selectedPlacement.unitsHigh} Units</p>
+                            <div className="bg-[#17A2B8]/10 p-2 rounded col-span-2">
+                                <p className="text-[10px] text-[#1B4F72] uppercase font-bold">Total Stock Capacity</p>
+                                <p className="font-bold text-[#1B4F72]">{selectedPlacement.facings * selectedPlacement.unitsDeep * selectedPlacement.unitsHigh} Units</p>
                             </div>
 
                         </div>

@@ -16,7 +16,7 @@ const urgencyConfig = {
     },
     soon: {
         label: "Soon",
-        color: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
+        color: "bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
         icon: Truck,
     },
     scheduled: {
@@ -44,20 +44,26 @@ export function ReplenishmentQueue() {
                 const response = await api.getReplenishment("STORE-001")
 
                 // Transform API response to UI format
-                const transformedOrders = response.recommendations?.map((rec, index) => ({
-                    id: `order-${index}`,
-                    product: rec.product_name || rec.sku,
-                    sku: rec.sku,
-                    quantity: rec.recommended_qty,
-                    urgency: rec.urgency,
-                    supplier: "Lanka Suppliers", // Could be added to API response
-                    estimatedDelivery: formatDeliveryDate(rec.urgency),
-                    reason: rec.reasoning,
-                    hasHoliday: rec.reasoning.includes("🎉"),
-                    confidence: rec.confidence,
-                    currentStock: rec.current_stock,
-                    reorderPoint: rec.reorder_point,
-                })) || []
+                const transformedOrders = response.recommendations?.map((rec, index) => {
+                    const reasonStr = rec.reasoning || "";
+
+                    return {
+                        id: `order-${index}`,
+                        product: rec.product_name || rec.sku,
+                        sku: rec.sku,
+                        quantity: rec.recommended_qty,
+                        urgency: rec.urgency,
+                        supplier: "Lanka Suppliers", // Could be added to API response
+                        estimatedDelivery: formatDeliveryDate(rec.urgency),
+                        reason: reasonStr,
+                        hasHoliday: reasonStr.includes("Surge") || reasonStr.includes("🎊") || reasonStr.includes("🛡️") || reasonStr.includes("💰"),
+                        isConstrained: reasonStr.includes("⚠️ Constrained by shelf life"),
+                        isDowngraded: reasonStr.includes("downgraded") || reasonStr.includes("🌦️"),
+                        confidence: rec.confidence,
+                        currentStock: rec.current_stock,
+                        reorderPoint: rec.reorder_point,
+                    }
+                }) || []
 
                 setOrders(transformedOrders)
             } catch (err) {
@@ -121,7 +127,7 @@ export function ReplenishmentQueue() {
                             </Badge>
                         )}
                         {holidayAffectedCount > 0 && (
-                            <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 gap-1">
+                            <Badge className="bg-slate-50 text-[#1B4F72] dark:bg-[#164060] dark:text-[#17A2B8] gap-1">
                                 <Sparkles className="h-3 w-3" />
                                 {holidayAffectedCount} Holiday
                             </Badge>
@@ -169,7 +175,7 @@ export function ReplenishmentQueue() {
                                             className={cn(
                                                 "rounded-lg border border-border bg-background p-3 transition-colors hover:bg-accent/50",
                                                 isSelected && "ring-2 ring-primary",
-                                                order.hasHoliday && "border-l-4 border-l-purple-500"
+                                                order.hasHoliday && "border-l-4 border-l-[#1B4F72]"
                                             )}
                                         >
                                             <div className="flex items-start gap-3">
@@ -182,9 +188,19 @@ export function ReplenishmentQueue() {
                                                             {urgencyConfig[order.urgency]?.label}
                                                         </Badge>
                                                         {order.hasHoliday && (
-                                                            <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 gap-0.5">
+                                                            <Badge className="bg-slate-50 text-[#1B4F72] dark:bg-[#164060] dark:text-[#17A2B8] gap-0.5">
                                                                 <Sparkles className="h-3 w-3" />
                                                                 Holiday
+                                                            </Badge>
+                                                        )}
+                                                        {order.isConstrained && (
+                                                            <Badge className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300 gap-0.5">
+                                                                ⚠️ Shelf Life Limit
+                                                            </Badge>
+                                                        )}
+                                                        {order.isDowngraded && (
+                                                            <Badge className="bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72] gap-0.5">
+                                                                🌦️ Weather Downgrade
                                                             </Badge>
                                                         )}
                                                     </div>

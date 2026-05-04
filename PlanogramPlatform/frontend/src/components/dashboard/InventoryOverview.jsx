@@ -84,7 +84,7 @@ const statusConfig = {
     },
     low: {
         label: "Low Stock",
-        color: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
+        color: "bg-[#17A2B8]/10 text-[#1B4F72] dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
         icon: AlertCircle,
     },
     critical: {

@@ -43,26 +43,26 @@ class ImpactEstimator:
                 print(f"Error loading metadata: {e}")
         
         # Load Product Master for metadata
-        prod_path = os.path.join(self.data_dir, "Product_Master.csv")
+        prod_path = os.path.join(self.data_dir, "Product_Master_2024.csv")
         product_meta = {}
         if os.path.exists(prod_path):
             try:
                 df_prod = pd.read_csv(prod_path)
-                # Create a dict: SKU -> { Category, ProductName }
-                product_meta = df_prod.set_index('SKU')[['Category', 'ProductName']].to_dict('index')
+                # Create a dict: sku -> { category, productName }
+                product_meta = df_prod.set_index('sku')[['category', 'productName']].to_dict('index')
             except Exception as e:
                 print(f"Error loading Product Master: {e}")
             
-        # Load Sales Data for Pricing (UnitPriceLKR)
+        # Load Sales Data for Pricing (unitPriceLKR)
         sales_path = os.path.join(self.data_dir, "Sales_2024.csv")
         price_map = {}
         if os.path.exists(sales_path):
             try:
                 df_sales = pd.read_csv(sales_path)
-                # Calculate average price per SKU
-                # Ensure UnitPriceLKR is numeric
-                df_sales['UnitPriceLKR'] = pd.to_numeric(df_sales['UnitPriceLKR'], errors='coerce')
-                price_series = df_sales.mask(df_sales['UnitPriceLKR'] <= 0).groupby('SKU')['UnitPriceLKR'].mean()
+                # Calculate average price per sku
+                # Ensure unitPriceLKR is numeric
+                df_sales['unitPriceLKR'] = pd.to_numeric(df_sales['unitPriceLKR'], errors='coerce')
+                price_series = df_sales.mask(df_sales['unitPriceLKR'] <= 0).groupby('sku')['unitPriceLKR'].mean()
                 price_map = price_series.to_dict()
             except Exception as e:
                 print(f"Error loading Sales Data: {e}")
@@ -81,8 +81,8 @@ class ImpactEstimator:
             if np.isnan(final_price): final_price = 0.0
             
             self.product_map[sku] = {
-                'Category': meta.get('Category', 'Unknown'),
-                'ProductName': meta.get('ProductName', 'Unknown'),
+                'Category': meta.get('category', 'Unknown'),
+                'ProductName': meta.get('productName', 'Unknown'),
                 'UnitPriceLKR': final_price
             }
             
@@ -210,30 +210,36 @@ class ImpactEstimator:
                 sales_current = max(0, sales_current)
                 sales_opt = max(0, sales_opt)
                 
-                # [HOTFIX] Fallback for New Products (Cold Start)
-                # If model predicts ~0 (unseen SKU), apply a heuristic uplift rule
-                # Rule: Moving up to Eye Level (Level 4/5) usually gives +15% sales vs Bottom
-                if sales_current < 0.1 and sales_opt < 0.1:
-                    base_volume = 100.0 # Assumed monthly unit sales for a standard item
-                    
-                    # Simple heuristic multiplier based on level
-                    current_mult = 1.0 + (shelf_current * 0.05) # L1=1.05, L4=1.20
-                    opt_mult = 1.0 + (shelf_opt * 0.05)
-                    
-                    sales_current = base_volume * current_mult
-                    sales_opt = base_volume * opt_mult
+                # [Facing-Aware Scaling]
+                # The model predicts sales for a single 'average' facing. 
+                # We scale by the actual count of facings.
+                current_facings = dev.get('current_state', {}).get('facings', 0) if dev.get('current_state') else 0
+                opt_facings = dev.get('optimized_state', {}).get('facings', 0) if dev.get('optimized_state') else 0
+                
+                # If it's a MISSING_ITEM entirely, current_facings is already handled by sales_current=0 logic
+                # Scale the predicted base sales by the number of facings
+                sales_current_scaled = sales_current * current_facings
+                sales_opt_scaled = sales_opt * opt_facings
 
-                unit_diff = sales_opt - sales_current
+                # [HOTFIX] Fallback for New Products (Cold Start)
+                if sales_current_scaled < 0.1 and sales_opt_scaled < 0.1:
+                    base_volume = 100.0
+                    current_mult = (1.0 + (shelf_current * 0.05)) * current_facings
+                    opt_mult = (1.0 + (shelf_opt * 0.05)) * opt_facings
+                    sales_current_scaled = base_volume * current_mult
+                    sales_opt_scaled = base_volume * opt_mult
+
+                unit_diff = sales_opt_scaled - sales_current_scaled
                 revenue_diff = unit_diff * price
                 
                 uplift_pct = 0.0
-                if sales_current > 0:
-                    uplift_pct = (unit_diff / sales_current) * 100
+                if sales_current_scaled > 0:
+                    uplift_pct = (unit_diff / sales_current_scaled) * 100
                 
                 dev['impact_prediction'] = {
-                    "sales_units_current": float(round(sales_current, 2)),
-                    "sales_units_optimized": float(round(sales_opt, 2)),
-                    "unit_opportunity": float(round(revenue_diff, 2)), 
+                    "sales_units_current": float(round(sales_current_scaled, 2)),
+                    "sales_units_optimized": float(round(sales_opt_scaled, 2)),
+                    "unit_opportunity": float(round(unit_diff, 2)), 
                     "revenue_opportunity": float(round(revenue_diff, 2)),
                     "uplift_percentage": float(round(uplift_pct, 1)),
                     "currency": "LKR"

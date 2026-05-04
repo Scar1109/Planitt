@@ -16,6 +16,7 @@ import WastagePrevention from './WastagePrevention';
 import ComplianceDashboard from './ComplianceDashboard';
 import SystemAnalysis from './SystemAnalysis';
 import ComplianceHistory from './ComplianceHistory';
+import ShelfCompliance from './ShelfCompliance';
 import ForecastPage from '../pages/promotional-forecasting/ForecastPage';
 import RecommendationsPage from './promotional-forecasting/RecommendationsPage';
 import ScenarioLab from './promotional-forecasting/ScenarioLab';
@@ -35,7 +36,7 @@ const DashboardLayout = ({ children }) => {
                 <Header />
                 <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-4 lg:p-6 relative">
                     {/* Background blob for style */}
-                    <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-50/50 to-transparent -z-10 pointer-events-none"></div>
+                    <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#17A2B8]/10 to-transparent -z-10 pointer-events-none"></div>
                     {children}
                 </main>
             </div>
@@ -46,8 +47,8 @@ const DashboardLayout = ({ children }) => {
 const UnassignedView = () => (
     <div className="flex flex-col items-center justify-center h-full text-center">
         <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 max-w-md">
-            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 bg-[#17A2B8]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[#17A2B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
             </div>
@@ -94,6 +95,15 @@ const Dashboard = () => {
                 <Route path="/promotional-forecasting/forecast" element={<ForecastPage />} />
                 <Route path="/promotional-forecasting/suggested" element={<RecommendationsPage />} />
                 <Route path="/promotional-forecasting/scenario-lab" element={<ScenarioLab />} />
+
+                {/* Inventory Routes */}
+                <Route path="/forecasting" element={<Forecasting />} />
+                <Route path="/inventory/wastage" element={<WastagePrevention />} />
+
+                {/* Compliance Routes */}
+                <Route path="/compliance" element={<ComplianceDashboard />} />
+                <Route path="/compliance/analysis" element={<SystemAnalysis />} />
+                <Route path="/compliance/history" element={<ComplianceHistory />} />
             </Routes>
         </DashboardLayout>
     );

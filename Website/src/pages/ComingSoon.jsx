@@ -45,7 +45,7 @@ const ComingSoon = () => {
         </div>
 
         {/* Hero Logo */}
-        <img src="/logo.png" alt="Planitt Logo" className="hero-logo" />
+        <img src="/logo.png" alt="Planitt Logo" className="hero-logo" style={{ height: '120px', width: 'auto', marginBottom: '24px' }} />
 
         <p className="hero-subtitle">
           Your Entire Retail Universe, Powered by AI. One platform. Limitless possibilities. The most advanced retail intelligence suite is arriving at a price that changes everything.

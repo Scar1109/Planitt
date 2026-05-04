@@ -2,8 +2,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dns from 'dns';
 
-// Force use of Google DNS to bypass local SRV lookup issues on certain networks
+// Default system DNS resolution
 dns.setServers(['8.8.8.8', '8.8.4.4']);
+dns.setDefaultResultOrder('ipv4first');
 
 import fs from 'fs';
 import dotenv from 'dotenv';
@@ -30,7 +31,7 @@ if (!mongoUri) {
     throw new Error('MONGO_URI is missing in .env');
 }
 
-mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000, family: 4 })
+mongoose.connect(mongoUri)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => {
         console.error('MongoDB connection failed:', err);

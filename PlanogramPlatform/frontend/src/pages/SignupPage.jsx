@@ -57,18 +57,18 @@ const SignupPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-indigo-50/50 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-[#17A2B8]/10/50 p-4">
             <div className="bg-white rounded-[2rem] shadow-2xl overflow-hidden max-w-5xl w-full flex min-h-[600px]">
 
                 {/* Left Side - Image */}
-                <div className="hidden lg:block w-1/2 p-4 bg-indigo-50">
+                <div className="hidden lg:block w-1/2 p-4 bg-[#17A2B8]/10">
                     <div className="h-full w-full rounded-[1.5rem] overflow-hidden relative group">
                         <img
                             src="/signup-bg-v2.png"
                             alt="Retail Illustration"
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/60 to-transparent p-10 flex flex-col justify-end text-white">
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#164060] to-transparent p-10 flex flex-col justify-end text-white">
                             <h2 className="text-3xl font-bold mb-2">Join the Revolution</h2>
                             <p className="opacity-90">Experience the future of retail management with AI-driven planograms.</p>
                         </div>
@@ -134,7 +134,7 @@ const SignupPage = () => {
                                         name="role"
                                         value={formData.role}
                                         onChange={handleChange}
-                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none appearance-none transition-all cursor-pointer"
+                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-[#17A2B8] focus:ring-2 focus:ring-[#17A2B8]/10 outline-none appearance-none transition-all cursor-pointer"
                                     >
                                         <option value="staff">Staff Member</option>
                                         <option value="manager">Store Manager</option>
@@ -156,7 +156,7 @@ const SignupPage = () => {
                             <Button
                                 type="submit"
                                 variant="primary"
-                                className="w-full py-4 text-lg font-semibold shadow-lg shadow-indigo-200 hover:shadow-indigo-300 mt-6 cursor-pointer"
+                                className="w-full py-4 text-lg font-semibold shadow-lg shadow-[#1B4F72]/20 hover:shadow-[#1B4F72]/20 mt-6 cursor-pointer"
                                 disabled={loading}
                             >
                                 {loading ? 'creating Account...' : 'Sign Up'}
@@ -167,7 +167,7 @@ const SignupPage = () => {
                             Already have an account? {' '}
                             <button
                                 onClick={() => navigate('/login')}
-                                className="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline cursor-pointer transition-colors"
+                                className="font-semibold text-[#1B4F72] hover:text-[#1B4F72] hover:underline cursor-pointer transition-colors"
                             >
                                 Sign in
                             </button>

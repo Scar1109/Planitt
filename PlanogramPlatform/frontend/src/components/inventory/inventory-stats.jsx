@@ -1,42 +1,88 @@
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Package, AlertTriangle, RotateCcw, DollarSign } from "lucide-react"
-
-const stats = [
-    {
-        label: "Total SKUs",
-        value: "1,247",
-        change: "+12 this week",
-        icon: Package,
-        color: "text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400",
-    },
-    {
-        label: "Low Stock Items",
-        value: "34",
-        change: "-5 from yesterday",
-        icon: AlertTriangle,
-        color: "text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-400",
-    },
-    {
-        label: "Inventory Turnover",
-        value: "12.4x",
-        change: "+8% vs target",
-        icon: RotateCcw,
-        color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400",
-    },
-    {
-        label: "Total Value",
-        value: "LKR 2.4M",
-        change: "+5.2% this week",
-        icon: DollarSign,
-        color: "text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400",
-    },
-]
+import api from "@/api/client"
 
 export function InventoryStats() {
+    const [stats, setStats] = useState([
+        {
+            label: "Total Products",
+            value: "...",
+            change: "",
+            icon: Package,
+            color: "text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400",
+        },
+        {
+            label: "Low Stock Items",
+            value: "...",
+            change: "",
+            icon: AlertTriangle,
+            color: "text-[#17A2B8] bg-[#17A2B8]/10 dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
+        },
+        {
+            label: "Total Sold (Latest)",
+            value: "...",
+            change: "",
+            icon: RotateCcw,
+            color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400",
+        },
+        {
+            label: "Total Stock Units",
+            value: "...",
+            change: "",
+            icon: DollarSign,
+            color: "text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400",
+        },
+    ]);
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                const res = await api.getInventorySummary();
+                if (res.success && res.summary) {
+                    const s = res.summary;
+                    setStats([
+                        {
+                            label: "Total Products",
+                            value: s.totalProducts?.toLocaleString() || "0",
+                            change: "Monitoring Active SKUs",
+                            icon: Package,
+                            color: "text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400",
+                        },
+                        {
+                            label: "Low Stock Items",
+                            value: s.lowStockCount?.toLocaleString() || "0",
+                            change: `${s.outOfStock || 0} out of stock`,
+                            icon: AlertTriangle,
+                            color: "text-[#17A2B8] bg-[#17A2B8]/10 dark:bg-[#17A2B8]/10 dark:text-[#1B4F72]",
+                        },
+                        {
+                            label: "Total Sold (Latest day)",
+                            value: s.totalSold?.toLocaleString() || "0",
+                            change: `Discarded: ${s.totalDiscarded || 0}`,
+                            icon: RotateCcw,
+                            color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400",
+                        },
+                        {
+                            label: "Total Stock Units",
+                            value: s.totalStock?.toLocaleString() || "0",
+                            change: `Avg: ${Math.round(s.avgClosingStock || 0)} per SKU`,
+                            icon: DollarSign,
+                            color: "text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400",
+                        },
+                    ]);
+                }
+            } catch (err) {
+                console.error("Failed to fetch stats", err);
+            }
+        }
+        fetchStats();
+    }, []);
+
     return (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat) => (
-                <Card key={stat.label} className="border-border">
+            {stats.map((stat, i) => (
+                <Card key={i} className="border-border">
                     <CardContent className="p-4">
                         <div className="flex items-center gap-4">
                             <div className={`p-2.5 rounded-lg ${stat.color}`}>
