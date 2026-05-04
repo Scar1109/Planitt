@@ -30,9 +30,8 @@ export default function Footer() {
                         <h4>Company</h4>
                         <ul>
                             <li><a href="#">About Us</a></li>
-                            <li><a href="#">Careers</a></li>
                             <li><a href="#">Blog</a></li>
-                            <li><a href="#">Press</a></li>
+                            <li><a href="#">Contact Us</a></li>
                         </ul>
                     </div>
 
@@ -50,9 +49,6 @@ export default function Footer() {
                 <div className="footer-bottom">
                     <p>© 2026 Planitt. All rights reserved.</p>
                     <div className="footer-socials">
-                        <a href="#" aria-label="LinkedIn">in</a>
-                        <a href="#" aria-label="Twitter">𝕏</a>
-                        <a href="#" aria-label="GitHub">⌨</a>
                     </div>
                 </div>
             </div>

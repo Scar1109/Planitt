@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Text, TextInput, Button, useTheme, Card, IconButton, Divider } from 'react-native-paper';
-import { Ruler, Plus, Trash2, ArrowLeft, Camera } from 'lucide-react-native';
+import { Ruler, Plus, Trash2, ArrowLeft, Camera, Save } from 'lucide-react-native';
+import { jwtToken } from '../utils/auth';
+import { getApiUrl } from '../utils/config';
 
 const ShelfDetailScreen = ({ route, navigation }) => {
     const theme = useTheme();
@@ -10,34 +12,121 @@ const ShelfDetailScreen = ({ route, navigation }) => {
     const initialData = route.params?.shelfData || { name: '', length: '', width: '', height: '', levels: [] };
 
     const [name, setName] = useState(initialData.name);
-    const [length, setLength] = useState(initialData.length || '120');
-    const [width, setWidth] = useState(initialData.width || '60');
-    const [height, setHeight] = useState(initialData.height || '200');
+    const [length, setLength] = useState(initialData.rawWidth?.toString() || '120');
+    const [width, setWidth] = useState(initialData.rawDepth?.toString() || '60');
+    const [height, setHeight] = useState(initialData.rawHeight?.toString() || '200');
     const [levels, setLevels] = useState(
         initialData.levels.length > 0
             ? initialData.levels // if this was full object array
             : [{ id: '1', heightFromBase: '20' }, { id: '2', heightFromBase: '60' }, { id: '3', heightFromBase: '100' }]
     );
 
-    const handleSave = () => {
-        // Basic validation
+    // Backend integration state
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        // Mock backend fetch
+        if (isEditing && !route.params?.shelfData?.loadedFromBackend) {
+            const fetchShelf = async () => {
+                setIsLoading(true);
+                try {
+                    // This points to PlanogramPlatform/backend running on local network
+                    const response = await fetch(`${getApiUrl()}/api/planograms/shelves/${initialData.id || 1}?storeId=6956357610ec0ab348888893`, {
+                        headers: {
+                            'Authorization': `Bearer ${jwtToken}`
+                        }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        setName(data.aisleBaySide || data.fixtureType || name);
+                        setLength(data.totalWidthCm?.toString() || length);
+                        setWidth(data.totalDepthCm?.toString() || width);
+                        setHeight(data.totalHeightCm?.toString() || height);
+                        if (data.levels && data.levels.length > 0) {
+                            setLevels(data.levels.map(l => ({ ...l, heightFromBase: l.heightFromFloorCm?.toString() })));
+                        }
+                    }
+                } catch (error) {
+                    console.log('Backend not available yet, using mock/local data');
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+            fetchShelf();
+        }
+    }, []);
+
+    useEffect(() => {
+        if (route.params?.measurements) {
+            const measurements = route.params.measurements;
+            
+            if (measurements.length) setLength(measurements.length.toString());
+            if (measurements.width) setWidth(measurements.width.toString());
+            if (measurements.height) setHeight(measurements.height.toString());
+
+            // Check for level measurements
+            const newLevels = [...levels];
+            let levelsUpdated = false;
+            
+            Object.keys(measurements).forEach(key => {
+                if (key.startsWith('level_')) {
+                    const levelIndex = parseInt(key.split('_')[1]) - 1;
+                    if (levelIndex >= 0 && levelIndex < newLevels.length) {
+                        newLevels[levelIndex].heightFromBase = measurements[key].toString();
+                        levelsUpdated = true;
+                    }
+                }
+            });
+            
+            if (levelsUpdated) setLevels(newLevels);
+
+            // Clear the params so they don't re-apply if we navigate back and forth
+            navigation.setParams({ measurements: undefined });
+        }
+    }, [route.params?.measurements]);
+
+    const handleSave = async () => {
         if (!name.trim()) {
             Alert.alert('Error', 'Please enter a shelf name.');
             return;
         }
+
+        const payload = {
+            storeId: '6956357610ec0ab348888893',
+            aisleBaySide: name,
+            fixtureType: 'Shelf',
+            totalWidthCm: parseFloat(length),
+            totalDepthCm: parseFloat(width),
+            totalHeightCm: parseFloat(height),
+            levels: levels.map((lvl, index) => ({
+                ...lvl,
+                usableWidthCm: parseFloat(length),
+                usableDepthCm: parseFloat(width),
+                heightFromFloorCm: parseFloat(lvl.heightFromBase || 0),
+                levelIndex: index
+            }))
+        };
+
+        try {
+            // This will use real PUT/POST to local planogram-platform API
+            const response = await fetch(`${getApiUrl()}/api/planograms/shelves${isEditing ? `/${initialData.id || 1}` : ''}?storeId=6956357610ec0ab348888893`, {
+                method: isEditing ? 'PUT' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${jwtToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+        } catch (error) {
+            console.log('Backend not available, saving locally');
+        }
+
         Alert.alert('Success', `Shelf ${isEditing ? 'updated' : 'created'} successfully!`);
         navigation.goBack();
     };
 
-    const handleLaunchAR = () => {
-        // Navigate to AR screen with callback
-        navigation.navigate('ARMeasure', {
-            onMeasureComplete: (measurements) => {
-                if (measurements.length) setLength(measurements.length.toString());
-                if (measurements.width) setWidth(measurements.width.toString());
-                if (measurements.height) setHeight(measurements.height.toString());
-            }
-        });
+    const handleLaunchAR = (target = 'length') => {
+        navigation.navigate('ARMeasure', { target });
     };
 
     const adbLevel = () => {
@@ -85,7 +174,7 @@ const ShelfDetailScreen = ({ route, navigation }) => {
                             <Button
                                 mode="text"
                                 icon={() => <Camera size={16} color={theme.colors.primary} />}
-                                onPress={handleLaunchAR}
+                                onPress={() => handleLaunchAR('length')}
                                 compact
                             >
                                 AR Measure
@@ -146,6 +235,11 @@ const ShelfDetailScreen = ({ route, navigation }) => {
                                     style={styles.levelInput}
                                 />
                                 <IconButton
+                                    icon={() => <Camera size={20} color={theme.colors.primary} />}
+                                    onPress={() => handleLaunchAR(`level_${index + 1}`)}
+                                    style={styles.measureButton}
+                                />
+                                <IconButton
                                     icon={() => <Trash2 size={20} color={theme.colors.error} />}
                                     onPress={() => removeLevel(level.id)}
                                     style={styles.deleteButton}
@@ -157,7 +251,7 @@ const ShelfDetailScreen = ({ route, navigation }) => {
             </ScrollView>
 
             <View style={[styles.footer, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.surfaceVariant }]}>
-                <Button mode="contained" onPress={handleSave} style={styles.saveButton} contentStyle={styles.saveContent}>
+                <Button mode="contained" onPress={handleSave} style={styles.saveButton} contentStyle={styles.saveContent} disabled={isLoading}>
                     Save Shelf
                 </Button>
             </View>

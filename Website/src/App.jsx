@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './sections/Navbar'
 import Hero from './sections/Hero'
 import Problem from './sections/Problem'
@@ -13,7 +13,37 @@ import CTA from './sections/CTA'
 import Footer from './sections/Footer'
 import Particles from './sections/Particles'
 
+const THEME_STORAGE_KEY = 'planitt-theme'
+
+function getStoredTheme() {
+    if (typeof window === 'undefined') {
+        return null
+    }
+
+    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY)
+    return storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : null
+}
+
+function getPreferredTheme() {
+    if (typeof window === 'undefined') {
+        return 'light'
+    }
+
+    const storedTheme = getStoredTheme()
+    if (storedTheme) {
+        return storedTheme
+    }
+
+    return 'light'
+}
+
 export default function App() {
+    const [theme, setTheme] = useState(() => getPreferredTheme())
+
+    useEffect(() => {
+        document.documentElement.dataset.theme = theme
+    }, [theme])
+
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -50,10 +80,18 @@ export default function App() {
         }
     }, [])
 
+    const handleThemeToggle = () => {
+        setTheme((currentTheme) => {
+            const nextTheme = currentTheme === 'dark' ? 'light' : 'dark'
+            window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme)
+            return nextTheme
+        })
+    }
+
     return (
         <>
             <Particles />
-            <Navbar />
+            <Navbar theme={theme} onToggleTheme={handleThemeToggle} />
             <main>
                 <Hero />
                 <Problem />
