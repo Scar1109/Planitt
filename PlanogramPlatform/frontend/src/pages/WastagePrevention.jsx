@@ -1,102 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
-    FaLeaf, FaTag, FaCheckCircle, FaSpinner, FaSearch,
-    FaFilter, FaExclamationTriangle, FaFire, FaCheck,
-    FaChartLine, FaShieldAlt, FaBoxes, FaTimes,
-    FaRobot, FaBolt, FaRecycle, FaArrowDown, FaArrowUp
+    FaLeaf, FaCheckCircle, FaSpinner, FaSearch,
+    FaExclamationTriangle, FaCheck,
+    FaRobot, FaRecycle, FaBoxes, FaTimes
 } from 'react-icons/fa';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
-
-/* ═══════════════════════════════════════════════════════════════════════
-   MINI CHART COMPONENTS (no external library required)
-   ═══════════════════════════════════════════════════════════════════════ */
-
-const MiniBarChart = ({ data, valueKey = 'value', labelKey = 'day', height = 120, accentColor = '#6366f1' }) => {
-    const maxVal = Math.max(...data.map(d => d[valueKey]), 1);
-    return (
-        <div className="flex items-end gap-1.5 justify-between" style={{ height }}>
-            {data.map((d, i) => {
-                const barH = Math.max(4, (d[valueKey] / maxVal) * (height - 24));
-                return (
-                    <div key={i} className="flex flex-col items-center gap-1 flex-1 group">
-                        <div className="relative flex-1 flex items-end w-full">
-                            <div
-                                className="w-full rounded-t-md transition-all duration-500 group-hover:opacity-80"
-                                style={{
-                                    height: barH,
-                                    background: `linear-gradient(180deg, ${accentColor}, ${accentColor}88)`,
-                                    minWidth: 18,
-                                }}
-                            />
-                            <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-
-                            </div>
-                        </div>
-                        <span className="text-[9px] text-slate-400 font-medium truncate w-full text-center">{d[labelKey]}</span>
-                    </div>
-                );
-            })}
-        </div>
-    );
-};
-
-const MiniDonut = ({ data, size = 120 }) => {
-    const total = data.reduce((s, d) => s + d.value, 0) || 1;
-    const colors = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'];
-    let cumAngle = 0;
-
-    const slices = data.map((d, i) => {
-        const angle = (d.value / total) * 360;
-        const startAngle = cumAngle;
-        cumAngle += angle;
-        const midAngle = startAngle + angle / 2;
-        const largeArc = angle > 180 ? 1 : 0;
-        const r = size / 2 - 4;
-        const cx = size / 2;
-        const cy = size / 2;
-
-        const x1 = cx + r * Math.cos((Math.PI * startAngle) / 180);
-        const y1 = cy + r * Math.sin((Math.PI * startAngle) / 180);
-        const x2 = cx + r * Math.cos((Math.PI * (startAngle + angle)) / 180);
-        const y2 = cy + r * Math.sin((Math.PI * (startAngle + angle)) / 180);
-
-        return (
-            <path
-                key={i}
-                d={`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`}
-                fill={colors[i % colors.length]}
-                className="transition-all duration-300 hover:opacity-80"
-                style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))' }}
-            />
-        );
-    });
-
-    return (
-        <div className="flex items-center gap-3">
-            <svg width={size} height={size} className="flex-shrink-0">
-                {slices}
-                <circle cx={size / 2} cy={size / 2} r={size / 4} fill="white" />
-                <text x={size / 2} y={size / 2 - 4} textAnchor="middle" className="text-[10px] font-bold fill-slate-700">
-                    {data.length}
-                </text>
-                <text x={size / 2} y={size / 2 + 8} textAnchor="middle" className="text-[8px] fill-slate-400">
-                    categories
-                </text>
-            </svg>
-            <div className="flex flex-col gap-1 min-w-0">
-                {data.slice(0, 5).map((d, i) => (
-                    <div key={i} className="flex items-center gap-1.5 text-[10px]">
-                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: colors[i % colors.length] }} />
-                        <span className="truncate text-slate-600">{d.name}</span>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-};
-
-
 
 /* ═══════════════════════════════════════════════════════════════════════
    URGENCY BAR
@@ -177,10 +86,10 @@ const OptimalSimulationModal = ({ item, onApply, onClose }) => {
         let mounted = true;
         const runSim = async () => {
             try {
-                setStep(1); // "Connecting to Promotion Forecasting Engine..."
+                setStep(1);
                 await new Promise(r => setTimeout(r, 800));
                 if (!mounted) return;
-                setStep(2); // "Running Stochastic Uplift Optimization..."
+                setStep(2);
 
                 const res = await api.getSmartDiscount({
                     sku: item.sku,
@@ -190,11 +99,11 @@ const OptimalSimulationModal = ({ item, onApply, onClose }) => {
                     costPrice: item.costPrice,
                 });
 
-                await new Promise(r => setTimeout(r, 600)); // Animation spacing
+                await new Promise(r => setTimeout(r, 600));
                 if (!mounted) return;
 
                 if (res.success) {
-                    setStep(3); // Complete
+                    setStep(3);
                     setResult({ ...res.data, source: res.source });
                 } else {
                     setError("Failed to simulate. Using standard rules.");
@@ -307,7 +216,6 @@ const WastagePrevention = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [dashboardData, setDashboardData] = useState(null);
-    const [applyingAction, setApplyingAction] = useState(null);
     const [resolvingItems, setResolvingItems] = useState(new Set());
     const [selectedItems, setSelectedItems] = useState(new Set());
     const [bulkApplying, setBulkApplying] = useState(false);
@@ -316,7 +224,7 @@ const WastagePrevention = () => {
     const [smartDiscounts, setSmartDiscounts] = useState({});
     const [simulationModalItem, setSimulationModalItem] = useState(null);
     const [autoPromoting, setAutoPromoting] = useState(false);
-    const [activeTab, setActiveTab] = useState('risk'); // risk | bundles
+    const [activeTab, setActiveTab] = useState('bundles'); // bundles | risk
     const { user } = useAuth();
 
     const storeId = typeof user?.store === 'string'
@@ -330,10 +238,11 @@ const WastagePrevention = () => {
         setError(null);
         try {
             const dashRes = await api.getWastageDashboard(storeId);
+            
             if (dashRes && dashRes.data) {
                 setDashboardData(dashRes.data);
             } else {
-                setDashboardData({ riskItems: [], totalRiskItems: 0, kpis: {}, expiryTimeline: [], categoryBreakdown: [], historicalWastageTrend: [], bundleSuggestions: [] });
+                setDashboardData({ riskItems: [], totalRiskItems: 0, kpis: {}, bundleSuggestions: [] });
             }
         } catch (err) {
             console.error('Dashboard fetch error:', err);
@@ -376,13 +285,6 @@ const WastagePrevention = () => {
         }));
         setResolvingItems(prev => { const s = new Set(prev); s.delete(item.id); return s; });
         setSelectedItems(prev => { const s = new Set(prev); s.delete(item.id); return s; });
-    };
-
-    const handleAction = async (item) => {
-        if (applyingAction) return;
-        setApplyingAction(item.id);
-        await resolveItem(item);
-        setApplyingAction(null);
     };
 
     /* ── Bulk apply ────────────────────────────────────────────────── */
@@ -442,26 +344,9 @@ const WastagePrevention = () => {
         });
     };
 
-    /* ── Fetch all smart discounts at once ─────────────────────────── */
-    const fetchAllSmartDiscounts = async () => {
-        const items = (dashboardData?.riskItems || []).filter(i => i.daysToExpiry > 0 && i.daysToExpiry <= 7);
-        for (const item of items) {
-            if (!smartDiscounts[item.sku]) {
-                fetchSmartDiscount(item);
-                await new Promise(r => setTimeout(r, 150)); // stagger
-            }
-        }
-    };
-
     /* ── Derived data ──────────────────────────────────────────────── */
     const riskItems = dashboardData?.riskItems || [];
-    const kpis = dashboardData?.kpis || {};
-    const expiryTimeline = dashboardData?.expiryTimeline || [];
-    const categoryBreakdown = dashboardData?.categoryBreakdown || [];
-    const historicalTrend = dashboardData?.historicalWastageTrend || [];
     const bundles = dashboardData?.bundleSuggestions || [];
-
-
 
     const filteredItems = useMemo(() => {
         return riskItems.filter(item => {
@@ -498,10 +383,9 @@ const WastagePrevention = () => {
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
                             <FaLeaf className="text-white" size={16} />
                         </div>
-                        Wastage Prevention
-
+                        Wastage Prevention System
                     </h1>
-                    <p className="text-slate-500 mt-1 text-sm">Intelligent waste management with optimized discount pricing</p>
+                    <p className="text-slate-500 mt-1 text-sm">Prioritized action queue for same-day stock recovery</p>
                 </div>
                 <div className="flex items-center gap-3">
                     {error && (
@@ -513,317 +397,266 @@ const WastagePrevention = () => {
                         className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm"
                     >
                         <FaCheckCircle className="text-emerald-500" />
-                        Refresh
+                        Refresh Queue
                     </button>
                 </div>
             </div>
 
-
-
-            {/* ═══════════ CHARTS SECTION ═══════════════════════════════ */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                {/* Expiry Timeline */}
-                <div className="lg:col-span-1 bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-                    <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <FaChartLine className="text-[#17A2B8]" size={12} />
-                        Expiry Timeline
-                    </h3>
-                    {expiryTimeline.length > 0 ? (
-                        <MiniBarChart data={expiryTimeline} />
-                    ) : (
-                        <p className="text-xs text-slate-400 text-center py-8">No timeline data</p>
-                    )}
-                </div>
-
-                {/* Category Breakdown */}
-                <div className="lg:col-span-1 bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-                    <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <FaBoxes className="text-[#17A2B8]" size={12} />
-                        Risk by Category
-                    </h3>
-                    {categoryBreakdown.length > 0 ? (
-                        <MiniDonut data={categoryBreakdown} />
-                    ) : (
-                        <p className="text-xs text-slate-400 text-center py-8">No category data</p>
-                    )}
-                </div>
-
-                {/* Historical Trend */}
-                <div className="lg:col-span-1 bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-                    <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <FaRecycle className="text-emerald-500" size={12} />
-                        Wastage Trend (3 months)
-                    </h3>
-                    <div className="max-w-[300px] mx-auto">
-                        {historicalTrend.length > 0 ? (
-                            <MiniBarChart data={historicalTrend} valueKey="value" labelKey="month" accentColor="#ef4444" />
-                        ) : (
-                            <p className="text-xs text-slate-400 text-center py-8">No historical data</p>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-
-            {/* ═══════════ TAB NAVIGATION ═══════════════════════════════ */}
-            <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1">
-                {[
-                    { key: 'risk', icon: FaExclamationTriangle, label: 'Risk Items', count: riskItems.length },
-                    { key: 'bundles', icon: FaBoxes, label: 'Smart Bundles', count: bundles.length },
-                ].map(tab => (
-                    <button
-                        key={tab.key}
-                        onClick={() => setActiveTab(tab.key)}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === tab.key
-                            ? 'bg-white text-slate-900 shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700'
-                            }`}
-                    >
-                        <tab.icon size={12} />
-                        {tab.label}
-                        {tab.count !== null && tab.count > 0 && (
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeTab === tab.key ? 'bg-[#17A2B8]/10 text-[#1B4F72]' : 'bg-slate-200 text-slate-500'}`}>
-                                {tab.count}
-                            </span>
-                        )}
-                    </button>
-                ))}
-            </div>
-
-
-            {/* ═══════════ TAB: RISK ITEMS TABLE ═══════════════════════ */}
-            {activeTab === 'risk' && (
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    {/* Table Header */}
-                    <div className="p-5 border-b border-slate-100">
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <div>
-                                <h2 className="text-lg font-bold text-slate-900">Priority Actions Required</h2>
-                                <p className="text-sm text-slate-500">Optimized discount recommendations for near-expiry items</p>
-                            </div>
-
-                        </div>
-
-                        {/* Search & Filter Bar */}
-                        <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                            <div className="relative flex-1">
-                                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
-                                <input
-                                    type="text"
-                                    placeholder="Search by name, SKU or category..."
-                                    value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
-                                    className="w-full pl-8 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] transition-all"
-                                />
-                            </div>
-
-                            <div className="relative">
-                                <FaExclamationTriangle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
-                                <select
-                                    value={filterRisk}
-                                    onChange={e => setFilterRisk(e.target.value)}
-                                    className="pl-8 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#17A2B8] appearance-none cursor-pointer"
-                                >
-                                    {['All', 'Critical', 'High', 'Medium', 'Low'].map(r => <option key={r}>{r}</option>)}
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Bulk Actions Bar */}
-                        <div className="mt-3 flex items-center gap-3 flex-wrap">
+            {/* ═══════════ COMMAND SUMMARY ═══════════════════════════════ */}
+            <div className="space-y-6">
+                {/* ═══════════ MAIN QUEUE PANEL ═══════════════════════════════ */}
+                <div className="space-y-4">
+                    {/* TAB NAVIGATION */}
+                    <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1 w-full max-w-md">
+                        {[
+                            { key: 'bundles', icon: FaBoxes, label: 'Smart Bundles', count: bundles.length },
+                            { key: 'risk', icon: FaExclamationTriangle, label: 'Action Queue', count: riskItems.length },
+                        ].map(tab => (
                             <button
-                                onClick={selectAllCritical}
-                                className="text-xs px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 font-medium hover:bg-orange-100 transition-colors"
+                                key={tab.key}
+                                onClick={() => setActiveTab(tab.key)}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${activeTab === tab.key
+                                    ? 'bg-white text-slate-900 shadow-sm'
+                                    : 'text-slate-500 hover:text-slate-700'
+                                    }`}
                             >
-                                🔥 Select All Critical & High
+                                <tab.icon size={12} />
+                                {tab.label}
+                                {tab.count !== null && tab.count > 0 && (
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeTab === tab.key ? 'bg-[#17A2B8]/10 text-[#1B4F72]' : 'bg-slate-200 text-slate-500'}`}>
+                                        {tab.count}
+                                    </span>
+                                )}
                             </button>
-                            {selectedItems.size > 0 && (
-                                <button
-                                    onClick={handleBulkApply}
-                                    disabled={bulkApplying}
-                                    className="text-xs px-4 py-1.5 rounded-lg bg-slate-900 text-white font-bold hover:bg-slate-700 transition-colors flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                                >
-                                    {bulkApplying
-                                        ? <><FaSpinner className="animate-spin" /> Applying...</>
-                                        : <><FaCheck /> Apply Selected ({selectedItems.size})</>
-                                    }
-                                </button>
-                            )}
-                            {selectedItems.size > 0 && (
-                                <button
-                                    onClick={() => setSelectedItems(new Set())}
-                                    className="text-xs px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 transition-colors"
-                                >
-                                    Clear
-                                </button>
-                            )}
-                            <span className="text-xs text-slate-400 ml-auto">
-                                {filteredItems.length} of {riskItems.length} items shown
-                            </span>
-                        </div>
+                        ))}
                     </div>
 
-                    {/* Table */}
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm">
-                            <thead className="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider text-xs">
-                                <tr>
-                                    <th className="px-4 py-3 w-10">
-                                        <input
-                                            type="checkbox"
-                                            className="rounded border-slate-300 accent-[#1B4F72] cursor-pointer"
-                                            checked={selectedItems.size > 0 && filteredItems.every(it => selectedItems.has(it.id))}
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    setSelectedItems(new Set(filteredItems.map(it => it.id)));
-                                                } else {
-                                                    setSelectedItems(new Set());
-                                                }
-                                            }}
-                                        />
-                                    </th>
-                                    <th className="px-4 py-3">Product Details</th>
-                                    <th className="px-4 py-3">Urgency</th>
-                                    <th className="px-4 py-3">AI Recommendation</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredItems.length > 0 ? filteredItems.map((item) => {
-                                    const isResolving = resolvingItems.has(item.id);
-                                    const isSelected = selectedItems.has(item.id);
+                    {/* TAB: RISK ITEMS TABLE */}
+                    {activeTab === 'risk' && (
+                        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                            {/* Table Header */}
+                            <div className="p-5 border-b border-slate-100">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div>
+                                        <h2 className="text-lg font-bold text-slate-900">Prioritized Action Queue</h2>
+                                        <p className="text-sm text-slate-500">Handle items in top-down order to maximize recovery.</p>
+                                    </div>
+                                </div>
 
-                                    return (
-                                        <tr
-                                            key={item.id}
-                                            style={{
-                                                transition: 'opacity 0.5s ease, transform 0.5s ease',
-                                                opacity: isResolving ? 0 : 1,
-                                                transform: isResolving ? 'translateX(40px)' : 'translateX(0)',
-                                                pointerEvents: isResolving ? 'none' : 'auto',
-                                                backgroundColor: isSelected ? '#f0f4ff' : undefined,
-                                            }}
-                                            className={`border-b border-slate-100 hover:bg-slate-50 transition-colors group ${isResolving ? 'bg-emerald-50' : ''}`}
+                                {/* Search & Filter Bar */}
+                                <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                                    <div className="relative flex-1">
+                                        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+                                        <input
+                                            type="text"
+                                            placeholder="Search by name, SKU or category..."
+                                            value={searchQuery}
+                                            onChange={e => setSearchQuery(e.target.value)}
+                                            className="w-full pl-8 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#17A2B8] focus:border-[#17A2B8] transition-all"
+                                        />
+                                    </div>
+
+                                    <div className="relative">
+                                        <FaExclamationTriangle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+                                        <select
+                                            value={filterRisk}
+                                            onChange={e => setFilterRisk(e.target.value)}
+                                            className="pl-8 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#17A2B8] appearance-none cursor-pointer"
                                         >
-                                            <td className="px-4 py-4">
+                                            {['All', 'Critical', 'High', 'Medium', 'Low'].map(r => <option key={r}>{r}</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Bulk Actions Bar */}
+                                <div className="mt-3 flex items-center gap-3 flex-wrap">
+                                    <button
+                                        onClick={selectAllCritical}
+                                        className="text-xs px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 font-medium hover:bg-orange-100 transition-colors"
+                                    >
+                                        🔥 Select All Critical & High
+                                    </button>
+                                    {selectedItems.size > 0 && (
+                                        <button
+                                            onClick={handleBulkApply}
+                                            disabled={bulkApplying}
+                                            className="text-xs px-4 py-1.5 rounded-lg bg-slate-900 text-white font-bold hover:bg-slate-700 transition-colors flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        >
+                                            {bulkApplying
+                                                ? <><FaSpinner className="animate-spin" /> Applying...</>
+                                                : <><FaCheck /> Apply Selected ({selectedItems.size})</>
+                                            }
+                                        </button>
+                                    )}
+                                    {selectedItems.size > 0 && (
+                                        <button
+                                            onClick={() => setSelectedItems(new Set())}
+                                            className="text-xs px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 transition-colors"
+                                        >
+                                            Clear
+                                        </button>
+                                    )}
+                                    <span className="text-xs text-slate-400 ml-auto">
+                                        {filteredItems.length} of {riskItems.length} items
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Table */}
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                                        <tr>
+                                            <th className="px-4 py-3 w-10">
                                                 <input
                                                     type="checkbox"
-                                                    checked={isSelected}
-                                                    onChange={() => toggleSelect(item.id)}
                                                     className="rounded border-slate-300 accent-[#1B4F72] cursor-pointer"
+                                                    checked={selectedItems.size > 0 && filteredItems.every(it => selectedItems.has(it.id))}
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setSelectedItems(new Set(filteredItems.map(it => it.id)));
+                                                        } else {
+                                                            setSelectedItems(new Set());
+                                                        }
+                                                    }}
                                                 />
-                                            </td>
-                                            <td className="px-4 py-4 max-w-[200px]">
-                                                <div className="font-semibold text-slate-900 truncate">{item.productName}</div>
-                                                <div className="text-slate-400 text-xs mt-0.5">{item.sku} · {item.category}</div>
-                                                <div className="text-xs text-slate-400 mt-0.5">{item.closingStock} units</div>
-                                            </td>
-                                            <td className="px-4 py-4 min-w-[150px]">
-                                                <div className="flex items-center gap-1.5 mb-1">
-                                                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${item.risk === 'Critical' ? 'bg-red-500 animate-pulse' :
-                                                        item.risk === 'High' ? 'bg-orange-500' :
-                                                            item.risk === 'Medium' ? 'bg-yellow-400' : 'bg-emerald-400'
-                                                        }`} />
-                                                    <span className={`text-xs font-semibold ${item.risk === 'Critical' ? 'text-red-600' :
-                                                        item.risk === 'High' ? 'text-orange-600' :
-                                                            item.risk === 'Medium' ? 'text-yellow-600' : 'text-emerald-600'
-                                                        }`}>{item.risk}</span>
-                                                </div>
-                                                <div className="text-xs text-slate-500 mb-1.5">{item.expiryLabel}</div>
-                                                <UrgencyBar risk={item.risk} />
-                                            </td>
-
-                                            <td className="px-4 py-4">
-                                                <SmartDiscountBadge
-                                                    item={item}
-                                                    smartDiscounts={smartDiscounts}
-                                                    onFetchDiscount={fetchSmartDiscount}
-                                                />
-                                            </td>
+                                            </th>
+                                            <th className="px-4 py-3">Product</th>
+                                            <th className="px-4 py-3">Urgency & Reason</th>
+                                            <th className="px-4 py-3">Recommendation</th>
                                         </tr>
-                                    );
-                                }) : (
-                                    <tr>
-                                        <td colSpan="5" className="px-6 py-16 text-center text-slate-400">
-                                            {riskItems.length === 0 ? (
-                                                <>
-                                                    <FaCheckCircle className="mx-auto text-emerald-400 mb-3" size={36} />
-                                                    <p className="font-semibold text-slate-600">No critical risks detected!</p>
-                                                    <p className="text-sm mt-1">Great job keeping stock under control.</p>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <FaSearch className="mx-auto text-slate-300 mb-3" size={32} />
-                                                    <p className="font-semibold text-slate-500">No items match your filters.</p>
-                                                    <p className="text-sm mt-1">Try adjusting your search or filter criteria.</p>
-                                                </>
-                                            )}
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                    </thead>
+                                    <tbody>
+                                        {filteredItems.length > 0 ? filteredItems.map((item) => {
+                                            const isResolving = resolvingItems.has(item.id);
+                                            const isSelected = selectedItems.has(item.id);
 
-                    {/* Footer */}
-                    {riskItems.length > 0 && (
-                        <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                            <span>
-                                <span className="font-medium text-slate-600">{filteredItems.length}</span> items shown
-                                {filterRisk !== 'All' || searchQuery ? ` (filtered from ${riskItems.length})` : ''}
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                                <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                                Live monitoring active
-                            </span>
-                        </div>
-                    )}
-                </div>
-            )}
+                                            return (
+                                                <tr
+                                                    key={item.id}
+                                                    style={{
+                                                        transition: 'opacity 0.5s ease, transform 0.5s ease',
+                                                        opacity: isResolving ? 0 : 1,
+                                                        transform: isResolving ? 'translateX(40px)' : 'translateX(0)',
+                                                        pointerEvents: isResolving ? 'none' : 'auto',
+                                                        backgroundColor: isSelected ? '#f0f4ff' : undefined,
+                                                    }}
+                                                    className={`border-b border-slate-100 hover:bg-slate-50 transition-colors group ${isResolving ? 'bg-emerald-50' : ''}`}
+                                                >
+                                                    <td className="px-4 py-4">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={isSelected}
+                                                            onChange={() => toggleSelect(item.id)}
+                                                            className="rounded border-slate-300 accent-[#1B4F72] cursor-pointer"
+                                                        />
+                                                    </td>
+                                                    <td className="px-4 py-4 max-w-[180px]">
+                                                        <div className="font-semibold text-slate-900 truncate">{item.productName}</div>
+                                                        <div className="text-slate-400 text-[11px] mt-0.5">{item.sku}</div>
+                                                        <div className="text-[11px] font-medium text-slate-600 mt-1">{item.closingStock} units at risk</div>
+                                                    </td>
+                                                    <td className="px-4 py-4 min-w-[150px]">
+                                                        <div className="flex items-center gap-1.5 mb-1">
+                                                            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${item.risk === 'Critical' ? 'bg-red-500 animate-pulse' :
+                                                                item.risk === 'High' ? 'bg-orange-500' :
+                                                                    item.risk === 'Medium' ? 'bg-yellow-400' : 'bg-emerald-400'
+                                                                }`} />
+                                                            <span className={`text-[11px] font-bold uppercase tracking-wide ${item.risk === 'Critical' ? 'text-red-600' :
+                                                                item.risk === 'High' ? 'text-orange-600' :
+                                                                    item.risk === 'Medium' ? 'text-yellow-600' : 'text-emerald-600'
+                                                                }`}>{item.risk}</span>
+                                                        </div>
+                                                        <div className="text-xs text-slate-500 mb-1.5">{item.daysToExpiry <= 0 ? 'Expired' : `Expires in ${item.daysToExpiry} days`}</div>
+                                                        <UrgencyBar risk={item.risk} />
+                                                    </td>
 
+                                                    <td className="px-4 py-4">
+                                                        {item.daysToExpiry <= 0 ? (
+                                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 font-bold text-xs border border-rose-200">
+                                                                <FaRecycle size={10} /> Donate / Discard
+                                                            </div>
+                                                        ) : (
+                                                            <SmartDiscountBadge
+                                                                item={item}
+                                                                smartDiscounts={smartDiscounts}
+                                                                onFetchDiscount={fetchSmartDiscount}
+                                                            />
+                                                        )}
+                                                    </td>
 
-            {/* ═══════════ TAB: SMART BUNDLES ═══════════════════════════ */}
-            {activeTab === 'bundles' && (
-                <div className="space-y-4">
-                    {bundles.length > 0 ? bundles.map((bundle) => (
-                        <div key={bundle.id} className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                                        <FaBoxes className="text-[#17A2B8]" />
-                                        Smart Bundle Suggestion
-                                    </h3>
-                                    <p className="text-xs text-slate-400 mt-1">Pair these near-expiry items for better sell-through</p>
-                                </div>
-                                <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
-                                    Save {bundle.savingsPercent}%
-                                </span>
-                            </div>
-
-                            <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                                {bundle.items.map((item, idx) => (
-                                    <React.Fragment key={item.sku}>
-                                        <div className="flex-1 bg-slate-50 rounded-lg p-3 border border-slate-100">
-                                            <p className="font-semibold text-sm text-slate-900 truncate">{item.name}</p>
-                                            <p className="text-xs text-slate-400">{item.sku}</p>
-                                        </div>
-                                        {idx < bundle.items.length - 1 && (
-                                            <div className="flex items-center justify-center text-slate-300 font-bold text-lg">+</div>
+                                                </tr>
+                                            );
+                                        }) : (
+                                            <tr>
+                                                <td colSpan="4" className="px-6 py-16 text-center text-slate-400">
+                                                    {riskItems.length === 0 ? (
+                                                        <>
+                                                            <FaCheckCircle className="mx-auto text-emerald-400 mb-3" size={36} />
+                                                            <p className="font-semibold text-slate-600">No critical risks detected!</p>
+                                                            <p className="text-sm mt-1">Great job keeping stock under control.</p>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <FaSearch className="mx-auto text-slate-300 mb-3" size={32} />
+                                                            <p className="font-semibold text-slate-500">No items match your filters.</p>
+                                                            <p className="text-sm mt-1">Try adjusting your search or filter criteria.</p>
+                                                        </>
+                                                    )}
+                                                </td>
+                                            </tr>
                                         )}
-                                    </React.Fragment>
-                                ))}
+                                    </tbody>
+                                </table>
                             </div>
-
-
                         </div>
-                    )) : (
-                        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-                            <FaBoxes className="mx-auto text-slate-300 mb-3" size={36} />
-                            <p className="font-semibold text-slate-600">No bundle suggestions available</p>
-                            <p className="text-sm text-slate-400 mt-1">Bundles are generated when multiple items from different categories are expiring soon.</p>
+                    )}
+
+                    {/* TAB: SMART BUNDLES */}
+                    {activeTab === 'bundles' && (
+                        <div className="space-y-4">
+                            {bundles.length > 0 ? bundles.map((bundle) => (
+                                <div key={bundle.id} className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="flex items-start justify-between">
+                                        <div>
+                                            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                                <FaBoxes className="text-[#17A2B8]" />
+                                                {bundle.name || 'Smart Bundle Suggestion'}
+                                            </h3>
+                                            <p className="text-xs text-slate-400 mt-1">{bundle.reason || 'Pair these near-expiry items for better sell-through'}</p>
+                                        </div>
+                                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                                            Save {bundle.savingsPercent}%
+                                        </span>
+                                    </div>
+
+                                    <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                                        {bundle.items.map((item, idx) => (
+                                            <React.Fragment key={item.sku}>
+                                                <div className="flex-1 bg-slate-50 rounded-lg p-3 border border-slate-100">
+                                                    <p className="font-semibold text-sm text-slate-900 truncate">{item.name}</p>
+                                                    <p className="text-xs text-slate-400">{item.sku}</p>
+                                                </div>
+                                                {idx < bundle.items.length - 1 && (
+                                                    <div className="flex items-center justify-center text-slate-300 font-bold text-lg">+</div>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
+                                    <FaBoxes className="mx-auto text-slate-300 mb-3" size={36} />
+                                    <p className="font-semibold text-slate-600">No bundle suggestions available</p>
+                                    <p className="text-sm text-slate-400 mt-1">Bundles are generated when multiple items from different categories are expiring soon.</p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
-            )}
+
+                {/* ═══════════ RECENT ACTION HISTORY PANEL ═══════════════════ */}
+            </div>
 
             {simulationModalItem && (
                 <OptimalSimulationModal

@@ -1,0 +1,21 @@
+{
+  "level": "summary",
+  "fold": "avg",
+  "imputation_strategy": "forward_fill_median",
+  "model_name": "random_forest",
+  "mae": 5.076121599186732,
+  "rmse": 7.724091176389566,
+  "mape": 29.66610441160156,
+  "smape": 27.368739741830204,
+  "fit_time_seconds": 0.811245399992913,
+  "train_samples": 998,
+  "validation_samples": 677,
+  "train_start": "",
+  "train_end": "",
+  "validation_start": "",
+  "validation_end": "",
+  "rank": 1,
+  "generated_at": "2026-04-21 11:47:02",
+  "validation_method": "Expanding-window TimeSeriesSplit (2 folds)",
+  "feature_count": 45
+}
