@@ -11,7 +11,7 @@
         "portal:frontend": "cd PlanogramPlatform/frontend && npm start",
         "web": "cd Website && npm run dev",
         "py": "cd PythonModels && npm start",
-        "all": "concurrently \"npm run portal\" \"npm run web\" \"npm run py\""
+        "all": "concurrently --names \"PORTAL,WEB,PYTHON\" --prefix-colors \"cyan,magenta,blue\" \"npm run portal\" \"npm run web\" \"npm run py\""
     },
     "devDependencies": {
         "concurrently": "^8.2.2"

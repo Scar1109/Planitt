@@ -143,7 +143,7 @@ class PlanogramAgent {
             ownerUserId: userId,
             planogramId: validPlanogramId,
             runType: config.runType, // Now mapped correctly
-            solver: "python_optimizer_v1",
+            solver: config.solver || "python_optimizer_v1",
             objectiveWeights: config.objectiveWeights,
             hyperparams: config.hyperparams,
             status: "running",
@@ -218,8 +218,8 @@ class PlanogramAgent {
                 const runtimeMs = Date.now() - startTime;
                 const heuristicScore = response.data.heuristic_score || 0;
                 const bestScore = response.data.score;
-                const improvementPct = heuristicScore > 0
-                    ? ((bestScore - heuristicScore) / heuristicScore * 100)
+                const improvementPct = heuristicScore !== 0
+                    ? ((bestScore - heuristicScore) / Math.abs(heuristicScore) * 100)
                     : 0;
 
                 console.log(`[Agent] Optimization Success. Score: ${bestScore}, Runtime: ${runtimeMs}ms, Improvement: ${improvementPct.toFixed(2)}%`);

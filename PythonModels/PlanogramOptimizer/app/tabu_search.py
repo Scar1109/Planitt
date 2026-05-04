@@ -26,6 +26,7 @@ import math
 import copy
 import logging
 from collections import deque
+from app.main_utils import state_to_placements
 
 logger = logging.getLogger(__name__)
 
@@ -196,24 +197,6 @@ class TabuSearchOptimizer:
 
         return neighbors
 
-    def _state_to_placements(self, state, levels_map):
-        """Convert state to flat placement list."""
-        placements = []
-        for lid, s in state.items():
-            lvl = levels_map[lid]
-            current_x = 0
-            for item in s['items']:
-                placements.append({
-                    'sku': item['sku'],
-                    'level_id': lid,
-                    'fixture_id': lvl.get('fixtureId'),
-                    'facings': item['facings'],
-                    'x_position': current_x,
-                    'y_position': 0,
-                    'width_used': item['total_width']
-                })
-                current_x += item['total_width']
-        return placements
 
     def optimize(self, initial_placements, products, levels, config, constraint_checker=None):
         """
@@ -336,5 +319,5 @@ class TabuSearchOptimizer:
 
         logger.info(f"Tabu Search Finished: BestScore={best_score:.2f}")
 
-        final_placements = self._state_to_placements(best_state, levels_map)
+        final_placements = state_to_placements(best_state, products_map)
         return final_placements, best_score, convergence_history
