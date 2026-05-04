@@ -6,6 +6,7 @@ import { validate, schemas } from '../middleware/validation.js';
 import logger from '../config/logger.js';
 import axios from 'axios';
 import { getInventorySummary, getDashboardKPIs } from '../controllers/inventory.controller.js';
+import openAIService from '../services/OpenAIService.js';
 
 const router = express.Router();
 
@@ -365,4 +366,119 @@ router.post('/snapshot', async (req, res, next) => {
         next(error);
     }
 });
+
+/**
+ * @route   POST /api/inventory/simulate-scenario
+ * @desc    Simulate inventory scenario and get AI recommendation
+ * @access  Public
+ */
+router.post('/simulate-scenario', async (req, res, next) => {
+    try {
+        const { baseMetrics, scenario } = req.body;
+        
+        if (!baseMetrics || !scenario) {
+            return res.status(400).json({ success: false, error: 'Missing baseMetrics or scenario data' });
+        }
+
+        // 1. Calculate deterministic math
+        const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+        const roundToOne = (value) => Math.round(value * 10) / 10;
+        
+        const WEATHER_MULTIPLIERS = { normal: 1, rainy: 0.98, hot: 1.08, cool: 1 };
+        
+        const totalDemand = Math.max(0, Number(baseMetrics.totalDemand) || 0);
+        const avgDailyDemand = Math.max(0, Number(baseMetrics.avgDailyDemand) || 0);
+        const horizonDays = clamp(Math.round(Number(baseMetrics.horizonDays) || 0), 1, 90);
+
+        const currentStock = Math.max(0, Math.round(Number(scenario.currentStock) || 0));
+        const trafficChangePct = clamp(Number(scenario.trafficChangePct) || 0, -50, 100);
+        const weather = scenario.weather in WEATHER_MULTIPLIERS ? scenario.weather : "normal";
+        const promotionActive = Boolean(scenario.promotionActive);
+        const supplierDelayDays = clamp(Math.round(Number(scenario.supplierDelayDays) || 0), 0, 14);
+
+        const demandMultiplier = (1 + trafficChangePct / 100) * WEATHER_MULTIPLIERS[weather] * (promotionActive ? 1.05 : 1);
+
+        const adjustedDemand = Math.max(0, Math.round(totalDemand * demandMultiplier));
+        const adjustedAvgDailyDemand = adjustedDemand / horizonDays;
+        const stockCoverageDays = adjustedAvgDailyDemand > 0 ? roundToOne(currentStock / adjustedAvgDailyDemand) : 999;
+        const shortfallUnits = Math.max(0, adjustedDemand - currentStock);
+        const surplusUnits = Math.max(0, currentStock - adjustedDemand);
+        const supplierWindowDemand = Math.round(adjustedAvgDailyDemand * supplierDelayDays);
+        const effectiveShortfall = Math.max(shortfallUnits, supplierWindowDemand > currentStock ? supplierWindowDemand - currentStock : shortfallUnits);
+        const safetyBuffer = Math.max(4, Math.ceil(adjustedAvgDailyDemand * 0.65));
+        const recommendedQuantity = effectiveShortfall > 0 ? effectiveShortfall + safetyBuffer : 0;
+        const demandDelta = adjustedDemand - totalDemand;
+
+        const mathResult = {
+            adjustedDemand,
+            adjustedAvgDailyDemand: roundToOne(adjustedAvgDailyDemand),
+            stockCoverageDays,
+            shortfallUnits,
+            surplusUnits,
+            demandDelta,
+            supplierWindowDemand,
+            recommendedQuantity
+        };
+
+        // 2. Call OpenAI for dynamic recommendation
+        const prompt = `You are an expert AI Supply Chain Analyst analyzing a "What-If" inventory scenario for a retail store.
+Base Demand over ${horizonDays} days was ${totalDemand} units. Current stock is ${currentStock} units.
+The user is simulating: Traffic changes by ${trafficChangePct > 0 ? '+' : ''}${trafficChangePct}%, Weather is ${weather}, Promotion Active: ${promotionActive}, Supplier Delay: ${supplierDelayDays} days.
+This results in an adjusted demand of ${adjustedDemand} units and a projected shortfall of ${shortfallUnits} units.
+The mathematically recommended reorder quantity is ${recommendedQuantity} units to cover the shortfall and safety buffer.
+
+Provide a strictly formatted JSON response containing:
+- recommendedAction: A short, punchy action phrase (e.g., "Expedite Reorder Immediately", "Stock is Healthy").
+- riskLevel: "high", "medium", or "low".
+- urgency: "high", "medium", or "low".
+- explanations: An array of 3 short, distinct, highly insightful sentences explaining why this action is recommended based on the specific inputs (e.g., how the supplier delay uniquely exacerbates the risk).
+
+Respond ONLY with valid JSON matching this schema:
+{
+  "recommendedAction": "string",
+  "riskLevel": "string",
+  "urgency": "string",
+  "explanations": ["string", "string", "string"]
+}`;
+
+        let aiResult = {
+            recommendedAction: shortfallUnits > 0 ? "Reorder Now" : "Stock is healthy",
+            riskLevel: shortfallUnits > 0 ? "high" : "low",
+            urgency: shortfallUnits > 0 ? "high" : "low",
+            explanations: ["Generated fallback based on shortfall."]
+        };
+
+        try {
+            // Use a short timeout so the UI doesn't hang forever
+            const aiPromise = openAIService.simpleCompletion(prompt, "Generate JSON response.");
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('AI timeout')), 4000));
+            const aiResponse = await Promise.race([aiPromise, timeoutPromise]);
+
+            if (aiResponse && aiResponse.success && aiResponse.message) {
+                const jsonStr = aiResponse.message.replace(/```json/g, '').replace(/```/g, '').trim();
+                const parsed = JSON.parse(jsonStr);
+                
+                aiResult = {
+                    recommendedAction: parsed.recommendedAction || aiResult.recommendedAction,
+                    riskLevel: (parsed.riskLevel || aiResult.riskLevel).toLowerCase(),
+                    urgency: (parsed.urgency || aiResult.urgency).toLowerCase(),
+                    explanations: Array.isArray(parsed.explanations) ? parsed.explanations : aiResult.explanations
+                };
+            }
+        } catch (error) {
+            logger.warn('AI scenario simulation failed or timed out:', error.message);
+        }
+
+        res.json({
+            success: true,
+            data: {
+                ...mathResult,
+                ...aiResult
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
 export default router;
