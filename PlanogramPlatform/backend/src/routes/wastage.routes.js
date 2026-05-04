@@ -5,6 +5,7 @@ import Product from '../models/Product.js';
 import Promotion from '../models/Promotion.js';
 import Sale from '../models/Sale.js';
 import pythonMLService from '../services/PythonMLService.js';
+import openAIService from '../services/OpenAIService.js';
 import { validate, schemas } from '../middleware/validation.js';
 import logger from '../config/logger.js';
 
@@ -382,54 +383,141 @@ router.get('/dashboard/:storeId', async (req, res, next) => {
             .sort((a, b) => b.value - a.value);
 
         // --- Smart Bundle Suggestions ---
-        const bundleSuggestions = [];
+        let bundleSuggestions = [];
         const criticalItems = enrichedRiskItems.filter(i => i.daysToExpiry <= 5 && i.daysToExpiry > 0);
-
-        // Define logical complementary categories to form smart bundles
-        const complementaryPairs = [
-            ['Beverages', 'Snacks'],
-            ['Bakery', 'Dairy'],
-            ['Produce', 'Meat'],
-            ['Spices', 'Produce'],
-            ['Breakfast', 'Dairy'],
-            ['Pantry', 'Spices']
-        ];
 
         const usedSkus = new Set();
 
-        const createAndAddBundle = (item1, item2) => {
-            const totalPrice = item1.basePrice + item2.basePrice;
+        if (criticalItems.length >= 2) {
+            try {
+                const aiPayload = criticalItems.map(i => ({
+                    sku: i.sku,
+                    name: i.productName,
+                    category: i.category,
+                    price: i.basePrice,
+                    daysToExpiry: i.daysToExpiry
+                }));
 
-            const getDiscountForDte = (dte) => {
-                if (dte <= 1) return 50;
-                if (dte <= 3) return 30;
-                if (dte <= 5) return 20;
-                if (dte <= 7) return 10;
-                return 0;
+                const prompt = `You are a retail merchandising AI. I will provide a list of near-expiry items in JSON. 
+Create up to 3 logical product bundles (2 items per bundle) to help clear stock. 
+Only bundle items that make sense to buy together (e.g., pasta + sauce, snack + beverage).
+Respond STRICTLY with valid JSON matching this schema:
+{
+  "bundles": [
+    {
+      "skus": ["SKU1", "SKU2"],
+      "name": "Creative Bundle Name",
+      "reason": "Why these pair well together"
+    }
+  ]
+}`;
+                
+                const aiPromise = openAIService.simpleCompletion(prompt, JSON.stringify(aiPayload));
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('AI timeout')), 4000));
+                
+                const aiResponse = await Promise.race([aiPromise, timeoutPromise]);
+
+                if (aiResponse && aiResponse.success && aiResponse.message) {
+                    let parsedData;
+                    try {
+                        const jsonStr = aiResponse.message.replace(/```json/g, '').replace(/```/g, '').trim();
+                        parsedData = JSON.parse(jsonStr);
+                    } catch (e) {
+                        logger.warn('Failed to parse AI bundle JSON, falling back to rules');
+                    }
+
+                    if (parsedData && Array.isArray(parsedData.bundles)) {
+                        const itemMap = new Map(criticalItems.map(i => [i.sku, i]));
+
+                        for (const b of parsedData.bundles) {
+                            if (bundleSuggestions.length >= 3) break;
+                            if (!b.skus || b.skus.length < 2) continue;
+                            
+                            const item1 = itemMap.get(b.skus[0]);
+                            const item2 = itemMap.get(b.skus[1]);
+
+                            if (item1 && item2 && !usedSkus.has(item1.sku) && !usedSkus.has(item2.sku)) {
+                                usedSkus.add(item1.sku);
+                                usedSkus.add(item2.sku);
+
+                                const totalPrice = item1.basePrice + item2.basePrice;
+                                const d1 = item1.daysToExpiry <= 1 ? 50 : item1.daysToExpiry <= 3 ? 30 : item1.daysToExpiry <= 5 ? 20 : 10;
+                                const d2 = item2.daysToExpiry <= 1 ? 50 : item2.daysToExpiry <= 3 ? 30 : item2.daysToExpiry <= 5 ? 20 : 10;
+                                
+                                let bundleDiscountPercent = Math.round((d1 + d2) / 2) + 5;
+                                bundleDiscountPercent = Math.min(60, Math.max(15, bundleDiscountPercent));
+                                
+                                const bundlePrice = Math.round(totalPrice * (1 - (bundleDiscountPercent / 100)));
+
+                                bundleSuggestions.push({
+                                    id: `bundle-${item1.sku}-${item2.sku}`,
+                                    name: b.name || 'Smart Combo',
+                                    reason: b.reason || 'AI Suggested Pair',
+                                    items: [
+                                        { sku: item1.sku, name: item1.productName, price: item1.basePrice },
+                                        { sku: item2.sku, name: item2.productName, price: item2.basePrice },
+                                    ],
+                                    originalTotal: totalPrice,
+                                    bundlePrice,
+                                    savings: totalPrice - bundlePrice,
+                                    savingsPercent: bundleDiscountPercent,
+                                });
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                logger.warn(`AI bundling failed: ${err.message}. Falling back to rule-based.`);
+            }
+        }
+
+        // --- Fallback: Rule-based heuristic ---
+        if (bundleSuggestions.length === 0 && criticalItems.length >= 2) {
+            // Define logical complementary categories to form smart bundles
+            const complementaryPairs = [
+                ['Beverages', 'Snacks'],
+                ['Bakery', 'Dairy'],
+                ['Produce', 'Meat'],
+                ['Spices', 'Produce'],
+                ['Breakfast', 'Dairy'],
+                ['Pantry', 'Spices']
+            ];
+
+            const createAndAddBundle = (item1, item2) => {
+                const totalPrice = item1.basePrice + item2.basePrice;
+
+                const getDiscountForDte = (dte) => {
+                    if (dte <= 1) return 50;
+                    if (dte <= 3) return 30;
+                    if (dte <= 5) return 20;
+                    if (dte <= 7) return 10;
+                    return 0;
+                };
+
+                const d1 = getDiscountForDte(item1.daysToExpiry);
+                const d2 = getDiscountForDte(item2.daysToExpiry);
+
+                // Bundle discount = average of individual discounts + 5% incentive
+                let bundleDiscountPercent = Math.round((d1 + d2) / 2) + 5;
+                if (bundleDiscountPercent > 60) bundleDiscountPercent = 60;
+                if (bundleDiscountPercent < 15) bundleDiscountPercent = 15;
+
+                const bundlePrice = Math.round(totalPrice * (1 - (bundleDiscountPercent / 100)));
+
+                bundleSuggestions.push({
+                    id: `bundle-${item1.sku}-${item2.sku}`,
+                    name: `${item1.category} & ${item2.category} Combo`,
+                    reason: `Clearance pairing for ${item1.category} and ${item2.category}`,
+                    items: [
+                        { sku: item1.sku, name: item1.productName, price: item1.basePrice },
+                        { sku: item2.sku, name: item2.productName, price: item2.basePrice },
+                    ],
+                    originalTotal: totalPrice,
+                    bundlePrice,
+                    savings: totalPrice - bundlePrice,
+                    savingsPercent: bundleDiscountPercent,
+                });
             };
-
-            const d1 = getDiscountForDte(item1.daysToExpiry);
-            const d2 = getDiscountForDte(item2.daysToExpiry);
-
-            // Bundle discount = average of individual discounts + 5% incentive
-            let bundleDiscountPercent = Math.round((d1 + d2) / 2) + 5;
-            if (bundleDiscountPercent > 60) bundleDiscountPercent = 60;
-            if (bundleDiscountPercent < 15) bundleDiscountPercent = 15;
-
-            const bundlePrice = Math.round(totalPrice * (1 - (bundleDiscountPercent / 100)));
-
-            bundleSuggestions.push({
-                id: `bundle-${item1.sku}-${item2.sku}`,
-                items: [
-                    { sku: item1.sku, name: item1.productName, price: item1.basePrice },
-                    { sku: item2.sku, name: item2.productName, price: item2.basePrice },
-                ],
-                originalTotal: totalPrice,
-                bundlePrice,
-                savings: totalPrice - bundlePrice,
-                savingsPercent: bundleDiscountPercent,
-            });
-        };
 
         // 1. Try to find logical complementary matches first
         for (const [cat1, cat2] of complementaryPairs) {
@@ -460,6 +548,7 @@ router.get('/dashboard/:storeId', async (req, res, next) => {
                 usedSkus.add(item2.sku);
                 createAndAddBundle(item1, item2);
             }
+        }
         }
 
         res.json({

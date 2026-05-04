@@ -454,6 +454,17 @@ ${actionDetails}
         }
     },
 
+    // Get past wastage actions history
+    async getWastageActionHistory(storeId = 'STORE-001', limit = 20) {
+        try {
+            const response = await nodeClient.get(`/wastage/actions/history/${storeId}?limit=${limit}`);
+            return response.data;
+        } catch (error) {
+            console.error('Wastage action history error:', error);
+            throw error;
+        }
+    },
+
     // Get AI-driven smart insight for order reduction
     async getSmartInsight(storeId = 'STORE-001') {
         try {
@@ -494,6 +505,17 @@ ${actionDetails}
             return response.data;
         } catch (error) {
             console.error('Auto-promote error:', error);
+            throw error;
+        }
+    },
+
+    // Simulate inventory what-if scenario with AI backend
+    async simulateInventoryScenario(payload) {
+        try {
+            const response = await nodeClient.post('/inventory/simulate-scenario', payload);
+            return response.data;
+        } catch (error) {
+            console.error('Simulate scenario error:', error);
             throw error;
         }
     },
