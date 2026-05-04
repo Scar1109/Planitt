@@ -53,6 +53,26 @@ export default function AboutUs() {
                                                     <span className="me-3 fs-5">📱</span>
                                                     <span className="text-muted fw-semibold">{m.mobile}</span>
                                                 </div>
+                                                {m.linkedin && (
+                                                    <div className="d-flex align-items-center mt-2">
+                                                        <span
+                                                            className="me-3 d-inline-flex align-items-center justify-content-center rounded text-white fw-bold"
+                                                            style={{ width: '24px', height: '24px', backgroundColor: '#0a66c2', fontSize: '0.85rem' }}
+                                                            aria-hidden="true"
+                                                        >
+                                                            in
+                                                        </span>
+                                                        <a
+                                                            href={m.linkedin}
+                                                            className="text-decoration-none text-muted fw-semibold"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            aria-label={`LinkedIn profile for ${m.fullName}`}
+                                                        >
+                                                            LinkedIn
+                                                        </a>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

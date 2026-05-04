@@ -23,6 +23,7 @@ References:
   - Drèze, X. et al. (1994). "Shelf Management and Space Elasticity."
 """
 import logging
+from app.main_utils import state_to_placements
 
 logger = logging.getLogger(__name__)
 
@@ -293,7 +294,7 @@ class HeuristicOptimizer:
     def __init__(self):
         pass
 
-    def generate_layout(self, products, fixtures, levels, constraints=None):
+    def generate_layout(self, products, fixtures, levels, constraints=None, skip_fill=False):
         """
         Generate a layout using the Advanced Heuristic Strategy (4-Step):
         1. Place Minimum Facings (Constraint Satisfaction)
@@ -354,75 +355,126 @@ class HeuristicOptimizer:
 
         # --- Step 1: Place Minimum Facings ---
         logger.info("Step 1: Assigning Minimum Facings...")
+        unplaced_products = []
 
-        for p in sorted_products:
+        # Define department families to prevent cross-contamination
+        # e.g., Washing powder should NEVER go on a Dairy shelf
+        FOOD_DEPARTMENTS = {'beverages', 'dairy', 'bakery', 'frozen', 'snacks', 'confectionery',
+                            'rice', 'dry goods', 'baby food', 'baby', 'instant', 'instant noodles'}
+        NON_FOOD_DEPARTMENTS = {'household', 'cleaning', 'personal care', 'personal',
+                                'stationery', 'health', 'beauty'}
+
+        def _get_department_family(text):
+            """Classify a tag/category into 'food', 'non_food', or 'unknown'."""
+            if not text:
+                return 'unknown'
+            t = text.lower().strip()
+            for kw in FOOD_DEPARTMENTS:
+                if kw in t:
+                    return 'food'
+            for kw in NON_FOOD_DEPARTMENTS:
+                if kw in t:
+                    return 'non_food'
+            return 'unknown'
+
+        def _check_category_match(product_category, product_allowed_tags, level_tags, mode='strict'):
+            """
+            Check if a product can go on a shelf.
+            
+            Modes:
+              'strict'  — category or allowedTags must match a level tag
+              'relaxed' — only prevents cross-department (food vs non-food)
+              'any'     — no category restriction (truly last resort)
+            """
+            if not level_tags:
+                return True  # No tags on shelf = accepts anything
+            
+            is_general = any(t in ('general', 'misc') for t in level_tags)
+            if is_general:
+                return True
+            
+            if mode == 'any':
+                return True
+            
+            if mode == 'strict':
+                # Check 1: product.category matches a level tag
+                if product_category:
+                    for tag in level_tags:
+                        if product_category in tag or tag in product_category:
+                            return True
+                
+                # Check 2: product.allowedTags matches a level tag
+                if product_allowed_tags:
+                    for allowed in product_allowed_tags:
+                        allowed_lower = allowed.lower().strip()
+                        for tag in level_tags:
+                            if allowed_lower in tag or tag in allowed_lower:
+                                return True
+                
+                return False
+            
+            if mode == 'relaxed':
+                # Prevent cross-department only
+                # Determine what "family" the shelf belongs to
+                shelf_families = set()
+                for tag in level_tags:
+                    family = _get_department_family(tag)
+                    if family != 'unknown':
+                        shelf_families.add(family)
+                
+                if not shelf_families:
+                    return True  # Unknown shelf = allow anything
+                
+                # Determine product's family
+                product_family = _get_department_family(product_category)
+                if product_family == 'unknown' and product_allowed_tags:
+                    for at in product_allowed_tags:
+                        pf = _get_department_family(at)
+                        if pf != 'unknown':
+                            product_family = pf
+                            break
+                
+                if product_family == 'unknown':
+                    return True  # Unknown product = allow anywhere
+                
+                # Block cross-department: food product on non-food shelf, or vice versa
+                if product_family not in shelf_families:
+                    return False
+                
+                return True
+
+        def attempt_placement(p, match_mode='strict'):
             sku = p['sku']
-
-            # Get effective facings (with constraint overrides)
             min_facings, max_facings = checker.get_effective_facings(sku, p)
-
-            # --- Constraint Checks ---
-            product_tags = p.get('tags', [])
-            product_category = p.get('category', '').lower()
-
-            # Standard Dims
-            width = p['widthCm']
-            height = p['heightCm']
-            depth = p['depthCm']
-
+            product_category = (p.get('category', '') or '').lower()
+            product_allowed_tags = [t.lower().strip() for t in (p.get('allowedTags') or [])]
+            width, height, depth = p['widthCm'], p['heightCm'], p['depthCm']
             needed_width = min_facings * width
 
-            placed = False
             for lvl in sorted_levels:
                 lid = lvl['_id']
                 state = shelf_state[lid]
-
-                # --- Strict Category Coherence ---
-                # Products must go on shelves whose tags contain the product's category.
-                # Falls back to general/misc shelves only as last resort.
                 level_tags = [t.lower().strip() for t in lvl.get('tags', [])]
 
-                if level_tags:
-                    is_general = any(t in ('general', 'misc') for t in level_tags)
-
-                    if not is_general:
-                        # Strict: product category must appear in level tags
-                        category_matches = False
-                        for tag in level_tags:
-                            if product_category and product_category in tag:
-                                category_matches = True
-                                break
-                            if tag in product_category:
-                                category_matches = True
-                                break
-
-                        if not category_matches:
-                            continue  # Skip — category mismatch
-
-                # Check Dimensions
-                if lvl['usableHeightCm'] < height:
-                    continue
-                if lvl['usableDepthCm'] < depth:
+                # Category Check
+                if not _check_category_match(product_category, product_allowed_tags, level_tags, mode=match_mode):
                     continue
 
-                # Check Capacity
+                # Physical Checks
+                if lvl['usableHeightCm'] < height or lvl['usableDepthCm'] < depth:
+                    continue
                 if state['remaining_width'] < needed_width:
                     continue
 
-                # --- User Constraint Checks ---
-                # Adjacency forbidden
+                # User Constraints
                 if not checker.check_adjacency_forbidden(sku, lid, shelf_state):
                     continue
-
-                # Shelf affinity
                 if not checker.check_shelf_affinity(sku, p, lid, lvl):
                     continue
-
-                # Max shelf share
                 if not checker.check_shelf_share(sku, p, lid, shelf_state, additional_width=needed_width):
                     continue
 
-                # --- All checks passed: Assign ---
+                # Placement
                 product_assignments[sku] = lid
                 state['items'][sku] = {
                     'sku': sku,
@@ -436,68 +488,73 @@ class HeuristicOptimizer:
                     'depth': depth
                 }
                 state['remaining_width'] -= needed_width
-                placed = True
-                break
+                return True
+            return False
 
-            if not placed:
-                logger.warning(f"Failed to place essential product {sku} (Min Facings: {min_facings})")
+        # Pass 1: Strict Category + AllowedTags Matching
+        for p in sorted_products:
+            if not attempt_placement(p, match_mode='strict'):
+                unplaced_products.append(p)
+        
+        logger.info(f"Pass 1 (Strict): Placed {len(sorted_products) - len(unplaced_products)}, Unplaced: {len(unplaced_products)}")
+
+        # Pass 2: Relaxed (same department family only — food↔food, non-food↔non-food)
+        if unplaced_products:
+            pass2_remaining = []
+            for p in unplaced_products:
+                if not attempt_placement(p, match_mode='relaxed'):
+                    pass2_remaining.append(p)
+            logger.info(f"Pass 2 (Relaxed): Placed {len(unplaced_products) - len(pass2_remaining)} more")
+            unplaced_products = pass2_remaining
+
+        # Pass 3: True Last Resort (any shelf with physical space)
+        if unplaced_products:
+            logger.info(f"Pass 3 (Last Resort): Attempting {len(unplaced_products)} remaining products...")
+            final_failures = []
+            for p in unplaced_products:
+                if not attempt_placement(p, match_mode='any'):
+                    final_failures.append(p['sku'])
+            
+            if final_failures:
+                logger.warning(f"Final Failure: Could not place {len(final_failures)} products (no physical space).")
 
         # --- Step 2 & 3: Fill Remaining Width ---
-        logger.info("Step 2 & 3: Filling Remaining Width...")
+        # When a metaheuristic will refine afterward, skip this step
+        # so the optimizer has room to genuinely improve facings allocation.
+        if skip_fill:
+            logger.info("Step 2 & 3: SKIPPED (metaheuristic will handle facings optimization)")
+        else:
+            logger.info("Step 2 & 3: Filling Remaining Width...")
 
-        changed = True
-        while changed:
-            changed = False
-            for p in sorted_products:
-                sku = p['sku']
-                if sku not in product_assignments:
-                    continue
+            changed = True
+            while changed:
+                changed = False
+                for p in sorted_products:
+                    sku = p['sku']
+                    if sku not in product_assignments:
+                        continue
 
-                lid = product_assignments[sku]
-                state = shelf_state[lid]
-                item_data = state['items'][sku]
+                    lid = product_assignments[sku]
+                    state = shelf_state[lid]
+                    item_data = state['items'][sku]
 
-                current_facings = item_data['facings']
-                max_facings_eff = item_data['max_facings']
-                width_one = item_data['width_one']
+                    current_facings = item_data['facings']
+                    max_facings_eff = item_data['max_facings']
+                    width_one = item_data['width_one']
 
-                # Check constraints
-                if current_facings < max_facings_eff and state['remaining_width'] >= width_one:
-                    # Check max shelf share before adding
-                    if checker.check_shelf_share(sku, p, lid, shelf_state, additional_width=width_one):
-                        item_data['facings'] += 1
-                        item_data['total_width'] += width_one
-                        state['remaining_width'] -= width_one
-                        changed = True
+                    # Check constraints
+                    if current_facings < max_facings_eff and state['remaining_width'] >= width_one:
+                        # Check max shelf share before adding
+                        if checker.check_shelf_share(sku, p, lid, shelf_state, additional_width=width_one):
+                            item_data['facings'] += 1
+                            item_data['total_width'] += width_one
+                            state['remaining_width'] -= width_one
+                            changed = True
 
         # --- Step 4: Pack (Generate Coordinates) ---
         logger.info("Step 4: Generating Coordinates...")
 
-        final_placements = []
-
-        for lid, state in shelf_state.items():
-            lvl = state['obj']
-            items_on_shelf = list(state['items'].values())
-            # Sort by priority (highest priority on the left = most visible)
-            items_on_shelf.sort(key=lambda x: x['priority'], reverse=True)
-
-            current_x = 0
-
-            for item in items_on_shelf:
-                placement = {
-                    'product_id': item['product_id'],
-                    'sku': item['sku'],
-                    'level_id': lid,
-                    'fixture_id': lvl.get('fixtureId'),
-                    'facings': item['facings'],
-                    'x_position': current_x,
-                    'y_position': 0,
-                    'width_used': item['total_width'],
-                    'height': lvl['usableHeightCm'],
-                    'depth': lvl['usableDepthCm']
-                }
-                final_placements.append(placement)
-                current_x += item['total_width']
+        final_placements = state_to_placements(shelf_state, products_map)
 
         # Compute constraint violations for reporting
         _, violations = checker.compute_penalty(shelf_state)

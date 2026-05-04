@@ -35,6 +35,7 @@ import random
 import math
 import copy
 import logging
+from app.main_utils import state_to_placements
 
 logger = logging.getLogger(__name__)
 
@@ -130,24 +131,6 @@ class SimulatedAnnealingOptimizer:
 
         return score
 
-    def _state_to_placements(self, state, levels_map):
-        """Convert internal state dict back to flat placement list."""
-        placements = []
-        for lid, s in state.items():
-            lvl = levels_map[lid]
-            current_x = 0
-            for item in s['items']:
-                placements.append({
-                    'sku': item['sku'],
-                    'level_id': lid,
-                    'fixture_id': lvl.get('fixtureId'),
-                    'facings': item['facings'],
-                    'x_position': current_x,
-                    'y_position': 0,
-                    'width_used': item['total_width']
-                })
-                current_x += item['total_width']
-        return placements
 
     def _try_single_move(self, new_state, levels, products_map):
         """
@@ -432,5 +415,5 @@ class SimulatedAnnealingOptimizer:
                     f"Improvements={improvement_moves}")
 
         # Convert state to placements
-        final_placements = self._state_to_placements(best_state, levels_map)
+        final_placements = state_to_placements(best_state, products_map)
         return final_placements, best_score, convergence_history

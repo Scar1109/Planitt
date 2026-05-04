@@ -164,10 +164,10 @@ const RunsAndEvaluation = () => {
                                     <p className="text-xs text-slate-500 mt-1 flex items-center gap-4 flex-wrap">
                                         <span><FaClock className="inline mr-1" /> {formatTime(run.createdAt)}</span>
                                         {run.bestScore && <span>Score: <span className="font-mono text-[#1B4F72] font-bold">{run.bestScore.toFixed(2)}</span></span>}
-                                        {run.heuristicScore > 0 && (
+                                        {run.heuristicScore !== 0 && (
                                             <span className="text-emerald-600 flex items-center gap-1">
                                                 <FaArrowUp className="text-[10px]" />
-                                                {((run.bestScore - run.heuristicScore) / run.heuristicScore * 100).toFixed(1)}% improvement
+                                                {((run.bestScore - run.heuristicScore) / Math.abs(run.heuristicScore) * 100).toFixed(1)}% improvement
                                             </span>
                                         )}
                                     </p>
@@ -242,8 +242,8 @@ const RunsAndEvaluation = () => {
                                                 <div className="bg-white rounded-lg p-3 border border-slate-200 text-center">
                                                     <p className="text-[10px] text-slate-400 uppercase font-bold">Improvement</p>
                                                     <p className="text-sm font-bold text-emerald-600 mt-0.5">
-                                                        {run.heuristicScore > 0
-                                                            ? `+${((run.bestScore - run.heuristicScore) / run.heuristicScore * 100).toFixed(1)}%`
+                                                        {run.heuristicScore !== 0
+                                                            ? `+${((run.bestScore - run.heuristicScore) / Math.abs(run.heuristicScore) * 100).toFixed(1)}%`
                                                             : '--'}
                                                     </p>
                                                 </div>

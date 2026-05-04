@@ -11,6 +11,28 @@ import {
 const fmt   = (n) => (n ?? 0).toLocaleString('en-LK', { maximumFractionDigits: 0 });
 const sign  = (n) => (n >= 0 ? '+' : '');
 const isPos = (n) => n >= 0;
+const numberFrom = (...values) => {
+  for (const value of values) {
+    const numeric = Number(value);
+    if (Number.isFinite(numeric)) return numeric;
+  }
+  return 0;
+};
+
+const getProductKey = (product) => String(product.sku || product._id || '');
+
+const getApiErrorMessage = (err) => {
+  const data = err.response?.data;
+  if (Array.isArray(data?.errors) && data.errors.length > 0) {
+    const shown = data.errors.slice(0, 4).join('; ');
+    const suffix = data.errors.length > 4 ? `; +${data.errors.length - 4} more` : '';
+    return `${data.message || 'Request failed'}: ${shown}${suffix}`;
+  }
+  if (Array.isArray(data?.detail) && data.detail.length > 0) {
+    return data.detail.map(item => item.msg || JSON.stringify(item)).join('; ');
+  }
+  return data?.message || data?.error || err.message || 'Failed to generate plan';
+};
 
 /* ─── AlgoBanner ────────────────────────────────────────────────── */
 const AlgoBanner = () => {
@@ -290,11 +312,31 @@ const RecommendationsPage = () => {
     setLoading(true); setError(null);
     try {
       const { data: products } = await axios.get('http://localhost:3000/api/products', { withCredentials: true });
-      const skusToPlan = products.slice(0, 20).map(p => ({
-        sku_id: p.sku || p._id, category: p.category || 'General', brand: p.brand || 'Unknown',
-        base_price: p.price || 0, cost_price: p.costPrice || (p.price ? p.price * 0.7 : 0),
-        lead_time_days: 3, stock_level: p.stockLevel || p.quantity || 100,
-      }));
+      const productBySku = new Map(products.map(p => [getProductKey(p), p]));
+      const skusToPlan = products
+        .map(p => {
+          const basePrice = numberFrom(p.baseUnitPriceLKR, p.price, p.basePrice);
+          const costPrice = numberFrom(p.unitCostLKR, p.costPrice, basePrice > 0 ? basePrice * 0.7 : 0);
+          const stockLevel = numberFrom(p.currentStock, p.stockLevel, p.quantity, p.closingStock, 100);
+
+          if (!getProductKey(p) || basePrice <= 0 || costPrice <= 0 || costPrice >= basePrice) return null;
+
+          return {
+            sku_id: getProductKey(p),
+            category: p.category || 'General',
+            brand: p.brand || 'Unknown',
+            base_price: basePrice,
+            cost_price: costPrice,
+            stock_level: Math.max(0, Math.round(stockLevel)),
+          };
+        })
+        .filter(Boolean)
+        .slice(0, 20);
+
+      if (skusToPlan.length === 0) {
+        throw new Error('No eligible products found for planning. Products need positive baseUnitPriceLKR and unitCostLKR, with cost below price.');
+      }
+
       const { data: planData } = await axios.post('http://localhost:3000/api/promotions/plan', {
         skus: skusToPlan,
         constraints: { max_slots: 10, max_per_category: 3, min_margin_pct: 0.10, allow_stockout_risk: false },
@@ -304,15 +346,15 @@ const RecommendationsPage = () => {
       setRecommendations(planData.recommendations.map((rec, i) => ({
         id: `REC-${new Date().getFullYear()}-${i + 1}`,
         sku: rec.sku_id,
-        name: products.find(p => p.sku === rec.sku_id || p._id === rec.sku_id)?.productName || rec.sku_id,
-        current_price: products.find(p => p.sku === rec.sku_id || p._id === rec.sku_id)?.price || 0,
-        category: products.find(p => p.sku === rec.sku_id || p._id === rec.sku_id)?.category || 'General',
+        name: productBySku.get(rec.sku_id)?.productName || rec.sku_id,
+        current_price: numberFrom(productBySku.get(rec.sku_id)?.baseUnitPriceLKR, productBySku.get(rec.sku_id)?.price),
+        category: productBySku.get(rec.sku_id)?.category || 'General',
         recommended_discount: rec.discount_depth,
         projected_uplift: rec.uplift_forecast,
       })));
       setNarrative(planData.narrative_explanation || '');
     } catch (err) {
-      setError(err.message || 'Failed to generate plan');
+      setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }

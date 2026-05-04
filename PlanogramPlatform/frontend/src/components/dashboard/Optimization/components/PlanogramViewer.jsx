@@ -3,23 +3,28 @@ import { FaArrowLeft, FaBox, FaInfoCircle, FaSearchPlus, FaSearchMinus, FaExpand
 import { ProductShape, getProductBgColor } from './ProductShapes';
 
 const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products = [] }) => {
-    const [zoom, setZoom] = useState(1);
+    const [zoom, setZoom] = useState(0.8);
     const [selectedPlacement, setSelectedPlacement] = useState(null);
 
     const rawPlacements = result?.resultingPlacements || [];
 
-    const usedFixtureIds = new Set(rawPlacements.map(p => p.fixture_id));
+    // Normalize IDs to strings for robust comparison
+    const usedFixtureIds = new Set(rawPlacements.map(p => String(p.fixture_id || '')));
 
-    // If no placements (e.g. failed/empty), show all (or maybe none?)
-    // Let's filter if we have placements.
-    const relevantFixtures = rawPlacements.length > 0
-        ? fixtures.filter(f => usedFixtureIds.has(f._id))
-        : fixtures;
+    // If no placements (e.g. failed/empty), show all fixtures
+    // Otherwise, filter to only show fixtures that have products on them
+    // If no placements match any fixtures, fallback to showing all available fixtures
+    // to avoid a completely empty screen.
+    let relevantFixtures = fixtures.filter(f => usedFixtureIds.has(String(f._id)));
+    if (relevantFixtures.length === 0 && fixtures.length > 0) {
+        relevantFixtures = fixtures;
+    }
 
     // Group levels by fixture
     const fixturesWithLevels = relevantFixtures.map(fixture => {
+        const fixtureIdStr = String(fixture._id);
         const fixtureLevels = levels
-            .filter(l => l.fixtureId === fixture._id)
+            .filter(l => String(l.fixtureId) === fixtureIdStr)
             .sort((a, b) => b.levelIndex - a.levelIndex); // Top to bottom
         return { ...fixture, levels: fixtureLevels };
     });
@@ -29,11 +34,15 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
     // Merge Product Data
     const placements = rawPlacements.map(p => {
         // Try matching by ID first, then by normalized SKU
+        const pProductIdStr = p.product_id ? String(p.product_id) : null;
+        const pLevelIdStr = p.level_id ? String(p.level_id) : null;
+
         const product = products.find(prod =>
-            (p.product_id && prod._id === p.product_id) ||
+            (pProductIdStr && String(prod._id) === pProductIdStr) ||
             (prod.sku && p.sku && prod.sku.toLowerCase() === p.sku.toLowerCase())
         ) || {};
-        const level = levels.find(l => l._id === p.level_id) || {};
+
+        const level = levels.find(l => String(l._id) === pLevelIdStr) || {};
 
         const productDepth = product.depthCm || 10;
         const productHeight = product.heightCm || 10;
@@ -63,7 +72,8 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
     });
 
     // Scale factor for rendering (cm to pixels)
-    const SCALE = 4 * zoom;
+    // Using 3 as a better base for typical screen resolutions
+    const SCALE = 3 * zoom;
 
     return (
         <div className="fixed inset-0 z-50 bg-slate-100 flex flex-col animate-in fade-in duration-200">
@@ -80,7 +90,7 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
                     <div>
                         <h2 className="text-xl font-bold text-slate-800">Planogram Results</h2>
                         <p className="text-xs text-slate-500">
-                            Score: {result?.bestScore?.toFixed(1) || 'N/A'} • Placements: {placements.length}
+                            Score: {((result?.bestScore !== undefined && result?.bestScore !== null) ? result.bestScore.toFixed(1) : (result?.score !== undefined ? result.score.toFixed(1) : 'N/A'))} • Placements: {placements.length}
                         </p>
                     </div>
                 </div>
@@ -98,34 +108,36 @@ const PlanogramViewer = ({ onClose, result, fixtures = [], levels = [], products
                     {fixturesWithLevels.map(fixture => (
                         <div
                             key={fixture._id}
-                            className="relative bg-white border-4 border-slate-300 shadow-xl"
+                            className="relative bg-white outline outline-4 outline-slate-300 shadow-xl"
                             style={{
                                 width: fixture.totalWidthCm * SCALE,
                                 height: fixture.totalHeightCm * SCALE,
-                                borderRadius: '4px'
+                                borderRadius: '4px',
+                                minWidth: fixture.totalWidthCm * SCALE
                             }}
                         >
                             {/* Fixture Label */}
-                            {/* Fixture Label */}
-                            <div className="absolute -top-20 left-0 w-full text-center z-30 pointer-events-none">
-                                <span className="inline-block bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-200 shadow-sm font-bold text-slate-600 text-sm whitespace-nowrap">
+                            <div className="absolute -top-12 left-0 w-full text-center z-30 pointer-events-none">
+                                <span className="inline-block bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-200 shadow-sm font-bold text-slate-600 text-[10px] whitespace-nowrap">
                                     {fixture.aisleBaySide}
                                 </span>
                             </div>
 
                             {/* Render Shelves */}
                             {fixture.levels.map(level => {
-                                // Find products on this level
-                                const itemsOnShelf = placements.filter(p => p.level_id === level._id);
+                                // Find products on this level - normalize IDs
+                                const levelIdStr = String(level._id);
+                                const itemsOnShelf = placements.filter(p => String(p.level_id) === levelIdStr);
 
                                 return (
                                     <div
                                         key={level._id}
-                                        className="absolute w-full bg-slate-200 border-b-4 border-slate-400 group"
+                                        className="absolute w-full bg-slate-300 border-b-2 border-slate-400 group overflow-hidden"
                                         style={{
                                             bottom: level.heightFromFloorCm * SCALE,
                                             height: '4px', // Visual thickness of shelf
-                                            width: '100%'
+                                            width: '100%',
+                                            overflow: 'visible' // Ensure products stick out from the 4px bar
                                         }}
                                     >
                                         {/* Shelf Label (Hover) */}

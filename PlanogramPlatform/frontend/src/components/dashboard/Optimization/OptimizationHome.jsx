@@ -20,6 +20,7 @@ const OptimizationHome = () => {
     // State
     const [config, setConfig] = useState({
         runType: 'balanced',
+        solver: 'swarm_intelligence',
         objectiveWeights: { sales: 0.7, space: 0.3 },
         constraints: { categoryGrouping: true },
         scope: { type: 'all', fixtureId: null, levelId: null }
@@ -165,7 +166,7 @@ const OptimizationHome = () => {
                         <div className="bg-[#17A2B8]/10 p-4 rounded-lg flex gap-3 text-xs text-[#1B4F72] leading-relaxed mb-4">
                             <FaInfoCircle className="shrink-0 text-[#17A2B8] mt-0.5" />
                             <p>
-                                System will prioritize <strong>{config.objectiveWeights.sales > config.objectiveWeights.space ? 'Sales Performance' : 'Space Efficiency'}</strong> using {config.runType} solver logic.
+                                System will prioritize <strong>{config.objectiveWeights.sales > config.objectiveWeights.space ? 'Sales Performance' : 'Space Efficiency'}</strong> using {config.runType} mode with the <strong>{config.solver === 'swarm_intelligence' ? 'Swarm Intelligence' : config.solver === 'adaptive_local_search' ? 'Adaptive Local Search' : 'Stochastic Annealing'}</strong> engine.
                             </p>
                         </div>
 

@@ -142,6 +142,47 @@ const OptimizationConfig = ({ config, setConfig, fixtures = [], levels = [] }) =
                 </div>
             </div>
 
+            {/* Section 1.5: Solver Engine (Only for Balanced/Deep) */}
+            {(config.runType === 'balanced' || config.runType === 'deep') && (
+                <div className="mb-8 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Optimization Engine</h3>
+                    <div className="grid grid-cols-1 gap-3">
+                        <button
+                            onClick={() => setConfig(prev => ({ ...prev, solver: 'swarm_intelligence' }))}
+                            className={`p-4 rounded-xl border text-left transition-all ${config.solver === 'swarm_intelligence' || !config.solver ? 'border-[#17A2B8] bg-[#17A2B8]/5 ring-1 ring-[#17A2B8]' : 'border-slate-200 hover:border-slate-300'}`}
+                        >
+                            <div className="flex justify-between items-center">
+                                <div className="font-bold text-sm text-slate-800">Swarm Intelligence Refiner</div>
+                                <span className="px-2 py-0.5 bg-[#17A2B8] text-white text-[10px] font-bold rounded-full">RECOMMENDED</span>
+                            </div>
+                            <div className="text-xs text-[#17A2B8] font-medium mt-1">High-accuracy nature-inspired optimization (GWO).</div>
+                        </button>
+                        
+                        <button
+                            onClick={() => setConfig(prev => ({ ...prev, solver: 'adaptive_local_search' }))}
+                            className={`p-4 rounded-xl border text-left transition-all ${config.solver === 'adaptive_local_search' ? 'border-amber-500 bg-amber-50 ring-1 ring-amber-500' : 'border-slate-200 hover:border-slate-300'}`}
+                        >
+                            <div className="flex justify-between items-center">
+                                <div className="font-bold text-sm text-slate-800">Adaptive Local Search</div>
+                                <span className="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded-full">STABLE</span>
+                            </div>
+                            <div className="text-xs text-amber-600 font-medium mt-1">Refined local exploration with tabu-memory logic.</div>
+                        </button>
+
+                        <button
+                            onClick={() => setConfig(prev => ({ ...prev, solver: 'stochastic_annealing' }))}
+                            className={`p-4 rounded-xl border text-left transition-all ${config.solver === 'stochastic_annealing' ? 'border-indigo-500 bg-indigo-50 ring-1 ring-indigo-500' : 'border-slate-200 hover:border-slate-300'}`}
+                        >
+                            <div className="flex justify-between items-center">
+                                <div className="font-bold text-sm text-slate-800">Stochastic Annealing Solver</div>
+                                <span className="px-2 py-0.5 bg-indigo-500 text-white text-[10px] font-bold rounded-full">RELIABLE</span>
+                            </div>
+                            <div className="text-xs text-indigo-600 font-medium mt-1">Thermal-equilibrium approach for escaping local optima.</div>
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Section 2: Objectives */}
             <div className="mb-8">
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Objective Priorities</h3>
