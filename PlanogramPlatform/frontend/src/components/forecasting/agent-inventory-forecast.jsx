@@ -447,7 +447,7 @@ export function AgentInventoryForecast({ onDataChange }) {
                         )}
 
                         {/* Subtle Yet Cool Recommendation Block */}
-                        {forecastData.data?.quantity !== null && (
+                        {forecastData.data && forecastData.data.quantity != null && (
                             <div className="mt-4 pt-4 border-t border-slate-100 flex justify-end">
                                 <div className="inline-flex items-center gap-4 py-2.5 px-5 bg-gradient-to-r from-[#17A2B8]/5 to-slate-50 border border-[#17A2B8]/20 rounded-xl shadow-[0_2px_10px_-4px_rgba(23,162,184,0.2)]">
                                     <div className="flex items-center gap-2.5">
